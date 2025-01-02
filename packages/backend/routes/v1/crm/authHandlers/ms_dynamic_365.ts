@@ -40,7 +40,7 @@ class MsDynamicAuthHandler extends BaseOAuthHandler {
             };
             formData = new URLSearchParams(formData);
 
-            const result = await axios({
+            var result = await axios({
                 method: 'post',
                 url: `https://login.microsoftonline.com/organizations/oauth2/v2.0/token`,
                 headers: {
@@ -50,7 +50,7 @@ class MsDynamicAuthHandler extends BaseOAuthHandler {
             });
             logInfo('OAuth creds for Microsoft Dynamics 365 sales', result.data);
 
-            const info: any = await axios({
+            var info: any = await axios({
                 method: 'get',
                 url: `${orgURL}/api/data/v9.2/WhoAmI`,
                 headers: {
