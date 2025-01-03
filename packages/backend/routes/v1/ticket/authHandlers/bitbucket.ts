@@ -24,18 +24,18 @@ class BitbucketAuthHandler extends BaseOAuthHandler {
         response,
         redirectUrl,
     }: IntegrationAuthProps) {
-        const formData = {
+        let formData = {
             grant_type: 'authorization_code',
             code: code,
         };
-        const headerData = {
+        let headerData = {
             client_id: clientId || config.BITBUCKET_CLIENT_ID,
             client_secret: clientSecret || config.BITBUCKET_CLIENT_SECRET,
         };
-        const encodedClientIdSecret = Buffer.from(headerData.client_id + ':' + headerData.client_secret).toString(
+        let encodedClientIdSecret = Buffer.from(headerData.client_id + ':' + headerData.client_secret).toString(
             'base64',
         );
-        const result: any = await axios({
+        let result: any = await axios({
             method: 'post',
             url: 'https://bitbucket.org/site/oauth2/access_token',
             headers: {
@@ -47,9 +47,9 @@ class BitbucketAuthHandler extends BaseOAuthHandler {
 
         logInfo('OAuth creds for Bitbucket', result.data);
 
-        const auth = 'Bearer ' + result.data?.access_token;
+        let auth = 'Bearer ' + result.data?.access_token;
 
-        const info = await axios({
+        let info = await axios({
             method: 'GET',
             url: `https://api.bitbucket.org/2.0/user`,
             headers: {
