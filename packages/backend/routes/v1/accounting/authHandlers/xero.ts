@@ -25,20 +25,20 @@ class XeroAuthHandler extends BaseOAuthHandler {
         response,
         redirectUrl,
     }: IntegrationAuthProps) {
-        let formData = {
+        const formData = {
             grant_type: 'authorization_code',
             code: code,
             redirect_uri: `${config.OAUTH_REDIRECT_BASE}/xero`,
         };
-        let headerData = {
+        const headerData = {
             client_id: clientId || config.XERO_CLIENT_ID,
             client_secret: clientSecret || config.XERO_CLIENT_SECRET,
         };
-        let encodedClientIdSecret = Buffer.from(headerData.client_id + ':' + headerData.client_secret).toString(
+        const encodedClientIdSecret = Buffer.from(headerData.client_id + ':' + headerData.client_secret).toString(
             'base64',
         );
 
-        let result: any = await axios({
+        const result: any = await axios({
             method: 'post',
             url: 'https://identity.xero.com/connect/token',
             headers: {
@@ -50,10 +50,10 @@ class XeroAuthHandler extends BaseOAuthHandler {
 
         logInfo('OAuth creds for Xero', result.data);
 
-        let auth = 'Bearer ' + result.data?.access_token;
-        let decodedData: any = jwtDecode(result.data?.access_token);
+        const auth = 'Bearer ' + result.data?.access_token;
+        const decodedData: any = jwtDecode(result.data?.access_token);
 
-        let info = await axios({
+        const info = await axios({
             method: 'GET',
             url: `https://api.xero.com/connections?authEventId=${decodedData.authentication_event_id}`,
             headers: {
