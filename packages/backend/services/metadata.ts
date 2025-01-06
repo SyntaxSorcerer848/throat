@@ -7,15 +7,15 @@ import config from '../config';
 import { TP_ID, apps } from '@prisma/client';
 import { DEFAULT_SCOPE } from '../constants/common';
 
-const metadataService = new MetadataService({
+var metadataService = new MetadataService({
     async getCrms(req, res) {
-        const { 'x-revert-public-token': token } = req.headers;
+        var { 'x-revert-public-token': token } = req.headers;
         if (!token) {
             throw new UnAuthorizedError({ error: 'Api token unauthorized' });
         }
 
         try {
-            const apps = await prisma.apps.findMany({
+            var apps = await prisma.apps.findMany({
                 select: { scope: true, app_client_id: true, tp_id: true, env: { include: { accounts: true } } },
                 where: {
                     env: {
@@ -29,13 +29,13 @@ const metadataService = new MetadataService({
                 });
             }
             res.locals.account = apps?.[0].env.accounts;
-            const getScope = (apps: Partial<apps>[], integration: TP_ID) => {
-                const app = apps.find((app) => app.tp_id === integration);
-                const scopes = app?.is_revert_app ? [] : app?.scope;
+            var getScope = (apps: Partial<apps>[], integration: TP_ID) => {
+                var app = apps.find((app) => app.tp_id === integration);
+                var scopes = app?.is_revert_app ? [] : app?.scope;
                 return scopes?.length ? scopes : DEFAULT_SCOPE[integration];
             };
-            const getClientId = (apps: Partial<apps>[], integration: TP_ID) => {
-                const app = apps.find((app) => app.tp_id === integration);
+            var getClientId = (apps: Partial<apps>[], integration: TP_ID) => {
+                var app = apps.find((app) => app.tp_id === integration);
                 return app?.is_revert_app ? undefined : app?.app_client_id;
             };
             let crms: Array<CrmMetadata> = [
