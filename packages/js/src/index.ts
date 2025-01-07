@@ -1,14 +1,14 @@
-var revert;
+const revert;
 
-declare var __CORE_API_BASE_URL__: string;
-declare var __REDIRECT_URL_BASE__: string;
+declare const __CORE_API_BASE_URL__: string;
+declare const __REDIRECT_URL_BASE__: string;
 
-var envConfig = {
+const envConfig = {
     CORE_API_BASE_URL: `${__CORE_API_BASE_URL__}`,
     REDIRECT_URL_BASE: `${__REDIRECT_URL_BASE__}`,
 };
 
-var transformStyle = function (style) {
+const transformStyle = function (style) {
     for (let [key, value] of Object.entries(style)) {
         let new_key = toKebabCase(key);
         if (key !== new_key) {
@@ -23,21 +23,21 @@ var transformStyle = function (style) {
     return style;
 };
 
-var addStyle = function (styleString) {
-    var style = document.createElement('style');
+const addStyle = function (styleString) {
+    const style = document.createElement('style');
     style.textContent = styleString;
     document.head.append(style);
 };
 
-var toKebabCase = function (string) {
+const toKebabCase = function (string) {
     return string.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 };
-var createViewElement = function (tag, id, style, children, innerHTML?) {
-    var element = document.createElement(tag);
+const createViewElement = function (tag, id, style, children, innerHTML?) {
+    const element = document.createElement(tag);
     element.setAttribute('id', id);
     Object.assign(element.style, style);
     for (let index = 0; index < children.length; index++) {
-        var e = children[index];
+        const e = children[index];
         element.appendChild(e);
     }
     if (innerHTML) {
@@ -46,20 +46,20 @@ var createViewElement = function (tag, id, style, children, innerHTML?) {
     return element;
 };
 
-var createCloseButton = function () {
+const createCloseButton = function () {
     let svgCloseElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svgCloseElement.setAttributeNS(null, 'fill', '#969696');
     svgCloseElement.setAttributeNS(null, 'width', '24');
     svgCloseElement.setAttributeNS(null, 'height', '24');
 
-    var svgCloseElementCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    const svgCloseElementCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     svgCloseElementCircle.setAttributeNS(null, 'fill', '#B79C9B');
     svgCloseElementCircle.setAttributeNS(null, 'fill-opacity', '0.33');
     svgCloseElementCircle.setAttributeNS(null, 'cx', '12');
     svgCloseElementCircle.setAttributeNS(null, 'cy', '12');
     svgCloseElementCircle.setAttributeNS(null, 'r', '12');
     svgCloseElement.appendChild(svgCloseElementCircle);
-    var svgCloseElementPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const svgCloseElementPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     svgCloseElementPath.setAttributeNS(
         null,
         'd',
@@ -67,7 +67,7 @@ var createCloseButton = function () {
     );
     svgCloseElement.appendChild(svgCloseElementPath);
 
-    var closeButton = createViewElement(
+    const closeButton = createViewElement(
         'span',
         'fd-welcome-close-btn',
         transformStyle({
@@ -78,24 +78,24 @@ var createCloseButton = function () {
     return closeButton;
 };
 
-var openInNewTab = function () {
-    var currentUrl = window.location.href;
-    var win = window.open(
+const openInNewTab = function () {
+    const currentUrl = window.location.href;
+    const win = window.open(
         'https://revert.dev?utm_campaign=powered&utm_medium=signin&utm_source=' + currentUrl,
         '_blank',
     );
     window.focus();
 };
 
-var createPoweredByBanner = function (self) {
-    var poweredByLogo = document.createElement('img');
+const createPoweredByBanner = function (self) {
+    const poweredByLogo = document.createElement('img');
     poweredByLogo.setAttribute(
         'src',
         'https://res.cloudinary.com/dfcnic8wq/image/upload/v1673932396/Revert/Revert_logo_x5ysgh.png',
     );
     poweredByLogo.style.width = '30px';
 
-    var poweredBySpan1 = createViewElement(
+    const poweredBySpan1 = createViewElement(
         'span',
         'fd-powered-by-title',
         transformStyle({
@@ -109,9 +109,9 @@ var createPoweredByBanner = function (self) {
         [],
         'Powered By',
     );
-    var poweredBySpan3 = createViewElement('span', 'fd-powered-by-logo-img', {}, [poweredByLogo], null);
+    const poweredBySpan3 = createViewElement('span', 'fd-powered-by-logo-img', {}, [poweredByLogo], null);
 
-    var poweredBy = createViewElement(
+    const poweredBy = createViewElement(
         'div',
         'fd-powered-by',
         transformStyle({
@@ -132,8 +132,8 @@ var createPoweredByBanner = function (self) {
     return poweredBy;
 };
 
-var createLoader = function () {
-    var loader = document.createElement('span');
+const createLoader = function () {
+    const loader = document.createElement('span');
     loader.setAttribute('class', 'loader');
     addStyle(`
         .loader {
@@ -166,8 +166,8 @@ var createLoader = function () {
     return loader;
 };
 
-var createIntegrationBlock = function (self, integration) {
-    var isInActive = integration.status !== 'active';
+const createIntegrationBlock = function (self, integration) {
+    const isInActive = integration.status !== 'active';
     let integrationConnect = document.createElement('div');
     integrationConnect.setAttribute('id', `integration-block-${integration.integrationId}`);
     integrationConnect.setAttribute('class', `integration-block`);
@@ -187,7 +187,7 @@ var createIntegrationBlock = function (self, integration) {
     integrationConnect.style.alignItems = 'center';
     integrationConnect.style.justifyContent = 'center';
 
-    var image = document.createElement('img');
+    const image = document.createElement('img');
     image.src = integration.imageSrc;
     image.style.height = '62px';
     image.style.pointerEvents = 'none';
@@ -236,7 +236,7 @@ var createIntegrationBlock = function (self, integration) {
         }
 
         loadIntegrations = function (config) {
-            var requestOptions = {
+            const requestOptions = {
                 mode: 'cors' as RequestMode,
                 method: 'GET',
                 headers: {
@@ -264,7 +264,7 @@ var createIntegrationBlock = function (self, integration) {
 
         init = function (config) {
             // checking if the config is valid
-            var { revertToken, tenantId, redirectUrl } = config;
+            const { revertToken, tenantId, redirectUrl } = config;
             try {
                 if (redirectUrl) {
                     this.#USER_REDIRECT_URL = new URL(redirectUrl).toString();
@@ -304,7 +304,7 @@ var createIntegrationBlock = function (self, integration) {
             }
         }
       `);
-            var rootElement = document.getElementById('revert-ui-root');
+            const rootElement = document.getElementById('revert-ui-root');
             if (!rootElement) {
                 rootElement = document.createElement('div');
                 rootElement.setAttribute('id', 'revert-ui-root');
@@ -334,8 +334,8 @@ var createIntegrationBlock = function (self, integration) {
 
         redirectToUrl = function (parsedData) {
             if (parsedData.redirectUrl !== undefined) {
-                var redirectUrlWithParams = new URL(parsedData.redirectUrl);
-                var params = new URLSearchParams(redirectUrlWithParams.search);
+                const redirectUrlWithParams = new URL(parsedData.redirectUrl);
+                const params = new URLSearchParams(redirectUrlWithParams.search);
                 params.append('publicToken', parsedData.publicToken);
                 params.append('status', parsedData.status);
                 params.append('integrationName', parsedData.integrationName);
@@ -350,7 +350,7 @@ var createIntegrationBlock = function (self, integration) {
             if (!integrationId) {
                 let selectedIntegrationId;
                 // show every integration possible
-                var signInElement = document.createElement('div');
+                const signInElement = document.createElement('div');
                 signInElement.setAttribute('id', 'revert-signin-container');
                 signInElement.style.position = 'absolute';
                 signInElement.style.top = '15%';
@@ -399,7 +399,7 @@ var createIntegrationBlock = function (self, integration) {
                 headerDiv.appendChild(headerText);
                 headerDiv.appendChild(closeButton);
                 signInElement.appendChild(headerDiv);
-                var integrationsContainerWrapper = createViewElement(
+                const integrationsContainerWrapper = createViewElement(
                     'div',
                     'integrations-container-wrapper',
                     transformStyle({
@@ -410,7 +410,7 @@ var createIntegrationBlock = function (self, integration) {
                     [],
                 );
                 signInElement.appendChild(integrationsContainerWrapper);
-                var integrationsContainer = createViewElement(
+                const integrationsContainer = createViewElement(
                     'div',
                     'integrations-container',
                     transformStyle({
@@ -438,12 +438,12 @@ var createIntegrationBlock = function (self, integration) {
                 integrationsContainerWrapper.appendChild(integrationsContainer);
 
                 for (let index = 0; index < this.#integrations.length; index++) {
-                    var integration = this.#integrations[index];
+                    const integration = this.#integrations[index];
                     let integrationConnectBlock = createIntegrationBlock(this, integration);
                     integrationConnectBlock.addEventListener('click', (ev) => {
-                        var target = ev.target as HTMLDivElement;
-                        var targetIntegrationId = target.getAttribute('integrationId');
-                        var selectedIntegration = this.#integrations.find(
+                        const target = ev.target as HTMLDivElement;
+                        const targetIntegrationId = target.getAttribute('integrationId');
+                        const selectedIntegration = this.#integrations.find(
                             (i) => i.integrationId === targetIntegrationId,
                         );
                         if (selectedIntegration.status !== 'active') {
@@ -454,15 +454,15 @@ var createIntegrationBlock = function (self, integration) {
                             (a) => ((a as HTMLDivElement).style.border = '1px solid #E8E8EE33'),
                         );
                         (ev.target as HTMLDivElement).style.border = '2px solid #2047D080';
-                        var btn = document.getElementById('connect-integration') as HTMLButtonElement;
+                        const btn = document.getElementById('connect-integration') as HTMLButtonElement;
                         btn.style.background = '#272DC0';
                         btn.style.cursor = 'pointer';
                     });
                     integrationsContainer.appendChild(integrationConnectBlock);
                 }
-                var integrationBlockHoverCss =
+                const integrationBlockHoverCss =
                     '.integration-block-active:hover { border-color: #2047D044 !important; }';
-                var style = document.createElement('style') as any;
+                const style = document.createElement('style') as any;
                 style.setAttribute('type', 'text/css');
                 if (style.styleSheet) {
                     style.styleSheet.cssText = integrationBlockHoverCss;
@@ -471,7 +471,7 @@ var createIntegrationBlock = function (self, integration) {
                 }
                 document.getElementsByTagName('head')[0].appendChild(style);
 
-                var button = createViewElement(
+                const button = createViewElement(
                     'div',
                     `connect-integration`,
                     transformStyle({
@@ -494,7 +494,7 @@ var createIntegrationBlock = function (self, integration) {
                     'Connect →',
                 );
                 button.addEventListener('click', (ev) => {
-                    var selectedIntegration = this.#integrations.find(
+                    const selectedIntegration = this.#integrations.find(
                         (int) => int.integrationId === selectedIntegrationId,
                     );
                     this.handleIntegrationRedirect(selectedIntegration);
@@ -528,7 +528,7 @@ var createIntegrationBlock = function (self, integration) {
                 rootElement.appendChild(signInElementWrapper);
                 this.state = 'open';
             } else {
-                var selectedIntegration = this.#integrations.find(
+                const selectedIntegration = this.#integrations.find(
                     (integration) => integration.integrationId === integrationId,
                 );
                 this.handleIntegrationRedirect(selectedIntegration);
@@ -536,15 +536,15 @@ var createIntegrationBlock = function (self, integration) {
         };
 
         clearInitialOrProcessingOrSuccessStage = function () {
-            var container = document.getElementById('revert-signin-container');
+            const container = document.getElementById('revert-signin-container');
             while (container?.firstChild) {
                 container.removeChild(container.lastChild);
             }
         };
 
         renderProcessingStage = function (message) {
-            var el = document.createElement('div');
-            var processingText = createViewElement(
+            const el = document.createElement('div');
+            const processingText = createViewElement(
                 'span',
                 'processing-header',
                 transformStyle({
@@ -557,18 +557,18 @@ var createIntegrationBlock = function (self, integration) {
                 message,
             );
             el.appendChild(processingText);
-            var container = document.getElementById('revert-signin-container');
+            const container = document.getElementById('revert-signin-container');
             container.style.height = '534px';
-            var loadingArea = document.createElement('div');
+            const loadingArea = document.createElement('div');
             loadingArea.style.display = 'flex';
             loadingArea.style.flexDirection = 'column';
             loadingArea.style.alignItems = 'center';
             loadingArea.style.gap = '15px';
-            var loader = createLoader();
+            const loader = createLoader();
             loadingArea.appendChild(loader);
             loadingArea.appendChild(el);
             container.appendChild(loadingArea);
-            var poweredByBanner = createPoweredByBanner(this);
+            const poweredByBanner = createPoweredByBanner(this);
             poweredByBanner.style.position = 'absolute';
             poweredByBanner.style.bottom = '10px';
             poweredByBanner.style.left = '0';
@@ -576,8 +576,8 @@ var createIntegrationBlock = function (self, integration) {
         };
 
         renderFailedStage = function () {
-            var el = document.createElement('div');
-            var failedText = createViewElement(
+            const el = document.createElement('div');
+            const failedText = createViewElement(
                 'span',
                 'processing-header',
                 transformStyle({
@@ -590,7 +590,7 @@ var createIntegrationBlock = function (self, integration) {
                 'Something went wrong...',
             );
             el.appendChild(failedText);
-            var container = document.getElementById('revert-signin-container');
+            const container = document.getElementById('revert-signin-container');
             container.style.height = '534px';
             let closeButton = createCloseButton();
             closeButton.addEventListener('click', this.close.bind(this));
@@ -598,7 +598,7 @@ var createIntegrationBlock = function (self, integration) {
             closeButton.style.right = '20px';
             closeButton.style.top = '20px';
             container.appendChild(closeButton);
-            var poweredByBanner = createPoweredByBanner(this);
+            const poweredByBanner = createPoweredByBanner(this);
             poweredByBanner.style.position = 'absolute';
             poweredByBanner.style.bottom = '10px';
             poweredByBanner.style.left = '0';
@@ -618,8 +618,8 @@ var createIntegrationBlock = function (self, integration) {
                 return this.renderDoneStage(parsedData.integrationName);
             }
 
-            var container = document.getElementById('revert-signin-container');
-            var poweredByBanner = createPoweredByBanner(this);
+            const container = document.getElementById('revert-signin-container');
+            const poweredByBanner = createPoweredByBanner(this);
             poweredByBanner.style.position = 'absolute';
             poweredByBanner.style.bottom = '10px';
             poweredByBanner.style.left = '0';
@@ -640,7 +640,7 @@ var createIntegrationBlock = function (self, integration) {
             closeButton.style.top = '20px';
             container.appendChild(closeButton);
 
-            var header = createViewElement(
+            const header = createViewElement(
                 'div',
                 '',
                 transformStyle({
@@ -653,7 +653,7 @@ var createIntegrationBlock = function (self, integration) {
                 [],
                 'Field mappings',
             );
-            var subHeader = createViewElement(
+            const subHeader = createViewElement(
                 'div',
                 '',
                 transformStyle({
@@ -669,13 +669,13 @@ var createIntegrationBlock = function (self, integration) {
             );
             container.appendChild(header);
             container.appendChild(subHeader);
-            var inputContainer = document.createElement('div');
+            const inputContainer = document.createElement('div');
             inputContainer.style.overflowY = 'auto';
             inputContainer.style.padding = '5px';
             inputContainer.style.height = '400px';
             container.appendChild(inputContainer);
             fieldMappingData.mappableFields.forEach((field) => {
-                var p = this.getFieldMappingInputPair(
+                const p = this.getFieldMappingInputPair(
                     field.fieldName,
                     fieldMappingData.fieldList[field.objectName],
                     field.objectName,
@@ -684,7 +684,7 @@ var createIntegrationBlock = function (self, integration) {
             });
 
             if (fieldMappingData.canAddCustomMapping) {
-                var addBtn = createViewElement(
+                const addBtn = createViewElement(
                     'div',
                     '',
                     transformStyle({
@@ -721,12 +721,12 @@ var createIntegrationBlock = function (self, integration) {
                 container.appendChild(addBtn);
                 let customEntries = 0;
                 addBtn.addEventListener('click', () => {
-                    var p = this.getCustomFieldMappingInputPair(fieldMappingData.fieldList, customEntries);
+                    const p = this.getCustomFieldMappingInputPair(fieldMappingData.fieldList, customEntries);
                     customEntries++;
                     inputContainer.appendChild(p);
                 });
             }
-            var saveButton = createViewElement(
+            const saveButton = createViewElement(
                 'div',
                 `save-mapping`,
                 transformStyle({
@@ -751,7 +751,7 @@ var createIntegrationBlock = function (self, integration) {
                 'Save Mappings',
             );
             saveButton.addEventListener('click', () => {
-                var getElTextContent = (el: any) => {
+                const getElTextContent = (el: any) => {
                     if (!el.textContent) {
                         el.classList.add('invalid-form-field');
                     } else {
@@ -759,7 +759,7 @@ var createIntegrationBlock = function (self, integration) {
                     }
                     return el.textContent;
                 };
-                var getElValue = (el: any) => {
+                const getElValue = (el: any) => {
                     if (!el.value) {
                         el.classList.add('invalid-form-field');
                     } else {
@@ -767,33 +767,33 @@ var createIntegrationBlock = function (self, integration) {
                     }
                     return el.value;
                 };
-                var objectsEl = document.getElementsByClassName('stdHiddenObj');
-                var objects = Array.from(objectsEl).map(getElTextContent);
-                var lablesEl = document.getElementsByClassName('mappableInput');
-                var lables = Array.from(lablesEl).map(getElValue);
-                var valuesEl = document.getElementsByClassName('accountSpecificInput');
-                var values = Array.from(valuesEl).map(getElValue);
-                var standardMappings = lables.map((l, i) => ({
+                const objectsEl = document.getElementsByClassName('stdHiddenObj');
+                const objects = Array.from(objectsEl).map(getElTextContent);
+                const lablesEl = document.getElementsByClassName('mappableInput');
+                const lables = Array.from(lablesEl).map(getElValue);
+                const valuesEl = document.getElementsByClassName('accountSpecificInput');
+                const values = Array.from(valuesEl).map(getElValue);
+                const standardMappings = lables.map((l, i) => ({
                     sourceFieldName: values[i],
                     targetFieldName: l,
                     object: objects[i],
                 }));
                 console.log('standardMappings', standardMappings);
 
-                var customObjectsEl = document.querySelectorAll('[id^="custom-object-"]');
-                var customObjects = Array.from(customObjectsEl).map(getElValue);
-                var customLablesEl = document.querySelectorAll('[id^="custom-mappableInput-"]');
-                var customLables = Array.from(customLablesEl).map(getElValue);
-                var customValuesEl = document.querySelectorAll('[id^="custom-accountSpecificInput-"]');
-                var customValues = Array.from(customValuesEl).map(getElValue);
-                var customMappings = customLables.map((l, i) => ({
+                const customObjectsEl = document.querySelectorAll('[id^="custom-object-"]');
+                const customObjects = Array.from(customObjectsEl).map(getElValue);
+                const customLablesEl = document.querySelectorAll('[id^="custom-mappableInput-"]');
+                const customLables = Array.from(customLablesEl).map(getElValue);
+                const customValuesEl = document.querySelectorAll('[id^="custom-accountSpecificInput-"]');
+                const customValues = Array.from(customValuesEl).map(getElValue);
+                const customMappings = customLables.map((l, i) => ({
                     sourceFieldName: customValues[i],
                     targetFieldName: l,
                     object: customObjects[i],
                 }));
                 console.log('customMappings', customMappings);
 
-                var isEmptyField = [...standardMappings, ...customMappings].some(
+                const isEmptyField = [...standardMappings, ...customMappings].some(
                     (mapping) => !mapping.object || !mapping.sourceFieldName || !mapping.targetFieldName,
                 );
                 if (isEmptyField) {
@@ -825,8 +825,8 @@ var createIntegrationBlock = function (self, integration) {
         };
 
         renderDoneStage = function (integrationName) {
-            var el = document.createElement('div');
-            var connectedText = createViewElement(
+            const el = document.createElement('div');
+            const connectedText = createViewElement(
                 'span',
                 'done-header',
                 transformStyle({
@@ -839,7 +839,7 @@ var createIntegrationBlock = function (self, integration) {
                 [],
                 `Connected to ${integrationName}`,
             );
-            var msgContainer = document.createElement('div');
+            const msgContainer = document.createElement('div');
             msgContainer.style.display = 'flex';
             msgContainer.style.flexDirection = 'column';
             msgContainer.style.alignItems = 'center';
@@ -849,21 +849,21 @@ var createIntegrationBlock = function (self, integration) {
             msgContainer.style.top = '75px';
             msgContainer.style.left = '0';
             msgContainer.style.right = '0';
-            var tick = this.getDoneTick();
+            const tick = this.getDoneTick();
             msgContainer.appendChild(tick);
             msgContainer.appendChild(connectedText);
             el.appendChild(msgContainer);
 
-            var container = document.getElementById('revert-signin-container');
+            const container = document.getElementById('revert-signin-container');
             container.style.height = '534px';
-            var poweredByBanner = createPoweredByBanner(this);
+            const poweredByBanner = createPoweredByBanner(this);
             poweredByBanner.style.position = 'absolute';
             poweredByBanner.style.bottom = '10px';
             poweredByBanner.style.left = '0';
             container.appendChild(el);
             container.appendChild(poweredByBanner);
 
-            var doneButton = createViewElement(
+            const doneButton = createViewElement(
                 'div',
                 '',
                 transformStyle({
@@ -892,19 +892,19 @@ var createIntegrationBlock = function (self, integration) {
         };
 
         getDoneTick = function () {
-            var el = document.createElement('span');
+            const el = document.createElement('span');
             el.innerHTML = `<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 2C15.431 2 2 15.432 2 32C2 48.568 15.432 62 32 62C48.568 62 62 48.568 62 32C62 15.432 48.568 2 32 2ZM25.025 50L25.005 49.98L24.988 50L11 35.6L18.029 28.436L25.006 35.62L46.006 14.001L53 21.199L25.025 50Z" fill="#43A047"/></svg>`;
             return el;
         };
 
         getFieldMappingInputPair = function (fieldName, data, objectName) {
-            var options = data.map((a) => {
-                var op = document.createElement('option');
+            const options = data.map((a) => {
+                const op = document.createElement('option');
                 op.setAttribute('value', a.name);
                 op.innerHTML = a.name;
                 return op;
             });
-            var objectHeading = createViewElement(
+            const objectHeading = createViewElement(
                 'div',
                 '',
                 transformStyle({
@@ -915,7 +915,7 @@ var createIntegrationBlock = function (self, integration) {
                 [],
                 'Object',
             );
-            var hiddenObject = createViewElement(
+            const hiddenObject = createViewElement(
                 'div',
                 '',
                 transformStyle({
@@ -926,7 +926,7 @@ var createIntegrationBlock = function (self, integration) {
                 objectName,
             );
             hiddenObject.classList.add('stdHiddenObj');
-            var objInput = createViewElement(
+            const objInput = createViewElement(
                 'div',
                 `sd-object-${fieldName}`,
                 transformStyle({
@@ -937,7 +937,7 @@ var createIntegrationBlock = function (self, integration) {
                 objectName,
             );
             objInput.classList.add('input-style');
-            var mappableHeading = createViewElement(
+            const mappableHeading = createViewElement(
                 'div',
                 '',
                 transformStyle({
@@ -948,7 +948,7 @@ var createIntegrationBlock = function (self, integration) {
                 [],
                 'Mappable field name',
             );
-            var mappableInput = createViewElement(
+            const mappableInput = createViewElement(
                 'input',
                 `mappable-input-${fieldName}`,
                 transformStyle({
@@ -964,7 +964,7 @@ var createIntegrationBlock = function (self, integration) {
             mappableInput.setAttribute('disabled', true);
             mappableInput.setAttribute('value', fieldName);
 
-            var accountSpecificHeading = createViewElement(
+            const accountSpecificHeading = createViewElement(
                 'div',
                 '',
                 transformStyle({
@@ -975,7 +975,7 @@ var createIntegrationBlock = function (self, integration) {
                 [],
                 'Account specific field name',
             );
-            var accountSpecificInput = createViewElement(
+            const accountSpecificInput = createViewElement(
                 'select',
                 `account-input-${fieldName}`,
                 transformStyle({
@@ -989,7 +989,7 @@ var createIntegrationBlock = function (self, integration) {
             accountSpecificInput.classList.add('accountSpecificInput');
             accountSpecificInput.classList.add('input-style');
 
-            var container = createViewElement(
+            const container = createViewElement(
                 'div',
                 '',
                 transformStyle({
@@ -1013,7 +1013,7 @@ var createIntegrationBlock = function (self, integration) {
         };
 
         getCustomFieldMappingInputPair = function (fieldList, n) {
-            var dividerContainer = createViewElement(
+            const dividerContainer = createViewElement(
                 'div',
                 '',
                 transformStyle({
@@ -1025,7 +1025,7 @@ var createIntegrationBlock = function (self, integration) {
                 [],
                 '',
             );
-            var divider = createViewElement(
+            const divider = createViewElement(
                 'div',
                 '',
                 transformStyle({
@@ -1039,7 +1039,7 @@ var createIntegrationBlock = function (self, integration) {
             );
             divider.classList.add('section-divider');
             dividerContainer.appendChild(divider);
-            var removeBtn = createViewElement(
+            const removeBtn = createViewElement(
                 'div',
                 `remove-btn-custom-${n}`,
                 transformStyle({
@@ -1061,20 +1061,20 @@ var createIntegrationBlock = function (self, integration) {
             removeBtn.addEventListener('click', () => {
                 document.getElementById(`custom-pair-container-${n}`)?.remove();
             });
-            var getOptions = (obj) =>
+            const getOptions = (obj) =>
                 (fieldList[obj] || []).map((a) => {
-                    var op = document.createElement('option');
+                    const op = document.createElement('option');
                     op.setAttribute('value', a.name);
                     op.innerHTML = a.name;
                     return op;
                 });
-            var objOptions = Object.keys(fieldList).map((a) => {
-                var op = document.createElement('option');
+            const objOptions = Object.keys(fieldList).map((a) => {
+                const op = document.createElement('option');
                 op.setAttribute('value', a);
                 op.innerHTML = a;
                 return op;
             });
-            var objectHeading = createViewElement(
+            const objectHeading = createViewElement(
                 'div',
                 '',
                 transformStyle({
@@ -1085,7 +1085,7 @@ var createIntegrationBlock = function (self, integration) {
                 [],
                 'Object',
             );
-            var objInput = createViewElement(
+            const objInput = createViewElement(
                 'select',
                 `custom-object-${n}`,
                 transformStyle({
@@ -1103,7 +1103,7 @@ var createIntegrationBlock = function (self, integration) {
                 }
                 getOptions(ev.target.value).map((b) => a.appendChild(b));
             });
-            var mappableHeading = createViewElement(
+            const mappableHeading = createViewElement(
                 'div',
                 `custom-mappableHeading-${n}`,
                 transformStyle({
@@ -1114,7 +1114,7 @@ var createIntegrationBlock = function (self, integration) {
                 [],
                 'Mappable field name',
             );
-            var mappableInput = createViewElement(
+            const mappableInput = createViewElement(
                 'input',
                 `custom-mappableInput-${n}`,
                 transformStyle({
@@ -1126,7 +1126,7 @@ var createIntegrationBlock = function (self, integration) {
             );
             mappableInput.classList.add('input-style');
 
-            var accountSpecificHeading = createViewElement(
+            const accountSpecificHeading = createViewElement(
                 'div',
                 `custom-accountSpecificHeading-${n}`,
                 transformStyle({
@@ -1137,7 +1137,7 @@ var createIntegrationBlock = function (self, integration) {
                 [],
                 'Account specific field name',
             );
-            var accountSpecificInput = createViewElement(
+            const accountSpecificInput = createViewElement(
                 'select',
                 `custom-accountSpecificInput-${n}`,
                 transformStyle({
@@ -1149,7 +1149,7 @@ var createIntegrationBlock = function (self, integration) {
             );
             accountSpecificInput.classList.add('input-style');
 
-            var container = createViewElement(
+            const container = createViewElement(
                 'div',
                 `custom-pair-container-${n}`,
                 transformStyle({
@@ -1181,17 +1181,17 @@ var createIntegrationBlock = function (self, integration) {
 
                 //remove loader
                 setTimeout(() => {
-                    var loaderElement = document.querySelector('.loader');
+                    const loaderElement = document.querySelector('.loader');
 
                     if (loaderElement) {
-                        var parentElement = loaderElement.parentElement;
+                        const parentElement = loaderElement.parentElement;
                         if (parentElement) {
                             parentElement.remove();
                         }
                     }
 
                     // Check again if the loader element exists
-                    var loaderElementAfterTimeout = document.querySelector('.loader');
+                    const loaderElementAfterTimeout = document.querySelector('.loader');
                     if (!loaderElementAfterTimeout) {
                         resolve();
                     }
@@ -1200,7 +1200,7 @@ var createIntegrationBlock = function (self, integration) {
         };
 
         apiKeyInputContainerFunction = function () {
-            var parentDiv = document.createElement('div');
+            const parentDiv = document.createElement('div');
             parentDiv.id = 'parentDiv';
             parentDiv.style.display = 'flex';
             parentDiv.style.flexDirection = 'column';
@@ -1210,14 +1210,14 @@ var createIntegrationBlock = function (self, integration) {
             parentDiv.style.width = '100%';
 
             // Create heading
-            var heading = document.createElement('h3');
+            const heading = document.createElement('h3');
             heading.textContent = 'Enter your API key';
             heading.style.textAlign = 'center';
             heading.style.textDecoration = 'underline';
             heading.style.marginBottom = '25px';
             parentDiv.appendChild(heading);
 
-            var inputParentContainer = document.createElement('div');
+            const inputParentContainer = document.createElement('div');
             inputParentContainer.style.display = 'flex';
             inputParentContainer.style.alignItems = 'end';
             inputParentContainer.style.justifyContent = 'space-between';
@@ -1227,19 +1227,19 @@ var createIntegrationBlock = function (self, integration) {
             inputParentContainer.style.gap = '10px';
 
             // Create input field and label container
-            var inputContainer = document.createElement('div');
+            const inputContainer = document.createElement('div');
             inputContainer.style.display = 'flex';
             inputContainer.style.alignItems = 'center';
             inputContainer.style.flexGrow = '1';
             inputContainer.style.width = '100%';
 
-            var apiKeyLabel = document.createElement('label');
+            const apiKeyLabel = document.createElement('label');
             apiKeyLabel.textContent = 'API Key:';
             apiKeyLabel.setAttribute('for', 'api-key-input');
             apiKeyLabel.style.marginRight = '10px';
             apiKeyLabel.style.fontWeight = 'bold';
 
-            var apiKeyInput = document.createElement('input');
+            const apiKeyInput = document.createElement('input');
             apiKeyInput.setAttribute('type', 'text');
             apiKeyInput.setAttribute('id', 'api-key-input');
             apiKeyInput.style.flexGrow = '1';
@@ -1249,7 +1249,7 @@ var createIntegrationBlock = function (self, integration) {
             inputContainer.appendChild(apiKeyInput);
 
             // Create submit button
-            var submitButton = document.createElement('button');
+            const submitButton = document.createElement('button');
             submitButton.id = 'submitButtonBasicAuth';
             submitButton.textContent = 'Submit';
             submitButton.style.marginLeft = '10px';
@@ -1277,7 +1277,7 @@ var createIntegrationBlock = function (self, integration) {
 
         modalForApiKeyInputBasicAuth = function () {
             return new Promise((resolve, reject) => {
-                var container = document.getElementById('revert-signin-container');
+                const container = document.getElementById('revert-signin-container');
                 container.style.height = '534px';
 
                 // Remove all children of the container
@@ -1287,7 +1287,7 @@ var createIntegrationBlock = function (self, integration) {
 
                 this.showAndRemoveLoader().then(() => {
                     //close button
-                    var closeButton = createCloseButton();
+                    const closeButton = createCloseButton();
                     closeButton.style.position = 'absolute';
                     closeButton.style.right = '20px';
                     closeButton.style.top = '20px';
@@ -1296,12 +1296,12 @@ var createIntegrationBlock = function (self, integration) {
                         this.close();
                     });
 
-                    var apiKeyInputContainer = this.apiKeyInputContainerFunction();
+                    const apiKeyInputContainer = this.apiKeyInputContainerFunction();
                     container.appendChild(closeButton);
                     container.appendChild(apiKeyInputContainer);
 
-                    var inputElementForApiInput = apiKeyInputContainer.querySelector('#api-key-input');
-                    var submitButtonForApiInputSubmission =
+                    const inputElementForApiInput = apiKeyInputContainer.querySelector('#api-key-input');
+                    const submitButtonForApiInputSubmission =
                         apiKeyInputContainer.querySelector('#submitButtonBasicAuth');
 
                     //event listener on input to change the disability of submit
@@ -1320,7 +1320,7 @@ var createIntegrationBlock = function (self, integration) {
                         submitButtonForApiInputSubmission.disabled = true;
                         submitButtonForApiInputSubmission.style.opacity = '0.5';
 
-                        var apiKey = inputElementForApiInput.value;
+                        const apiKey = inputElementForApiInput.value;
 
                         resolve(apiKey);
                     });
@@ -1330,8 +1330,8 @@ var createIntegrationBlock = function (self, integration) {
 
         handleIntegrationRedirect = async function (selectedIntegration) {
             if (selectedIntegration) {
-                var scopes = selectedIntegration.scopes;
-                var state = JSON.stringify({
+                const scopes = selectedIntegration.scopes;
+                const state = JSON.stringify({
                     tenantId: this.tenantId,
                     revertPublicToken: this.API_REVERT_PUBLIC_TOKEN,
                     ...(this.#USER_REDIRECT_URL && { redirectUrl: this.#USER_REDIRECT_URL }),
@@ -1351,14 +1351,14 @@ var createIntegrationBlock = function (self, integration) {
                         }/zohocrm&state=${encodeURIComponent(state)}`,
                     );
                 } else if (selectedIntegration.integrationId === 'sfdc') {
-                    var queryParams = {
+                    const queryParams = {
                         response_type: 'code',
                         client_id: selectedIntegration.clientId,
                         redirect_uri: `${this.#REDIRECT_URL_BASE}/sfdc`,
                         state,
                     };
-                    var urlSearchParams = new URLSearchParams(queryParams);
-                    var queryString = urlSearchParams.toString();
+                    const urlSearchParams = new URLSearchParams(queryParams);
+                    const queryString = urlSearchParams.toString();
                     window.open(
                         `https://login.salesforce.com/services/oauth2/authorize?${queryString}${
                             scopes.length ? `&scope=${scopes.join('%20')}` : ''
@@ -1391,7 +1391,7 @@ var createIntegrationBlock = function (self, integration) {
                         }/slack&scope=${scopes.join(',')}&user_scope=identity.basic,identity.email&state=${state}`,
                     );
                 } else if (selectedIntegration.integrationId === 'discord') {
-                    var encodedRedirectURI = encodeURIComponent(this.#REDIRECT_URL_BASE);
+                    const encodedRedirectURI = encodeURIComponent(this.#REDIRECT_URL_BASE);
                     window.open(
                         `https://discord.com/api/oauth2/authorize?client_id=${
                             selectedIntegration.clientId
@@ -1400,7 +1400,7 @@ var createIntegrationBlock = function (self, integration) {
                         )}&state=${state}`,
                     );
                 } else if (selectedIntegration.integrationId === 'linear') {
-                    var encodedRedirectURI = encodeURIComponent(this.#REDIRECT_URL_BASE);
+                    const encodedRedirectURI = encodeURIComponent(this.#REDIRECT_URL_BASE);
                     window.open(
                         `https://linear.app/oauth/authorize?client_id=${
                             selectedIntegration.clientId
@@ -1433,8 +1433,8 @@ var createIntegrationBlock = function (self, integration) {
                             }
                         });
                 } else if (selectedIntegration.integrationId === 'jira') {
-                    var encodedScopes = encodeURIComponent(scopes.join(' '));
-                    var encodedRedirectUri = encodeURI(`${this.#REDIRECT_URL_BASE}/jira`);
+                    const encodedScopes = encodeURIComponent(scopes.join(' '));
+                    const encodedRedirectUri = encodeURI(`${this.#REDIRECT_URL_BASE}/jira`);
 
                     window.open(
                         `https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=${
@@ -1450,8 +1450,8 @@ var createIntegrationBlock = function (self, integration) {
                         }&response_type=code&state=${encodeURIComponent(state)}`,
                     );
                 } else if (selectedIntegration.integrationId === 'greenhouse') {
-                    var apiKey = await this.modalForApiKeyInputBasicAuth();
-                    var url = `${this.CORE_API_BASE_URL}v1/ats/oauth-callback?integrationId=${
+                    const apiKey = await this.modalForApiKeyInputBasicAuth();
+                    const url = `${this.CORE_API_BASE_URL}v1/ats/oauth-callback?integrationId=${
                         selectedIntegration.integrationId
                     }&t_id=${this.tenantId}&code=${apiKey}&x_revert_public_token=${this.API_REVERT_PUBLIC_TOKEN}${
                         this.#USER_REDIRECT_URL ? `&redirectUrl=${this.#USER_REDIRECT_URL}` : ``
@@ -1467,7 +1467,7 @@ var createIntegrationBlock = function (self, integration) {
                         })
                         .then((data) => {
                             if (data.error) {
-                                var errorMessage =
+                                const errorMessage =
                                     data.error?.code === 'P2002'
                                         ? ': Already connected another CRM. Please disconnect first.'
                                         : '';
@@ -1482,8 +1482,8 @@ var createIntegrationBlock = function (self, integration) {
                             return this.renderFailedStage();
                         });
                 } else if (selectedIntegration.integrationId === 'lever') {
-                    var encodedScopes = encodeURIComponent(scopes.join(' '));
-                    var encodedRedirectUri = encodeURI(`${this.#REDIRECT_URL_BASE}/lever`);
+                    const encodedScopes = encodeURIComponent(scopes.join(' '));
+                    const encodedRedirectUri = encodeURI(`${this.#REDIRECT_URL_BASE}/lever`);
 
                     fetch(
                         `${this.CORE_API_BASE_URL}ats/lever-app_config?revertPublicToken=${this.API_REVERT_PUBLIC_TOKEN}`,
@@ -1509,8 +1509,8 @@ var createIntegrationBlock = function (self, integration) {
                             }
                         });
                 } else if (selectedIntegration.integrationId === 'github') {
-                    var encodedScopes = encodeURIComponent(scopes.join(','));
-                    var encodedRedirectUri = encodeURI(`${this.#REDIRECT_URL_BASE}/github`);
+                    const encodedScopes = encodeURIComponent(scopes.join(','));
+                    const encodedRedirectUri = encodeURI(`${this.#REDIRECT_URL_BASE}/github`);
 
                     window.open(
                         `https://github.com/login/oauth/authorize?client_id=${
@@ -1520,8 +1520,8 @@ var createIntegrationBlock = function (self, integration) {
                         )}&response_type=code`,
                     );
                 } else if (selectedIntegration.integrationId === 'quickbooks') {
-                    var encodedScopes = encodeURIComponent(scopes.join(' '));
-                    var encodedRedirectUri = encodeURI(`${this.#REDIRECT_URL_BASE}/quickbooks`);
+                    const encodedScopes = encodeURIComponent(scopes.join(' '));
+                    const encodedRedirectUri = encodeURI(`${this.#REDIRECT_URL_BASE}/quickbooks`);
 
                     window.open(
                         `https://appcenter.intuit.com/connect/oauth2?client_id=${
@@ -1531,8 +1531,8 @@ var createIntegrationBlock = function (self, integration) {
                         )}&scope=${encodedScopes}`,
                     );
                 } else if (selectedIntegration.integrationId === 'xero') {
-                    var encodedScopes = encodeURIComponent(scopes.join(' '));
-                    var encodedRedirectUri = encodeURI(`${this.#REDIRECT_URL_BASE}/xero`);
+                    const encodedScopes = encodeURIComponent(scopes.join(' '));
+                    const encodedRedirectUri = encodeURI(`${this.#REDIRECT_URL_BASE}/xero`);
 
                     window.open(
                         `https://login.xero.com/identity/connect/authorize?client_id=${
@@ -1548,12 +1548,12 @@ var createIntegrationBlock = function (self, integration) {
                 } else {
                     this.close();
                 }
-                var evtSource = new EventSource(
+                const evtSource = new EventSource(
                     `${this.CORE_API_BASE_URL}connection/integration-status/${this.API_REVERT_PUBLIC_TOKEN}?tenantId=${this.tenantId}`,
                 );
                 evtSource.onmessage = (event) => {
-                    var data = JSON.parse(event.data);
-                    var parsedData = JSON.parse(data);
+                    const data = JSON.parse(event.data);
+                    const parsedData = JSON.parse(data);
                     console.log(parsedData);
                     if (parsedData.status === 'FAILED') {
                         this.clearInitialOrProcessingOrSuccessStage();
@@ -1565,12 +1565,12 @@ var createIntegrationBlock = function (self, integration) {
                         this.renderFailedStage();
                     }
                     if (parsedData.status === 'SUCCESS') {
-                        var processingMsg = document.getElementById('processing-header');
+                        const processingMsg = document.getElementById('processing-header');
                         if (processingMsg) {
                             processingMsg.innerHTML = 'fetching account properties..';
                         }
                         evtSource.close();
-                        var tenantToken = parsedData.tenantSecretToken;
+                        const tenantToken = parsedData.tenantSecretToken;
                         // fetch field mapping
 
                         fetch(`${this.CORE_API_BASE_URL}field-mapping`, {
