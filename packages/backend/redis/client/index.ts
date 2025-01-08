@@ -5,7 +5,7 @@ import { logInfo, logWarn } from '../../helpers/logger';
 let client = createRedisClient(config.REDIS_URL);
 
 function createRedisClient(url: string) {
-    const newClient = createClient({ url: url });
+    var newClient = createClient({ url: url });
 
     newClient.on('error', (error) => {
         // Handle the error gracefully, e.g., log it or perform necessary cleanup.
