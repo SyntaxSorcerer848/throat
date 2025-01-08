@@ -14,20 +14,20 @@ import { UnifiedContact } from '../../models/unified/contact';
 import { StandardObjects } from '../../constants/common';
 import { getAssociationObjects, isValidAssociationTypeRequestedByUser } from '../../helpers/crm/hubspot';
 
-const objType = StandardObjects.contact;
+var objType = StandardObjects.contact;
 
-const contactService = new ContactService(
+var contactService = new ContactService(
     {
         async getContact(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const contactId = req.params.id;
-                const fields = req.query.fields;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const associations = req.query.associations ? req.query.associations.split(',') : [];
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var contactId = req.params.id;
+                var fields = req.query.fields;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET CONTACT',
@@ -40,7 +40,7 @@ const contactService = new ContactService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        const formattedFields = [
+                        var formattedFields = [
                             ...String(fields || '').split(','),
                             'hs_lead_status',
                             'firstname',
@@ -49,15 +49,15 @@ const contactService = new ContactService(
                             'hs_object_id',
                             'phone',
                         ];
-                        const validAssociations = [...associations].filter((item) =>
+                        var validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        const invalidAssociations = [...associations].filter(
+                        var invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        const url =
+                        var url =
                             `https://api.hubapi.com/crm/v3/objects/contacts/${contactId}?properties=${formattedFields}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
 
@@ -68,7 +68,7 @@ const contactService = new ContactService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        const associatedData = await getAssociationObjects(
+                        var associatedData = await getAssociationObjects(
                             contact.data?.associations,
                             thirdPartyToken,
                             thirdPartyId,
@@ -107,7 +107,7 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        const instanceUrl = connection.tp_account_url;
+                        var instanceUrl = connection.tp_account_url;
                         let contact: any = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Contact/${contactId}`,
@@ -127,7 +127,7 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const result = await axios.get<{ data: Partial<PipedriveContact> | any } & PipedrivePagination>(
+                        var result = await axios.get<{ data: Partial<PipedriveContact> | any } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/persons/${contactId}`,
                             {
                                 headers: {
@@ -135,15 +135,15 @@ const contactService = new ContactService(
                                 },
                             },
                         );
-                        const contact = result.data;
-                        const personFields = (
+                        var contact = result.data;
+                        var personFields = (
                             await axios.get(`${connection.tp_account_url}/v1/personFields`, {
                                 headers: {
                                     Authorization: `Bearer ${thirdPartyToken}`,
                                 },
                             })
                         ).data.data;
-                        const mappedContact = mapPipedriveObjectCustomFields({
+                        var mappedContact = mapPipedriveObjectCustomFields({
                             object: contact.data,
                             objectFields: personFields,
                         });
@@ -180,7 +180,7 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/contacts(${contactId})`,
                             headers: {
@@ -191,7 +191,7 @@ const contactService = new ContactService(
                             },
                         });
 
-                        const unifiedContact = await unifyObject<any, UnifiedContact>({
+                        var unifiedContact = await unifyObject<any, UnifiedContact>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -217,15 +217,15 @@ const contactService = new ContactService(
         },
         async getContacts(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const fields = req.query.fields;
-                const pageSize = parseInt(String(req.query.pageSize));
-                const cursor = req.query.cursor;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const associations = req.query.associations ? req.query.associations.split(',') : [];
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var fields = req.query.fields;
+                var pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET ALL CONTACTS',
@@ -237,7 +237,7 @@ const contactService = new ContactService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        const formattedFields = [
+                        var formattedFields = [
                             ...String(fields || '').split(','),
                             'hs_lead_status',
                             'firstname',
@@ -246,18 +246,18 @@ const contactService = new ContactService(
                             'hs_object_id',
                             'phone',
                         ];
-                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&after=${cursor}` : ''
                         }`;
-                        const validAssociations = [...associations].filter((item) =>
+                        var validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        const invalidAssociations = [...associations].filter(
+                        var invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        const url =
+                        var url =
                             `https://api.hubapi.com/crm/v3/objects/contacts?properties=${formattedFields}${pagingString}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
 
@@ -268,12 +268,12 @@ const contactService = new ContactService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        const nextCursor = contacts.data?.paging?.next?.after || undefined;
+                        var nextCursor = contacts.data?.paging?.next?.after || undefined;
 
                         contacts = contacts.data.results as any[];
                         contacts = await Promise.all(
                             contacts?.map(async (l: any) => {
-                                const associatedData = await getAssociationObjects(
+                                var associatedData = await getAssociationObjects(
                                     l?.associations,
                                     thirdPartyToken,
                                     thirdPartyId,
@@ -299,7 +299,7 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let contacts: any = await axios({
@@ -309,8 +309,8 @@ const contactService = new ContactService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        const nextCursor = contacts.data?.info?.next_page_token || undefined;
-                        const prevCursor = contacts.data?.info?.previous_page_token || undefined;
+                        var nextCursor = contacts.data?.info?.next_page_token || undefined;
+                        var prevCursor = contacts.data?.info?.previous_page_token || undefined;
                         contacts = contacts.data.data;
                         contacts = await Promise.all(
                             contacts?.map(
@@ -334,9 +334,9 @@ const contactService = new ContactService(
                         if (!pageSize && !cursor) {
                             pagingString = 'LIMIT 200';
                         }
-                        const instanceUrl = connection.tp_account_url;
+                        var instanceUrl = connection.tp_account_url;
                         // NOTE: Handle "ALL" for Hubspot & Zoho
-                        const query =
+                        var query =
                             !fields || fields === 'ALL'
                                 ? `SELECT+fields(all)+from+Contact+${pagingString}`
                                 : `SELECT+${(fields as string).split(',').join('+,+')}+from+Contact+${pagingString}`;
@@ -347,10 +347,10 @@ const contactService = new ContactService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        const nextCursor = pageSize
+                        var nextCursor = pageSize
                             ? String(contacts.data?.totalSize + (parseInt(String(cursor)) || 0))
                             : undefined;
-                        const prevCursor =
+                        var prevCursor =
                             cursor && parseInt(String(cursor)) > 0
                                 ? String(parseInt(String(cursor)) - contacts.data?.totalSize)
                                 : undefined;
@@ -371,10 +371,10 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&start=${cursor}` : ''
                         }`;
-                        const result = await axios.get<{ data: Partial<PipedriveContact>[] } & PipedrivePagination>(
+                        var result = await axios.get<{ data: Partial<PipedriveContact>[] } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/persons?${pagingString}`,
                             {
                                 headers: {
@@ -382,20 +382,20 @@ const contactService = new ContactService(
                                 },
                             },
                         );
-                        const nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
-                        const prevCursor = undefined;
-                        const contacts = result.data.data;
-                        const personFields = (
+                        var nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
+                        var prevCursor = undefined;
+                        var contacts = result.data.data;
+                        var personFields = (
                             await axios.get(`${connection.tp_account_url}/v1/personFields`, {
                                 headers: {
                                     Authorization: `Bearer ${thirdPartyToken}`,
                                 },
                             })
                         ).data.data;
-                        const mappedContacts = contacts.map((c: any) =>
+                        var mappedContacts = contacts.map((c: any) =>
                             mapPipedriveObjectCustomFields({ object: c, objectFields: personFields }),
                         );
-                        const unifiedContacts = await Promise.all(
+                        var unifiedContacts = await Promise.all(
                             mappedContacts?.map(
                                 async (d) =>
                                     await unifyObject<any, UnifiedContact>({
@@ -411,7 +411,7 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.closecrm: {
-                        const pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
                             cursor ? `&_skip=${cursor}` : ''
                         }`;
 
@@ -423,7 +423,7 @@ const contactService = new ContactService(
                                 Accept: 'application/json',
                             },
                         });
-                        const hasMore = contacts.data?.has_more;
+                        var hasMore = contacts.data?.has_more;
                         contacts = contacts.data?.data as any[];
                         contacts = await Promise.all(
                             contacts?.map(
@@ -440,8 +440,8 @@ const contactService = new ContactService(
 
                         let cursorVal = parseInt(String(cursor));
                         if (isNaN(cursorVal)) cursorVal = 0;
-                        const nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
-                        const prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
+                        var nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
+                        var prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
 
                         res.send({
                             status: 'ok',
@@ -452,9 +452,9 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/contacts?${pagingString}`,
                             headers: {
@@ -466,7 +466,7 @@ const contactService = new ContactService(
                             },
                         });
 
-                        const unifiedContacts = await Promise.all(
+                        var unifiedContacts = await Promise.all(
                             result.data.value.map(
                                 async (contact: any) =>
                                     await unifyObject<any, UnifiedContact>({
@@ -502,13 +502,13 @@ const contactService = new ContactService(
         },
         async createContact(req, res) {
             try {
-                const contactData = req.body as UnifiedContact;
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const contact = await disunifyObject<UnifiedContact>({
+                var contactData = req.body as UnifiedContact;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var contact = await disunifyObject<UnifiedContact>({
                     obj: contactData,
                     tpId: thirdPartyId,
                     objType,
@@ -519,7 +519,7 @@ const contactService = new ContactService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        const response = await axios({
+                        var response = await axios({
                             method: 'post',
                             url: `https://api.hubapi.com/crm/v3/objects/contacts/`,
                             headers: {
@@ -541,7 +541,7 @@ const contactService = new ContactService(
                                 error: 'Required field for association is missing: (additional.Contact_Role)',
                             });
                         }
-                        const result = await axios({
+                        var result = await axios({
                             method: 'post',
                             url: `https://www.zohoapis.com/crm/v3/Contacts`,
                             headers: {
@@ -570,8 +570,8 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        const instanceUrl = connection.tp_account_url;
-                        const contactCreated = await axios({
+                        var instanceUrl = connection.tp_account_url;
+                        var contactCreated = await axios({
                             method: 'post',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Contact/`,
                             headers: {
@@ -603,9 +603,9 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const instanceUrl = connection.tp_account_url;
-                        const pipedriveContact = contact as Partial<PipedriveContact>;
-                        const contactCreated = await axios.post<{ data: Partial<PipedriveContact> }>(
+                        var instanceUrl = connection.tp_account_url;
+                        var pipedriveContact = contact as Partial<PipedriveContact>;
+                        var contactCreated = await axios.post<{ data: Partial<PipedriveContact> }>(
                             `${instanceUrl}/v1/persons`,
                             pipedriveContact,
                             {
@@ -628,7 +628,7 @@ const contactService = new ContactService(
                         if (!contactData.lastName || !contactData.firstName) {
                             throw new Error('Both "firstName" and "lastName" fields are required.');
                         }
-                        const response = await axios({
+                        var response = await axios({
                             method: 'post',
                             url: 'https://api.close.com/api/v1/contact/',
                             headers: {
@@ -645,7 +645,7 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        const response = await axios({
+                        var response = await axios({
                             method: 'post',
                             url: `${connection.tp_account_url}/api/data/v9.2/contacts`,
                             headers: {
@@ -681,14 +681,14 @@ const contactService = new ContactService(
         },
         async updateContact(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const contactData = req.body as UnifiedContact;
-                const contactId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const contact = await disunifyObject<UnifiedContact>({
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var contactData = req.body as UnifiedContact;
+                var contactId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var contact = await disunifyObject<UnifiedContact>({
                     obj: contactData,
                     tpId: thirdPartyId,
                     objType,
@@ -728,7 +728,7 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        const instanceUrl = connection.tp_account_url;
+                        var instanceUrl = connection.tp_account_url;
                         await axios({
                             method: 'patch',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Contact/${contactId}`,
@@ -742,7 +742,7 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const contactUpdated = await axios.put<{ data: Partial<PipedriveContact> }>(
+                        var contactUpdated = await axios.put<{ data: Partial<PipedriveContact> }>(
                             `${connection.tp_account_url}/v1/persons/${contactId}`,
                             contact,
                             {
@@ -765,7 +765,7 @@ const contactService = new ContactService(
                         if ((contact.lastName || contact.firstName) && (!contact.firstName || !contact.lastName)) {
                             throw new Error('Both firstName and lastName fields are required for Close CRM.');
                         }
-                        const response = await axios({
+                        var response = await axios({
                             method: 'put',
                             url: `https://api.close.com/api/v1/contact/${contactId}`,
                             headers: {
@@ -783,7 +783,7 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        const response = await axios({
+                        var response = await axios({
                             method: 'patch',
                             url: `${connection.tp_account_url}/api/data/v9.2/contacts(${contactId})`,
                             headers: {
@@ -818,16 +818,16 @@ const contactService = new ContactService(
         },
         async searchContacts(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const fields = req.query.fields;
-                const searchCriteria: any = req.body.searchCriteria;
-                const formattedFields = [...String(fields || '').split(',')];
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const pageSize = parseInt(String(req.query.pageSize));
-                const cursor = req.query.cursor;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var fields = req.query.fields;
+                var searchCriteria: any = req.body.searchCriteria;
+                var formattedFields = [...String(fields || '').split(',')];
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
                 logInfo('Revert::SEARCH CONTACT', connection.app?.env?.accountId, tenantId, searchCriteria);
 
                 switch (thirdPartyId) {
@@ -854,7 +854,7 @@ const contactService = new ContactService(
                                 ],
                             }),
                         });
-                        const nextCursor = contacts.data?.paging?.next?.after || undefined;
+                        var nextCursor = contacts.data?.paging?.next?.after || undefined;
                         contacts = contacts.data.results as any[];
                         contacts = await Promise.all(
                             contacts?.map(
@@ -877,7 +877,7 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let contacts: any = await axios({
@@ -890,7 +890,7 @@ const contactService = new ContactService(
 
                         let nextCursor;
                         let prevCursor;
-                        const isValidContactData =
+                        var isValidContactData =
                             contacts.data && contacts.data.data !== undefined && Array.isArray(contacts.data.data);
                         if (isValidContactData) {
                             contacts = contacts?.data?.data;
@@ -916,7 +916,7 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        const instanceUrl = connection.tp_account_url;
+                        var instanceUrl = connection.tp_account_url;
                         let contacts: any = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/search?q=${searchCriteria}`,
@@ -943,11 +943,11 @@ const contactService = new ContactService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&start=${cursor}` : ''
                         }`;
-                        const instanceUrl = connection.tp_account_url;
-                        const result = await axios.get<
+                        var instanceUrl = connection.tp_account_url;
+                        var result = await axios.get<
                             { data: { items: { item: any; result_score: number }[] } } & PipedrivePagination
                         >(
                             `${instanceUrl}/v1/persons/search?term=${searchCriteria}${
@@ -959,21 +959,21 @@ const contactService = new ContactService(
                                 },
                             },
                         );
-                        const nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
-                        const prevCursor = undefined;
+                        var nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
+                        var prevCursor = undefined;
 
-                        const contacts = result.data.data.items.map((item) => item.item);
-                        const personFields = (
+                        var contacts = result.data.data.items.map((item) => item.item);
+                        var personFields = (
                             await axios.get(`${connection.tp_account_url}/v1/personFields`, {
                                 headers: {
                                     Authorization: `Bearer ${thirdPartyToken}`,
                                 },
                             })
                         ).data.data;
-                        const mappedContacts = contacts.map((c: any) =>
+                        var mappedContacts = contacts.map((c: any) =>
                             mapPipedriveObjectCustomFields({ object: c, objectFields: personFields }),
                         );
-                        const unifiedContacts = await Promise.all(
+                        var unifiedContacts = await Promise.all(
                             mappedContacts?.map(
                                 async (c: any) =>
                                     await unifyObject<any, UnifiedContact>({
@@ -990,8 +990,8 @@ const contactService = new ContactService(
                     }
                     // @TODO
                     case TP_ID.closecrm: {
-                        const fields = ['id', 'date_created', 'date_updated', 'name', 'phones', 'emails', 'lead_id'];
-                        const response: any = await axios({
+                        var fields = ['id', 'date_created', 'date_updated', 'name', 'phones', 'emails', 'lead_id'];
+                        var response: any = await axios({
                             method: 'post',
                             url: 'https://api.close.com/api/v1/data/search',
                             headers: {
@@ -1006,10 +1006,10 @@ const contactService = new ContactService(
                             },
                         });
 
-                        const nextCursor = response.data?.cursor || undefined;
-                        const prevCursor = undefined;
+                        var nextCursor = response.data?.cursor || undefined;
+                        var prevCursor = undefined;
 
-                        const contacts = await Promise.all(
+                        var contacts = await Promise.all(
                             response.data.data.map(
                                 async (l: any) =>
                                     await unifyObject<any, UnifiedContact>({
@@ -1030,8 +1030,8 @@ const contactService = new ContactService(
                         if (searchCriteria) {
                             searchString += fields ? `&$filter=${searchCriteria}` : `$filter=${searchCriteria}`;
                         }
-                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
-                        const result = await axios({
+                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/contacts?${searchString}${pagingString}`,
                             headers: {
@@ -1043,7 +1043,7 @@ const contactService = new ContactService(
                             },
                         });
 
-                        const unifiedContacts = await Promise.all(
+                        var unifiedContacts = await Promise.all(
                             result.data.value.map(
                                 async (contact: any) =>
                                     await unifyObject<any, UnifiedContact>({
