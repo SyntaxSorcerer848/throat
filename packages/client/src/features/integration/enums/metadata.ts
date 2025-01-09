@@ -1,6 +1,6 @@
 // TODO: Get this from API Later Point.
 
-export const appsInfo = {
+export let appsInfo = {
     hubspot: {
         name: 'Hubspot',
         logo: 'https://res.cloudinary.com/dfcnic8wq/image/upload/v1711548892/Revert/v8xy74cep10cjuitlnpk.png',
