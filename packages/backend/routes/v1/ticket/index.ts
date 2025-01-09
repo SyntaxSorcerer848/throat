@@ -9,7 +9,7 @@ import redis from '../../../redis/client';
 import prisma from '../../../prisma/client';
 import { InternalServerError } from '../../../generated/typescript/api/resources/common';
 
-const ticketRouter = express.Router();
+var ticketRouter = express.Router();
 
 ticketRouter.get('/ping', async (_, res) => {
     res.send({
@@ -22,9 +22,9 @@ ticketRouter.use('/', authRouter);
 
 ticketRouter.get('/integration-status/:publicToken', async (req, res) => {
     try {
-        const publicToken = req.params.publicToken;
-        const { tenantId } = req.query;
-        const session = await createSession(req, res);
+        var publicToken = req.params.publicToken;
+        var { tenantId } = req.query;
+        var session = await createSession(req, res);
         await pubsub.subscribe(`${PUBSUB_CHANNELS.INTEGRATION_STATUS}_${tenantId}`, async (message: any) => {
             logDebug('pubsub message', message);
             let parsedMessage = JSON.parse(message) as IntegrationStatusSseMessage;
@@ -39,17 +39,17 @@ ticketRouter.get('/integration-status/:publicToken', async (req, res) => {
 
 ticketRouter.get('/trello-request-token', async (req, res) => {
     try {
-        const requestURL = 'https://trello.com/1/OAuthGetRequestToken';
-        const accessURL = 'https://trello.com/1/OAuthGetAccessToken';
-        const authorizeURL = 'https://trello.com/1/OAuthAuthorizeToken';
-        const expiration = 'never';
-        const { tenantId, revertPublicToken, redirectUrl } = req.query;
-        const loginCallback = `${
+        var requestURL = 'https://trello.com/1/OAuthGetRequestToken';
+        var accessURL = 'https://trello.com/1/OAuthGetAccessToken';
+        var authorizeURL = 'https://trello.com/1/OAuthAuthorizeToken';
+        var expiration = 'never';
+        var { tenantId, revertPublicToken, redirectUrl } = req.query;
+        var loginCallback = `${
             config.OAUTH_REDIRECT_BASE
         }/trello?tenantId=${tenantId}&revertPublicToken=${revertPublicToken}${
             redirectUrl ? `&redirectUrl=${redirectUrl}` : ``
         }`;
-        const account = await prisma.environments.findFirst({
+        var account = await prisma.environments.findFirst({
             where: {
                 public_token: String(revertPublicToken),
             },
@@ -67,7 +67,7 @@ ticketRouter.get('/trello-request-token', async (req, res) => {
             ? config.TRELLO_CLIENT_SECRET
             : account?.apps[0]?.app_client_secret;
 
-        const oauth = new OAuth(
+        var oauth = new OAuth(
             requestURL,
             accessURL,
             String(clientId),
@@ -77,7 +77,7 @@ ticketRouter.get('/trello-request-token', async (req, res) => {
             'HMAC-SHA1'
         );
 
-        const oauth_creds: any = {};
+        var oauth_creds: any = {};
         oauth.getOAuthRequestToken(async (error: any, token, tokenSecret, _results) => {
             if (error) {
                 console.error('Error obtaining request token:', error);
