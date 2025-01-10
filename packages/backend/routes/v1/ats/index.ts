@@ -6,7 +6,7 @@ import { logError } from '../../../helpers/logger';
 import { InternalServerError } from '../../../generated/typescript/api/resources/common';
 import { AppConfig } from '../../../constants/common';
 
-let atsRouter = express.Router();
+const atsRouter = express.Router();
 
 atsRouter.get('/ping', async (_, res) => {
     res.send({
@@ -17,9 +17,9 @@ atsRouter.get('/ping', async (_, res) => {
 
 atsRouter.get('/lever-app_config', async (req, res) => {
     try {
-        let { revertPublicToken } = req.query;
+        const { revertPublicToken } = req.query;
 
-        let app = await prisma.environments.findFirst({
+        const app = await prisma.environments.findFirst({
             where: {
                 public_token: String(revertPublicToken),
             },
@@ -31,7 +31,7 @@ atsRouter.get('/lever-app_config', async (req, res) => {
             },
         });
 
-        let appConfig = app && (app.apps[0].app_config as AppConfig);
+        const appConfig = app && (app.apps[0].app_config as AppConfig);
 
         if (appConfig?.env === 'Production') {
             return res.send({ status: 'ok', env: 'Production' });
