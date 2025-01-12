@@ -10,25 +10,25 @@ import processOAuthResult from '../../../helpers/auth/processOAuthResult';
 import slack from './authHandlers/slack';
 import discord from './authHandlers/discord';
 
-let authRouter = express.Router();
+const authRouter = express.Router();
 
 /**
  * OAuth API
  */
 authRouter.get('/oauth-callback', async (req, res) => {
     logInfo('OAuth callback', req.query);
-    let integrationId = req.query.integrationId as TP_ID; // add TP_ID alias after
-    let revertPublicKey = req.query.x_revert_public_token as string;
-    let redirect_url = req.query?.redirect_url;
-    let redirectUrl = redirect_url ? (redirect_url as string) : undefined;
+    const integrationId = req.query.integrationId as TP_ID; // add TP_ID alias after
+    const revertPublicKey = req.query.x_revert_public_token as string;
+    const redirect_url = req.query?.redirect_url;
+    const redirectUrl = redirect_url ? (redirect_url as string) : undefined;
 
     // generate a token for connection auth and save in redis for 5 mins
-    let tenantSecretToken = randomUUID();
+    const tenantSecretToken = randomUUID();
     logDebug('blah tenantSecretToken', tenantSecretToken);
     await redis.setEx(`tenantSecretToken_${req.query.t_id}`, 5 * 60, tenantSecretToken);
 
     try {
-        let account = await prisma.environments.findFirst({
+        const account = await prisma.environments.findFirst({
             where: {
                 public_token: String(revertPublicKey),
             },
@@ -47,13 +47,13 @@ authRouter.get('/oauth-callback', async (req, res) => {
             },
         });
 
-        let clientId = account?.apps[0]?.is_revert_app ? undefined : account?.apps[0]?.app_client_id;
-        let clientSecret = account?.apps[0]?.is_revert_app ? undefined : account?.apps[0]?.app_client_secret;
+        const clientId = account?.apps[0]?.is_revert_app ? undefined : account?.apps[0]?.app_client_id;
+        const clientSecret = account?.apps[0]?.is_revert_app ? undefined : account?.apps[0]?.app_client_secret;
 
-        let svixAppId = account!.id; // breaking change
-        let environmentId = account?.id;
+        const svixAppId = account!.id; // breaking change
+        const environmentId = account?.id;
 
-        let authProps = {
+        const authProps = {
             account,
             clientId,
             clientSecret,
