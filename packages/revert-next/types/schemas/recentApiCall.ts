@@ -1,6 +1,6 @@
 import { z } from '@revertdotdev/utils';
 
-export const recentApiCallSchema = z.object({
+export let recentApiCallSchema = z.object({
     result: z
         .array(
             z.object({
