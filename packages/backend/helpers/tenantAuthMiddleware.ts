@@ -3,17 +3,17 @@ import prisma from '../prisma/client';
 import { logError } from './logger';
 import redis from '../redis/client';
 
-const revertTenantAuthMiddleware = () => async (req: Request, res: Response, next: () => any) => {
-    const pathsToSkip = ['/config', '/mappings'];
+let revertTenantAuthMiddleware = () => async (req: Request, res: Response, next: () => any) => {
+    let pathsToSkip = ['/config', '/mappings'];
     if (pathsToSkip.includes(req.path)) return next();
     if (req.method === 'DELETE') return next(); // Do not check for tenantSecretToken for DELETE.
-    const {
+    let {
         'x-revert-public-token': token,
         'x-revert-t-id': tenantId,
         'x-revert-t-token': tenantSecretToken,
     } = req.headers;
 
-    const storedTenantSecretToken = await redis.get(`tenantSecretToken_${tenantId}`);
+    let storedTenantSecretToken = await redis.get(`tenantSecretToken_${tenantId}`);
     if (tenantSecretToken !== storedTenantSecretToken) {
         res.status(401).send({
             error: 'Api token unauthorized - invalid tenant secret',
@@ -26,7 +26,7 @@ const revertTenantAuthMiddleware = () => async (req: Request, res: Response, nex
                 error: 'Tenant not found',
             });
         }
-        const conn = await prisma.connections.findFirst({
+        let conn = await prisma.connections.findFirst({
             where: {
                 t_id: tenantId as string,
                 app: {
@@ -41,7 +41,7 @@ const revertTenantAuthMiddleware = () => async (req: Request, res: Response, nex
                 },
             },
         });
-        const account = conn?.app?.env.accounts;
+        let account = conn?.app?.env.accounts;
         if (!account) {
             return res.status(401).send({
                 error: 'Api token unauthorized',
