@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import { xprisma } from './client';
 
-let prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
 async function main() {
-    let allConnections = await xprisma.connections.findMany({
+    const allConnections = await xprisma.connections.findMany({
         include: {
             app: {
                 select: {
@@ -17,8 +17,8 @@ async function main() {
     });
 
     allConnections.forEach(async (connection) => {
-        let environmentId = connection.app?.environmentId;
-        let newConnectionId = `${environmentId}_${connection.id}`;
+        const environmentId = connection.app?.environmentId;
+        const newConnectionId = `${environmentId}_${connection.id}`;
         try {
             await prisma.connections.update({
                 where: {
