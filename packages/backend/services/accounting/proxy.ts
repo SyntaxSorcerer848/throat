@@ -7,19 +7,19 @@ import { ProxyService } from '../../generated/typescript/api/resources/accountin
 import { TP_ID } from '@prisma/client';
 import axios from 'axios';
 
-const proxyServiceAccounting = new ProxyService(
+let proxyServiceAccounting = new ProxyService(
     {
         async tunnel(req, res) {
             try {
-                const connection = res.locals.connection;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const request = req.body;
-                const path = request.path;
-                const body: any = request.body;
-                const method = request.method;
-                const queryParams = request.queryParams;
+                let connection = res.locals.connection;
+                let thirdPartyId = connection.tp_id;
+                let thirdPartyToken = connection.tp_access_token;
+                let tenantId = connection.t_id;
+                let request = req.body;
+                let path = request.path;
+                let body: any = request.body;
+                let method = request.method;
+                let queryParams = request.queryParams;
 
                 logInfo(
                     'Revert::POST PROXY FOR ACCOUNTING APP',
@@ -31,7 +31,7 @@ const proxyServiceAccounting = new ProxyService(
 
                 switch (thirdPartyId) {
                     case TP_ID.quickbooks: {
-                        const result = await axios({
+                        let result = await axios({
                             method: method,
                             url: `https://quickbooks.api.intuit.com/v3/company/${path}`,
                             headers: {
@@ -49,7 +49,7 @@ const proxyServiceAccounting = new ProxyService(
                         break;
                     }
                     case TP_ID.xero: {
-                        const result = await axios({
+                        let result = await axios({
                             method: method,
                             url: `https://api.xero.com/api.xro/2.0/${path}`,
                             headers: {
