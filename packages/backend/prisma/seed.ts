@@ -9,10 +9,10 @@ import {
     AccountingStandardObjects,
 } from '../constants/common';
 import { allFields, atsFields, chatFields, ticketingFields, accountingFields } from './fields';
-var prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
 async function main() {
-    var localAccount = await prisma.accounts.upsert({
+    const localAccount = await prisma.accounts.upsert({
         where: { id: 'localAccount' },
         update: {},
         create: {
@@ -36,7 +36,7 @@ async function main() {
     });
     await Promise.all(
         Object.keys(TP_ID).map(async (tp) => {
-            var localRevertApp = await prisma.apps.upsert({
+            const localRevertApp = await prisma.apps.upsert({
                 where: {
                     id: `${tp}_${localAccount.id}`,
                 },
@@ -62,7 +62,7 @@ async function main() {
         };
     });
 
-    var chatSchemas = Object.keys(chatFields).map((obj) => {
+    const chatSchemas = Object.keys(chatFields).map((obj) => {
         return {
             id: randomUUID(),
             fields: chatFields[obj as keyof typeof chatFields].map((n) => n.target_field_name),
@@ -70,7 +70,7 @@ async function main() {
         };
     });
 
-    var ticketSchemas = Object.keys(ticketingFields).map((obj) => {
+    const ticketSchemas = Object.keys(ticketingFields).map((obj) => {
         return {
             id: randomUUID(),
             fields: ticketingFields[obj as keyof typeof ticketingFields].map((n) => n.target_field_name),
@@ -78,14 +78,14 @@ async function main() {
         };
     });
 
-    var atsSchemas = Object.keys(atsFields).map((obj) => {
+    const atsSchemas = Object.keys(atsFields).map((obj) => {
         return {
             id: randomUUID(),
             fields: atsFields[obj as keyof typeof atsFields].map((n) => n.target_field_name),
             object: obj as AtsStandardObjects,
         };
     });
-    var accountingSchemas = Object.keys(accountingFields).map((obj) => {
+    const accountingSchemas = Object.keys(accountingFields).map((obj) => {
         return {
             id: randomUUID(),
             fields: accountingFields[obj as keyof typeof accountingFields].map((n) => n.target_field_name),
@@ -93,7 +93,7 @@ async function main() {
         };
     });
 
-    var mergedSchema = [...allSchemas, ...chatSchemas, ...ticketSchemas, ...atsSchemas, ...accountingSchemas];
+    const mergedSchema = [...allSchemas, ...chatSchemas, ...ticketSchemas, ...atsSchemas, ...accountingSchemas];
 
     await prisma.schema_mapping.deleteMany({
         where: {
@@ -124,7 +124,7 @@ async function main() {
         },
     });
 
-    var fieldMappingForAll: fieldMappings[] = [];
+    const fieldMappingForAll: fieldMappings[] = [];
     Object.values(StandardObjects).forEach((obj) => {
         Object.values(TP_ID).forEach(async (tpId) => {
             if (
@@ -138,8 +138,8 @@ async function main() {
                 )
             )
                 return;
-            var objSchema = allSchemas.find((s: any) => s.object === obj);
-            var fieldMappings = objSchema?.fields.map((field: any) => ({
+            const objSchema = allSchemas.find((s: any) => s.object === obj);
+            const fieldMappings = objSchema?.fields.map((field: any) => ({
                 id: randomUUID(),
                 source_tp_id: tpId,
                 schema_id: objSchema.id,
@@ -157,8 +157,8 @@ async function main() {
     Object.values(ChatStandardObjects).forEach((obj) => {
         Object.values(TP_ID).forEach(async (tpId) => {
             if (!(tpId === 'slack' || tpId === 'discord')) return;
-            var objSchema = chatSchemas.find((s: any) => s.object === obj);
-            var fieldMappings = objSchema?.fields.map((field: any) => ({
+            const objSchema = chatSchemas.find((s: any) => s.object === obj);
+            const fieldMappings = objSchema?.fields.map((field: any) => ({
                 id: randomUUID(),
                 source_tp_id: tpId,
                 schema_id: objSchema.id,
@@ -185,9 +185,9 @@ async function main() {
                 )
             )
                 return;
-            var objSchema = ticketSchemas.find((s: any) => s.object === obj);
-            var fieldMappings = objSchema?.fields.map((field: any) => {
-                var sourceFields: any = (ticketingFields[obj] as { target_field_name: string }[]).find(
+            const objSchema = ticketSchemas.find((s: any) => s.object === obj);
+            const fieldMappings = objSchema?.fields.map((field: any) => {
+                const sourceFields: any = (ticketingFields[obj] as { target_field_name: string }[]).find(
                     (a) => a.target_field_name === field,
                 );
                 return {
@@ -208,9 +208,9 @@ async function main() {
     Object.values(AtsStandardObjects).forEach((obj) => {
         Object.values(TP_ID).forEach(async (tpId) => {
             if (!(tpId === 'greenhouse' || tpId === 'lever')) return;
-            var objSchema = atsSchemas.find((s: any) => s.object === obj);
-            var fieldMappings = objSchema?.fields.map((field: any) => {
-                var sourceFields: any = (atsFields[obj] as { target_field_name: string }[]).find(
+            const objSchema = atsSchemas.find((s: any) => s.object === obj);
+            const fieldMappings = objSchema?.fields.map((field: any) => {
+                const sourceFields: any = (atsFields[obj] as { target_field_name: string }[]).find(
                     (a) => a.target_field_name === field,
                 );
                 return {
@@ -230,9 +230,9 @@ async function main() {
     Object.values(AccountingStandardObjects).forEach((obj) => {
         Object.values(TP_ID).forEach(async (tpId) => {
             if (!(tpId === 'quickbooks' || tpId === 'xero')) return;
-            var objSchema = accountingSchemas.find((s: any) => s.object === obj);
-            var fieldMappings = objSchema?.fields.map((field: any) => {
-                var sourceFields: any = (accountingFields[obj] as { target_field_name: string }[]).find(
+            const objSchema = accountingSchemas.find((s: any) => s.object === obj);
+            const fieldMappings = objSchema?.fields.map((field: any) => {
+                const sourceFields: any = (accountingFields[obj] as { target_field_name: string }[]).find(
                     (a) => a.target_field_name === field,
                 );
                 return {
