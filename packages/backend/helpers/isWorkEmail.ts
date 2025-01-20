@@ -1,5 +1,5 @@
 function isWorkEmail(email: string): boolean {
-    let personalEmailProviders = [
+    const personalEmailProviders = [
         'gmail.com',
         'yahoo.com',
         'hotmail.com',
@@ -12,11 +12,11 @@ function isWorkEmail(email: string): boolean {
         'yandex.com',
     ];
 
-    let emailParts = email.split('@');
+    const emailParts = email.split('@');
     if (emailParts.length !== 2) {
         return false;
     }
-    let workEmailRegex = new RegExp(`^[A-Za-z0-9._%+-]+@(?!(${personalEmailProviders.join('|')})).*$`);
+    const workEmailRegex = new RegExp(`^[A-Za-z0-9._%+-]+@(?!(${personalEmailProviders.join('|')})).*$`);
 
     return workEmailRegex.test(email);
 }
