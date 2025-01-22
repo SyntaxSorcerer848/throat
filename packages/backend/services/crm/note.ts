@@ -14,20 +14,20 @@ import { PipedriveNote, PipedrivePagination } from '../../constants/pipedrive';
 import { StandardObjects } from '../../constants/common';
 import { getAssociationObjects, isValidAssociationTypeRequestedByUser } from '../../helpers/crm/hubspot';
 
-var objType = StandardObjects.note;
+const objType = StandardObjects.note;
 
-var noteService = new NoteService(
+const noteService = new NoteService(
     {
         async getNote(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var noteId = req.params.id;
-                var fields = req.query.fields;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var associations = req.query.associations ? req.query.associations.split(',') : [];
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const noteId = req.params.id;
+                const fields = req.query.fields;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET NOTE',
@@ -40,16 +40,16 @@ var noteService = new NoteService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var formattedFields = [...String(fields || '').split(','), 'hs_note_body'];
-                        var validAssociations = [...associations].filter((item) =>
+                        const formattedFields = [...String(fields || '').split(','), 'hs_note_body'];
+                        const validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        var invalidAssociations = [...associations].filter(
+                        const invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        var url =
+                        const url =
                             `https://api.hubapi.com/crm/v3/objects/notes/${noteId}?properties=${formattedFields}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
                         let note: any = await axios({
@@ -60,7 +60,7 @@ var noteService = new NoteService(
                             },
                         });
                         note = ([note.data] as any[])?.[0];
-                        var associatedData = await getAssociationObjects(
+                        const associatedData = await getAssociationObjects(
                             note?.associations,
                             thirdPartyToken,
                             thirdPartyId,
@@ -79,7 +79,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var notes = await axios({
+                        const notes = await axios({
                             method: 'get',
                             url: `https://www.zohoapis.com/crm/v3/Notes/${noteId}?fields=${fields}`,
                             headers: {
@@ -97,8 +97,8 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
-                        var notes = await axios({
+                        const instanceUrl = connection.tp_account_url;
+                        const notes = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Note/${noteId}`,
                             headers: {
@@ -116,7 +116,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var result = await axios.get<{ data: Partial<PipedriveNote> } & PipedrivePagination>(
+                        const result = await axios.get<{ data: Partial<PipedriveNote> } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/notes/${noteId}`,
                             {
                                 headers: {
@@ -124,7 +124,7 @@ var noteService = new NoteService(
                                 },
                             },
                         );
-                        var note = result.data;
+                        const note = result.data;
                         res.send({
                             status: 'ok',
                             result: await unifyObject<any, UnifiedNote>({
@@ -195,15 +195,15 @@ var noteService = new NoteService(
         },
         async getNotes(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields = req.query.fields;
-                var pageSize = parseInt(String(req.query.pageSize));
-                var cursor = req.query.cursor;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var associations = req.query.associations ? req.query.associations.split(',') : [];
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields = req.query.fields;
+                const pageSize = parseInt(String(req.query.pageSize));
+                const cursor = req.query.cursor;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET ALL NOTE',
@@ -215,19 +215,19 @@ var noteService = new NoteService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var formattedFields = [...String(fields || '').split(','), 'hs_note_body'];
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const formattedFields = [...String(fields || '').split(','), 'hs_note_body'];
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&after=${cursor}` : ''
                         }`;
-                        var validAssociations = [...associations].filter((item) =>
+                        const validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        var invalidAssociations = [...associations].filter(
+                        const invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        var url =
+                        const url =
                             `https://api.hubapi.com/crm/v3/objects/notes?properties=${formattedFields}${pagingString}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
 
@@ -238,11 +238,11 @@ var noteService = new NoteService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = notes.data?.paging?.next?.after || undefined;
+                        const nextCursor = notes.data?.paging?.next?.after || undefined;
                         notes = notes.data.results as any[];
                         notes = await Promise.all(
                             notes?.map(async (l: any) => {
-                                var associatedData = await getAssociationObjects(
+                                const associatedData = await getAssociationObjects(
                                     l?.associations,
                                     thirdPartyToken,
                                     thirdPartyId,
@@ -269,7 +269,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let notes: any = await axios({
@@ -279,8 +279,8 @@ var noteService = new NoteService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = notes.data?.info?.next_page_token || undefined;
-                        var prevCursor = notes.data?.info?.previous_page_token || undefined;
+                        const nextCursor = notes.data?.info?.next_page_token || undefined;
+                        const prevCursor = notes.data?.info?.previous_page_token || undefined;
                         notes = notes.data.data;
                         notes = await Promise.all(
                             notes?.map(
@@ -304,9 +304,9 @@ var noteService = new NoteService(
                         if (!pageSize && !cursor) {
                             pagingString = 'LIMIT 200';
                         }
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         // TODO: Handle "ALL" for Hubspot & Zoho
-                        var query =
+                        const query =
                             !fields || fields === 'ALL'
                                 ? `SELECT+fields(all)+from+Note+${pagingString}`
                                 : `SELECT+${(fields as string).split(',').join('+,+')}+from+Note+${pagingString}`;
@@ -317,10 +317,10 @@ var noteService = new NoteService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = pageSize
+                        const nextCursor = pageSize
                             ? String(notes.data?.totalSize + (parseInt(String(cursor)) || 0))
                             : undefined;
-                        var prevCursor =
+                        const prevCursor =
                             cursor && parseInt(String(cursor)) > 0
                                 ? String(parseInt(String(cursor)) - notes.data?.totalSize)
                                 : undefined;
@@ -341,10 +341,10 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&start=${cursor}` : ''
                         }`;
-                        var result = await axios.get<{ data: Partial<PipedriveNote>[] } & PipedrivePagination>(
+                        const result = await axios.get<{ data: Partial<PipedriveNote>[] } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/notes?${pagingString}`,
                             {
                                 headers: {
@@ -352,10 +352,10 @@ var noteService = new NoteService(
                                 },
                             },
                         );
-                        var nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
-                        var prevCursor = undefined;
-                        var notes = result.data.data;
-                        var unifiedNotes = await Promise.all(
+                        const nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
+                        const prevCursor = undefined;
+                        const notes = result.data.data;
+                        const unifiedNotes = await Promise.all(
                             notes?.map(
                                 async (d) =>
                                     await unifyObject<any, UnifiedNote>({
@@ -371,7 +371,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.closecrm: {
-                        var pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
                             cursor ? `&_skip=${cursor}` : ''
                         }`;
                         let notes: any = await axios({
@@ -384,7 +384,7 @@ var noteService = new NoteService(
                         });
 
                         // @TODO handle hasMore while pagination
-                        var hasMore = notes.data?.has_more;
+                        const hasMore = notes.data?.has_more;
                         notes = notes.data?.data as any[];
                         notes = await Promise.all(
                             notes?.map(
@@ -400,8 +400,8 @@ var noteService = new NoteService(
                         );
                         let cursorVal = parseInt(String(cursor));
                         if (isNaN(cursorVal)) cursorVal = 0;
-                        var nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
-                        var prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
+                        const nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
+                        const prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
                         res.send({
                             status: 'ok',
                             next: nextSkipVal ? String(nextSkipVal) : undefined,
@@ -411,7 +411,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
 
                         let result: any = await axios({
                             method: 'get',
@@ -425,7 +425,7 @@ var noteService = new NoteService(
                             },
                         });
 
-                        var unifiedNotes = await Promise.all(
+                        const unifiedNotes = await Promise.all(
                             result.data.value.map(
                                 async (l: any) =>
                                     await unifyObject<any, UnifiedNote>({
@@ -461,13 +461,13 @@ var noteService = new NoteService(
         },
         async createNote(req, res) {
             try {
-                var noteData = req.body as UnifiedNote;
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var note = await disunifyObject<UnifiedNote>({
+                const noteData = req.body as UnifiedNote;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const note = await disunifyObject<UnifiedNote>({
                     obj: noteData,
                     tpId: thirdPartyId,
                     objType,
@@ -478,7 +478,7 @@ var noteService = new NoteService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'post',
                             url: `https://api.hubapi.com/crm/v3/objects/notes/`,
                             headers: {
@@ -507,8 +507,8 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
-                        var noteCreated = await axios({
+                        const instanceUrl = connection.tp_account_url;
+                        const noteCreated = await axios({
                             method: 'post',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Note/`,
                             headers: {
@@ -521,8 +521,8 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var instanceUrl = connection.tp_account_url;
-                        var noteCreated = await axios.post<{ data: any }>(`${instanceUrl}/v1/notes`, note, {
+                        const instanceUrl = connection.tp_account_url;
+                        const noteCreated = await axios.post<{ data: any }>(`${instanceUrl}/v1/notes`, note, {
                             headers: {
                                 Authorization: `Bearer ${thirdPartyToken}`,
                             },
@@ -537,7 +537,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.closecrm: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'post',
                             url: `https://api.close.com/api/v1/activity/note/`,
                             headers: {
@@ -556,7 +556,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'post',
                             url: `${connection.tp_account_url}/api/data/v9.2/annotations`,
                             headers: {
@@ -591,14 +591,14 @@ var noteService = new NoteService(
         },
         async updateNote(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var noteData = req.body as UnifiedNote;
-                var noteId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var note = await disunifyObject<UnifiedNote>({
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const noteData = req.body as UnifiedNote;
+                const noteId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const note = await disunifyObject<UnifiedNote>({
                     obj: noteData,
                     tpId: thirdPartyId,
                     objType,
@@ -634,7 +634,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         await axios({
                             method: 'patch',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Note/${noteId}`,
@@ -648,7 +648,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var noteUpdated = await axios.put<{ data: Partial<PipedriveNote> }>(
+                        const noteUpdated = await axios.put<{ data: Partial<PipedriveNote> }>(
                             `${connection.tp_account_url}/v1/notes/${noteId}`,
                             note,
                             {
@@ -667,7 +667,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.closecrm: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'put',
                             url: `https://api.close.com/api/v1/activity/note/${noteId}`,
                             headers: {
@@ -685,7 +685,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'patch',
                             url: `${connection.tp_account_url}/api/data/v9.2/annotations(${noteId})`,
                             headers: {
@@ -720,16 +720,16 @@ var noteService = new NoteService(
         },
         async searchNotes(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields = req.query.fields;
-                var searchCriteria: any = req.body.searchCriteria;
-                var formattedFields = (fields || '').split('').filter(Boolean);
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var cursor = req.query.cursor;
-                var pageSize = parseInt(String(req.query.pageSize));
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields = req.query.fields;
+                const searchCriteria: any = req.body.searchCriteria;
+                const formattedFields = (fields || '').split('').filter(Boolean);
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const cursor = req.query.cursor;
+                const pageSize = parseInt(String(req.query.pageSize));
                 logInfo('Revert::SEARCH NOTE', connection.app?.env?.accountId, tenantId, searchCriteria, fields);
 
                 switch (thirdPartyId) {
@@ -748,7 +748,7 @@ var noteService = new NoteService(
                                 properties: ['hs_note_body', 'hs_object_id', ...formattedFields],
                             }),
                         });
-                        var nextCursor = notes.data?.paging?.next?.after || undefined;
+                        const nextCursor = notes.data?.paging?.next?.after || undefined;
                         notes = notes.data.results as any[];
                         notes = await Promise.all(
                             notes?.map(
@@ -766,7 +766,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let notes: any = await axios({
@@ -776,8 +776,8 @@ var noteService = new NoteService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = notes.data?.info?.next_page_token || undefined;
-                        var prevCursor = notes.data?.info?.previous_page_token || undefined;
+                        const nextCursor = notes.data?.info?.next_page_token || undefined;
+                        const prevCursor = notes.data?.info?.previous_page_token || undefined;
                         notes = notes.data.data;
                         notes = await Promise.all(
                             notes?.map(
@@ -795,7 +795,7 @@ var noteService = new NoteService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         let notes: any = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/search?q=${searchCriteria}`,
@@ -824,8 +824,8 @@ var noteService = new NoteService(
                     }
                     // @TODO do search effectively
                     case TP_ID.closecrm: {
-                        // var fields = ['id', 'note_html'];
-                        // var response: any = await axios({
+                        // const fields = ['id', 'note_html'];
+                        // const response: any = await axios({
                         //     method: 'post',
                         //     url: 'https://api.close.com/api/v1/data/search',
                         //     headers: {
@@ -835,7 +835,7 @@ var noteService = new NoteService(
                         //     data: { ...searchCriteria },
                         // });
 
-                        // var notes = await Promise.all(
+                        // const notes = await Promise.all(
                         //     response.data.data.map(
                         //         async (l: any) =>
                         //             await unifyObject<any, UnifiedNote>({
@@ -857,8 +857,8 @@ var noteService = new NoteService(
                         if (searchCriteria) {
                             searchString += fields ? `&$filter=${searchCriteria}` : `$filter=${searchCriteria}`;
                         }
-                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
-                        var result = await axios({
+                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/annotations?${searchString}${pagingString}`,
                             headers: {
@@ -870,7 +870,7 @@ var noteService = new NoteService(
                             },
                         });
 
-                        var unifiedNotes = await Promise.all(
+                        const unifiedNotes = await Promise.all(
                             result.data.value.map(
                                 async (contact: any) =>
                                     await unifyObject<any, UnifiedNote>({
