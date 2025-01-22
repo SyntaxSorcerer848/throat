@@ -10,18 +10,18 @@ import { disunifyAtsObject, unifyObject } from '../../helpers/crm/transform';
 import { UnifiedCandidate } from '../../models/unified/candidate';
 import { CandidateService } from '../../generated/typescript/api/resources/ats/resources/candidate/service/CandidateService';
 
-const objType = AtsStandardObjects.candidate;
+var objType = AtsStandardObjects.candidate;
 
-const candidateServiceAts = new CandidateService(
+var candidateServiceAts = new CandidateService(
     {
         async getCandidate(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const candidateId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var candidateId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
                 logInfo(
                     'Revert::GET CANDIDATE',
                     connection.app?.env?.accountId,
@@ -33,19 +33,19 @@ const candidateServiceAts = new CandidateService(
 
                 switch (thirdPartyId) {
                     case TP_ID.greenhouse: {
-                        const apiToken = thirdPartyToken;
-                        const credentials = Buffer.from(apiToken + ':').toString('base64');
-                        const headers = {
+                        var apiToken = thirdPartyToken;
+                        var credentials = Buffer.from(apiToken + ':').toString('base64');
+                        var headers = {
                             Authorization: 'Basic ' + credentials,
                         };
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `https://harvest.greenhouse.io/v1/candidates/${candidateId}`,
                             headers: headers,
                         });
 
-                        const unifiedCandidate: any = await unifyObject<any, UnifiedCandidate>({
+                        var unifiedCandidate: any = await unifyObject<any, UnifiedCandidate>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -60,23 +60,23 @@ const candidateServiceAts = new CandidateService(
                         break;
                     }
                     case TP_ID.lever: {
-                        const headers = { Authorization: `Bearer ${thirdPartyToken}` };
+                        var headers = { Authorization: `Bearer ${thirdPartyToken}` };
 
-                        const env =
+                        var env =
                             connection?.app?.tp_id === 'lever' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        const url =
+                        var url =
                             env === 'Sandbox'
                                 ? `https://api.sandbox.lever.co/v1/opportunities/${candidateId}`
                                 : `https://api.lever.co/v1/opportunities/${candidateId}`;
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: url,
                             headers: headers,
                         });
 
-                        const unifiedCandidate: any = await unifyObject<any, UnifiedCandidate>({
+                        var unifiedCandidate: any = await unifyObject<any, UnifiedCandidate>({
                             obj: result.data.data,
                             tpId: thirdPartyId,
                             objType,
@@ -106,14 +106,14 @@ const candidateServiceAts = new CandidateService(
         },
         async getCandidates(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const fields: any = req.query.fields && JSON.parse(req.query.fields as string);
-                const pageSize = parseInt(String(req.query.pageSize));
-                const cursor = req.query.cursor;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var fields: any = req.query.fields && JSON.parse(req.query.fields as string);
+                var pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
 
                 logInfo(
                     'Revert::GET ALL CANDIDATES',
@@ -125,9 +125,9 @@ const candidateServiceAts = new CandidateService(
 
                 switch (thirdPartyId) {
                     case TP_ID.greenhouse: {
-                        const apiToken = thirdPartyToken;
-                        const credentials = Buffer.from(apiToken + ':').toString('base64');
-                        const headers = {
+                        var apiToken = thirdPartyToken;
+                        var credentials = Buffer.from(apiToken + ':').toString('base64');
+                        var headers = {
                             Authorization: 'Basic ' + credentials,
                         };
                         let otherParams = '';
@@ -141,12 +141,12 @@ const candidateServiceAts = new CandidateService(
                             pageSize && cursor ? `&page=${cursor}` : ''
                         }${otherParams ? `&${otherParams}` : ''}`;
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `https://harvest.greenhouse.io/v1/candidates?${pagingString}`,
                             headers: headers,
                         });
-                        const unifiedCandidates = await Promise.all(
+                        var unifiedCandidates = await Promise.all(
                             result.data.map(async (candidate: any) => {
                                 return await unifyObject<any, UnifiedCandidate>({
                                     obj: candidate,
@@ -158,10 +158,10 @@ const candidateServiceAts = new CandidateService(
                             }),
                         );
 
-                        const linkHeader = result.headers.link;
+                        var linkHeader = result.headers.link;
                         let nextCursor, previousCursor;
                         if (linkHeader) {
-                            const links = linkHeader.split(',');
+                            var links = linkHeader.split(',');
 
                             links?.forEach((link: any) => {
                                 if (link.includes('rel="next"')) {
@@ -182,9 +182,9 @@ const candidateServiceAts = new CandidateService(
                         break;
                     }
                     case TP_ID.lever: {
-                        const headers = { Authorization: `Bearer ${thirdPartyToken}` };
+                        var headers = { Authorization: `Bearer ${thirdPartyToken}` };
 
-                        const env =
+                        var env =
                             connection?.app?.tp_id === 'lever' && (connection?.app?.app_config as AppConfig)?.env;
 
                         let otherParams = '';
@@ -198,17 +198,17 @@ const candidateServiceAts = new CandidateService(
                             cursor ? `&offset=${cursor}` : ''
                         }${otherParams ? `&${otherParams}` : ''}`;
 
-                        const url =
+                        var url =
                             env === 'Sandbox'
                                 ? `https://api.sandbox.lever.co/v1/opportunities?${pagingString}`
                                 : `https://api.lever.co/v1/opportunities?${pagingString}`;
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: url,
                             headers: headers,
                         });
-                        const unifiedCandidates = await Promise.all(
+                        var unifiedCandidates = await Promise.all(
                             result.data.data.map(async (candidate: any) => {
                                 return await unifyObject<any, UnifiedCandidate>({
                                     obj: candidate,
@@ -253,15 +253,15 @@ const candidateServiceAts = new CandidateService(
         },
         async createCandidate(req, res) {
             try {
-                const candidateData: any = req.body as unknown as UnifiedCandidate;
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                var candidateData: any = req.body as unknown as UnifiedCandidate;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
-                const candidate: any = await disunifyAtsObject<UnifiedCandidate>({
+                var candidate: any = await disunifyAtsObject<UnifiedCandidate>({
                     obj: candidateData,
                     tpId: thirdPartyId,
                     objType,
@@ -279,10 +279,10 @@ const candidateServiceAts = new CandidateService(
                             });
                         }
 
-                        const apiToken = thirdPartyToken;
-                        const credentials = Buffer.from(apiToken + ':').toString('base64');
+                        var apiToken = thirdPartyToken;
+                        var credentials = Buffer.from(apiToken + ':').toString('base64');
 
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
                             url: `https://harvest.greenhouse.io/v1/candidates`,
                             headers: {
@@ -304,21 +304,21 @@ const candidateServiceAts = new CandidateService(
                             });
                         }
 
-                        const env =
+                        var env =
                             connection?.app?.tp_id === 'lever' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        const url =
+                        var url =
                             env === 'Sandbox'
                                 ? `https://api.sandbox.lever.co/v1/opportunities?perform_as=${fields.perform_as}`
                                 : `https://api.lever.co/v1/opportunities?perform_as=${fields.perform_as}`;
 
-                        const headers = {
+                        var headers = {
                             Authorization: `Bearer ${thirdPartyToken}`,
                             Accept: 'application/json',
                             'Content-Type': 'multipart/form-data type',
                         };
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'post',
                             url: url,
 
@@ -345,16 +345,16 @@ const candidateServiceAts = new CandidateService(
         },
         async updateCandidate(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const candidateData = req.body as unknown as UnifiedCandidate;
-                const candidateId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var candidateData = req.body as unknown as UnifiedCandidate;
+                var candidateId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
-                const candidate: any = await disunifyAtsObject<UnifiedCandidate>({
+                var candidate: any = await disunifyAtsObject<UnifiedCandidate>({
                     obj: candidateData,
                     tpId: thirdPartyId,
                     objType,
@@ -371,10 +371,10 @@ const candidateServiceAts = new CandidateService(
                             });
                         }
 
-                        const apiToken = thirdPartyToken;
-                        const credentials = Buffer.from(apiToken + ':').toString('base64');
+                        var apiToken = thirdPartyToken;
+                        var credentials = Buffer.from(apiToken + ':').toString('base64');
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'patch',
                             url: `https://harvest.greenhouse.io/v1/candidates/${candidateId}`,
                             headers: {
@@ -418,12 +418,12 @@ const candidateServiceAts = new CandidateService(
 
         async deleteCandidate(req, res) {
             try {
-                const connection = res.locals.connection;
-                const candidateId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                var connection = res.locals.connection;
+                var candidateId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
                 logInfo(
                     'Revert::DELETE CANDIDATE',
@@ -442,8 +442,8 @@ const candidateServiceAts = new CandidateService(
                             });
                         }
 
-                        const apiToken = thirdPartyToken;
-                        const credentials = Buffer.from(apiToken + ':').toString('base64');
+                        var apiToken = thirdPartyToken;
+                        var credentials = Buffer.from(apiToken + ':').toString('base64');
 
                         await axios({
                             method: 'delete',
