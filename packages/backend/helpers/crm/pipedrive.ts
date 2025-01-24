@@ -1,8 +1,8 @@
 // TODO: type this?
-export let mapPipedriveObjectCustomFields = ({ object, objectFields }: { object: any; objectFields: any }) => {
-    let mappedCustomFields: Record<string, any> = {};
+export const mapPipedriveObjectCustomFields = ({ object, objectFields }: { object: any; objectFields: any }) => {
+    const mappedCustomFields: Record<string, any> = {};
     Object.keys(object).forEach((k) => {
-        let a = objectFields.find((p: any) => p.key === k)?.name;
+        const a = objectFields.find((p: any) => p.key === k)?.name;
         if (
             a &&
             !Object.keys(object)
@@ -25,7 +25,7 @@ export function handlePipedriveDisunify<T extends Record<string, any>>({
     obj: T;
     transformedObj: any;
 }) {
-    let pipedriveObj = {
+    const pipedriveObj = {
         ...transformedObj,
         ...(obj.associations?.contactId && {
             person_id: obj.associations.contactId,
