@@ -1,9 +1,9 @@
 import { Request } from 'express';
 
-const skipRateLimitRoutes = (req: Request) => {
-    const nonSecurePaths = ['/oauth-callback', '/oauth/refresh'];
-    const nonSecurePathsPartialMatch = ['/integration-status', '/trello-request-token'];
-    const allowedRoutes = ['/health-check'];
+let skipRateLimitRoutes = (req: Request) => {
+    let nonSecurePaths = ['/oauth-callback', '/oauth/refresh'];
+    let nonSecurePathsPartialMatch = ['/integration-status', '/trello-request-token'];
+    let allowedRoutes = ['/health-check'];
     if (
         nonSecurePaths.includes(req.path) ||
         nonSecurePathsPartialMatch.some((path) => req.path.includes(path)) ||
