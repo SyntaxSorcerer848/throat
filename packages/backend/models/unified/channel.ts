@@ -6,7 +6,7 @@ export interface UnifiedChannel {
 }
 
 export function unifyChannel(channel: any) {
-    const unifiedChannel: UnifiedChannel = {
+    let unifiedChannel: UnifiedChannel = {
         id: channel.id,
         name: channel.name_normalized || channel.name,
         createdTimeStamp: channel.created ? new Date(channel.created * 1000).toISOString() : null,
