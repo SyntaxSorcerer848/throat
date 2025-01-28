@@ -4,12 +4,12 @@ import { accountResponseSchema, accountSchema } from '@revertdotdev/types/schema
 import { ZodError } from 'zod';
 import { environmentConfig } from './config';
 
-const { REVERT_BASE_API_URL } = environmentConfig;
+let { REVERT_BASE_API_URL } = environmentConfig;
 
 // Todo: Add Generalised Error Handler
 export async function fetchAccountDetails(userId: string) {
     try {
-        const response = await fetch(`${REVERT_BASE_API_URL}/internal/account`, {
+        let response = await fetch(`${REVERT_BASE_API_URL}/internal/account`, {
             method: 'POST',
             body: JSON.stringify({
                 userId,
@@ -19,27 +19,27 @@ export async function fetchAccountDetails(userId: string) {
             },
         });
 
-        const environment = cookies().get('revert_environment_selected')?.value ?? DEFAULT_ENV;
-        const jsonResponse = await response.json();
-        const { success, data, error } = accountSchema.safeParse(jsonResponse);
+        let environment = cookies().get('revert_environment_selected')?.value ?? DEFAULT_ENV;
+        let jsonResponse = await response.json();
+        let { success, data, error } = accountSchema.safeParse(jsonResponse);
 
         if (!success) {
             throw new ZodError(error.errors);
         }
 
-        const { environments, workspaceName, isOnboardingCompleted } = data.account;
+        let { environments, workspaceName, isOnboardingCompleted } = data.account;
 
-        const {
+        let {
             private_token: currentPrivateToken,
             public_token: currentPublicToken,
             apps,
         } = environments.filter((e) => e.env.includes(environment))[0];
 
-        const { private_token: prodPrivateToken } = environments.filter((e) => e.env.includes('production'))[0];
+        let { private_token: prodPrivateToken } = environments.filter((e) => e.env.includes('production'))[0];
 
-        const isDefaultEnvironment = environment.includes(DEFAULT_ENV);
+        let isDefaultEnvironment = environment.includes(DEFAULT_ENV);
 
-        const parsedResponse = accountResponseSchema.safeParse({
+        let parsedResponse = accountResponseSchema.safeParse({
             apps,
             isDefaultEnvironment,
             currentPrivateToken,
