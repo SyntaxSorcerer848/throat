@@ -24,11 +24,11 @@ class MsDynamicAuthHandler extends BaseOAuthHandler {
         redirectUrl,
     }: IntegrationAuthProps) {
         try {
-            let orgURL = account?.apps[0]?.is_revert_app
+            const orgURL = account?.apps[0]?.is_revert_app
                 ? undefined
                 : (account?.apps[0]?.app_config as AppConfig)?.org_url;
             if (!orgURL) orgURL = config.MS_DYNAMICS_SALES_ORG_URL;
-            let formData: any = {
+            const formData: any = {
                 client_id: clientId || config.MS_DYNAMICS_SALES_CLIENT_ID,
                 client_secret: clientSecret || config.MS_DYNAMICS_SALES_CLIENT_SECRET,
                 grant_type: 'authorization_code',
