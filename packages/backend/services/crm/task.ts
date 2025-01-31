@@ -14,20 +14,20 @@ import { PipedrivePagination, PipedriveTask } from '../../constants/pipedrive';
 import { StandardObjects } from '../../constants/common';
 import { getAssociationObjects, isValidAssociationTypeRequestedByUser } from '../../helpers/crm/hubspot';
 
-var objType = StandardObjects.task;
+const objType = StandardObjects.task;
 
-var taskService = new TaskService(
+const taskService = new TaskService(
     {
         async getTask(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var taskId = req.params.id;
-                var fields = req.query.fields;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var associations = req.query.associations ? req.query.associations.split(',') : [];
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const taskId = req.params.id;
+                const fields = req.query.fields;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET TASK',
@@ -40,7 +40,7 @@ var taskService = new TaskService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var formattedFields = [
+                        const formattedFields = [
                             ...String(fields || '').split(','),
                             'hs_task_body',
                             'hs_task_subject',
@@ -48,15 +48,15 @@ var taskService = new TaskService(
                             'hs_task_status',
                             'hs_timestamp',
                         ];
-                        var validAssociations = [...associations].filter((item) =>
+                        const validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        var invalidAssociations = [...associations].filter(
+                        const invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        var url =
+                        const url =
                             `https://api.hubapi.com/crm/v3/objects/tasks/${taskId}?properties=${formattedFields}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
 
@@ -69,7 +69,7 @@ var taskService = new TaskService(
                         });
                         task = ([task.data] as any[])?.[0];
 
-                        var associatedData = await getAssociationObjects(
+                        const associatedData = await getAssociationObjects(
                             task?.associations,
                             thirdPartyToken,
                             thirdPartyId,
@@ -89,7 +89,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var tasks = await axios({
+                        const tasks = await axios({
                             method: 'get',
                             url: `https://www.zohoapis.com/crm/v3/Tasks/${taskId}?fields=${fields}`,
                             headers: {
@@ -107,8 +107,8 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
-                        var tasks = await axios({
+                        const instanceUrl = connection.tp_account_url;
+                        const tasks = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Task/${taskId}`,
                             headers: {
@@ -126,7 +126,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var result = await axios.get<{ data: Partial<PipedriveTask> } & PipedrivePagination>(
+                        const result = await axios.get<{ data: Partial<PipedriveTask> } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/activities/${taskId}`,
                             {
                                 headers: {
@@ -134,7 +134,7 @@ var taskService = new TaskService(
                                 },
                             },
                         );
-                        var task = result.data;
+                        const task = result.data;
                         res.send({
                             status: 'ok',
                             result: await unifyObject<any, UnifiedTask>({
@@ -171,7 +171,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/tasks(${taskId})`,
                             headers: {
@@ -182,7 +182,7 @@ var taskService = new TaskService(
                             },
                         });
 
-                        var unifiedTask = await unifyObject<any, UnifiedTask>({
+                        const unifiedTask = await unifyObject<any, UnifiedTask>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -208,15 +208,15 @@ var taskService = new TaskService(
         },
         async getTasks(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields = req.query.fields;
-                var pageSize = parseInt(String(req.query.pageSize));
-                var cursor = req.query.cursor;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var associations = req.query.associations ? req.query.associations.split(',') : [];
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields = req.query.fields;
+                const pageSize = parseInt(String(req.query.pageSize));
+                const cursor = req.query.cursor;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET ALL TASK',
@@ -228,7 +228,7 @@ var taskService = new TaskService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var formattedFields = [
+                        const formattedFields = [
                             ...String(fields || '').split(','),
                             'hs_task_body',
                             'hs_task_subject',
@@ -236,18 +236,18 @@ var taskService = new TaskService(
                             'hs_task_status',
                             'hs_timestamp',
                         ];
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&after=${cursor}` : ''
                         }`;
-                        var validAssociations = [...associations].filter((item) =>
+                        const validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        var invalidAssociations = [...associations].filter(
+                        const invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        var url =
+                        const url =
                             `https://api.hubapi.com/crm/v3/objects/tasks?properties=${formattedFields}${pagingString}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
                         let tasks: any = await axios({
@@ -257,11 +257,11 @@ var taskService = new TaskService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = tasks.data?.paging?.next?.after || undefined;
+                        const nextCursor = tasks.data?.paging?.next?.after || undefined;
                         tasks = tasks.data.results as any[];
                         tasks = await Promise.all(
                             tasks?.map(async (l: any) => {
-                                var associatedData = await getAssociationObjects(
+                                const associatedData = await getAssociationObjects(
                                     l?.associations,
                                     thirdPartyToken,
                                     thirdPartyId,
@@ -287,7 +287,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let tasks: any = await axios({
@@ -297,8 +297,8 @@ var taskService = new TaskService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = tasks.data?.info?.next_page_token || undefined;
-                        var prevCursor = tasks.data?.info?.previous_page_token || undefined;
+                        const nextCursor = tasks.data?.info?.next_page_token || undefined;
+                        const prevCursor = tasks.data?.info?.previous_page_token || undefined;
                         tasks = tasks.data.data;
                         tasks = await Promise.all(
                             tasks?.map(
@@ -322,9 +322,9 @@ var taskService = new TaskService(
                         if (!pageSize && !cursor) {
                             pagingString = 'LIMIT 200';
                         }
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         // TODO: Handle "ALL" for Hubspot & Zoho
-                        var query =
+                        const query =
                             !fields || fields === 'ALL'
                                 ? `SELECT+fields(all)+from+Task+${pagingString}`
                                 : `SELECT+${(fields as string).split(',').join('+,+')}+from+Task+${pagingString}`;
@@ -335,10 +335,10 @@ var taskService = new TaskService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = pageSize
+                        const nextCursor = pageSize
                             ? String(tasks.data?.totalSize + (parseInt(String(cursor)) || 0))
                             : undefined;
-                        var prevCursor =
+                        const prevCursor =
                             cursor && parseInt(String(cursor)) > 0
                                 ? String(parseInt(String(cursor)) - tasks.data?.totalSize)
                                 : undefined;
@@ -359,10 +359,10 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&start=${cursor}` : ''
                         }`;
-                        var result = await axios.get<{ data: Partial<PipedriveTask>[] } & PipedrivePagination>(
+                        const result = await axios.get<{ data: Partial<PipedriveTask>[] } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/activities?type=task${pagingString}`,
                             {
                                 headers: {
@@ -370,10 +370,10 @@ var taskService = new TaskService(
                                 },
                             },
                         );
-                        var nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
-                        var prevCursor = undefined;
-                        var tasks = result.data.data;
-                        var unifiedTasks = await Promise.all(
+                        const nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
+                        const prevCursor = undefined;
+                        const tasks = result.data.data;
+                        const unifiedTasks = await Promise.all(
                             tasks?.map(
                                 async (d) =>
                                     await unifyObject<any, UnifiedTask>({
@@ -389,7 +389,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.closecrm: {
-                        var pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
                             cursor ? `&_skip=${cursor}` : ''
                         }`;
 
@@ -401,7 +401,7 @@ var taskService = new TaskService(
                                 Accept: 'application/json',
                             },
                         });
-                        var hasMore = tasks.data?.has_more;
+                        const hasMore = tasks.data?.has_more;
                         tasks = tasks.data?.data as any[];
                         tasks = await Promise.all(
                             tasks?.map(
@@ -418,8 +418,8 @@ var taskService = new TaskService(
 
                         let cursorVal = parseInt(String(cursor));
                         if (isNaN(cursorVal)) cursorVal = 0;
-                        var nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
-                        var prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
+                        const nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
+                        const prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
 
                         res.send({
                             status: 'ok',
@@ -430,9 +430,9 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/tasks?${pagingString}`,
                             headers: {
@@ -444,7 +444,7 @@ var taskService = new TaskService(
                             },
                         });
 
-                        var unifiedTasks = await Promise.all(
+                        const unifiedTasks = await Promise.all(
                             result.data.value.map(
                                 async (task: any) =>
                                     await unifyObject<any, UnifiedTask>({
@@ -480,13 +480,13 @@ var taskService = new TaskService(
         },
         async createTask(req, res) {
             try {
-                var taskData = req.body as UnifiedTask;
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var task = await disunifyObject<UnifiedTask>({
+                const taskData = req.body as UnifiedTask;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const task = await disunifyObject<UnifiedTask>({
                     obj: taskData,
                     tpId: thirdPartyId,
                     objType,
@@ -497,7 +497,7 @@ var taskService = new TaskService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'post',
                             url: `https://api.hubapi.com/crm/v3/objects/tasks/`,
                             headers: {
@@ -526,8 +526,8 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
-                        var taskCreated = await axios({
+                        const instanceUrl = connection.tp_account_url;
+                        const taskCreated = await axios({
                             method: 'post',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Task/`,
                             headers: {
@@ -544,9 +544,9 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var instanceUrl = connection.tp_account_url;
-                        var pipedriveTask = task as Partial<PipedriveTask>;
-                        var taskCreated = await axios.post<{ data: Partial<PipedriveTask> }>(
+                        const instanceUrl = connection.tp_account_url;
+                        const pipedriveTask = task as Partial<PipedriveTask>;
+                        const taskCreated = await axios.post<{ data: Partial<PipedriveTask> }>(
                             `${instanceUrl}/v1/activities`,
                             pipedriveTask,
                             {
@@ -565,7 +565,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.closecrm: {
-                        var response: any = await axios({
+                        const response: any = await axios({
                             method: 'post',
                             url: 'https://api.close.com/api/v1/task/',
                             headers: {
@@ -583,7 +583,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'post',
                             url: `${connection.tp_account_url}/api/data/v9.2/tasks`,
                             headers: {
@@ -618,14 +618,14 @@ var taskService = new TaskService(
         },
         async updateTask(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var taskData = req.body as UnifiedTask;
-                var taskId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var task = await disunifyObject<UnifiedTask>({
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const taskData = req.body as UnifiedTask;
+                const taskId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const task = await disunifyObject<UnifiedTask>({
                     obj: taskData,
                     tpId: thirdPartyId,
                     objType,
@@ -665,7 +665,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         await axios({
                             method: 'patch',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Task/${taskId}`,
@@ -679,7 +679,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var taskUpdated = await axios.put<{ data: Partial<PipedriveTask> }>(
+                        const taskUpdated = await axios.put<{ data: Partial<PipedriveTask> }>(
                             `${connection.tp_account_url}/v1/activities/${taskId}`,
                             task,
                             {
@@ -698,7 +698,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.closecrm: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'put',
                             url: `https://api.close.com/api/v1/task/${taskId}`,
                             headers: {
@@ -716,7 +716,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'patch',
                             url: `${connection.tp_account_url}/api/data/v9.2/tasks(${taskId})`,
                             headers: {
@@ -751,16 +751,16 @@ var taskService = new TaskService(
         },
         async searchTasks(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields = req.query.fields;
-                var searchCriteria: any = req.body.searchCriteria;
-                var formattedFields = (fields || '').split('').filter(Boolean);
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var cursor = req.query.cursor;
-                var pageSize = parseInt(String(req.query.pageSize));
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields = req.query.fields;
+                const searchCriteria: any = req.body.searchCriteria;
+                const formattedFields = (fields || '').split('').filter(Boolean);
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const cursor = req.query.cursor;
+                const pageSize = parseInt(String(req.query.pageSize));
 
                 logInfo('Revert::SEARCH TASK', connection.app?.env?.accountId, tenantId, searchCriteria, fields);
 
@@ -787,7 +787,7 @@ var taskService = new TaskService(
                                 ],
                             }),
                         });
-                        var nextCursor = tasks.data?.paging?.next?.after || undefined;
+                        const nextCursor = tasks.data?.paging?.next?.after || undefined;
 
                         tasks = tasks.data.results as any[];
                         tasks = await Promise.all(
@@ -811,7 +811,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let tasks: any = await axios({
@@ -821,8 +821,8 @@ var taskService = new TaskService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = tasks.data?.info?.next_page_token || undefined;
-                        var prevCursor = tasks.data?.info?.previous_page_token || undefined;
+                        const nextCursor = tasks.data?.info?.next_page_token || undefined;
+                        const prevCursor = tasks.data?.info?.previous_page_token || undefined;
                         tasks = tasks.data.data;
                         tasks = await Promise.all(
                             tasks?.map(
@@ -840,7 +840,7 @@ var taskService = new TaskService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         let tasks: any = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/search?q=${searchCriteria}`,
@@ -872,9 +872,9 @@ var taskService = new TaskService(
                         if (searchCriteria) {
                             searchString += fields ? `&$filter=${searchCriteria}` : `$filter=${searchCriteria}`;
                         }
-                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/tasks?${searchString}${pagingString}`,
                             headers: {
@@ -886,7 +886,7 @@ var taskService = new TaskService(
                             },
                         });
 
-                        var unifiedTasks = await Promise.all(
+                        const unifiedTasks = await Promise.all(
                             result.data.value.map(
                                 async (contact: any) =>
                                     await unifyObject<any, UnifiedTask>({
