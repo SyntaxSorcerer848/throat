@@ -10,18 +10,18 @@ import { disunifyAtsObject, unifyObject } from '../../helpers/crm/transform';
 import { UnifiedJob } from '../../models/unified/job';
 import { JobService } from '../../generated/typescript/api/resources/ats/resources/job/service/JobService';
 
-const objType = AtsStandardObjects.job;
+var objType = AtsStandardObjects.job;
 
-const jobServiceAts = new JobService(
+var jobServiceAts = new JobService(
     {
         async getJob(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const jobId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var jobId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
                 logInfo(
                     'Revert::GET JOB',
                     connection.app?.env?.accountId,
@@ -33,19 +33,19 @@ const jobServiceAts = new JobService(
 
                 switch (thirdPartyId) {
                     case TP_ID.greenhouse: {
-                        const apiToken = thirdPartyToken;
-                        const credentials = Buffer.from(apiToken + ':').toString('base64');
-                        const headers = {
+                        var apiToken = thirdPartyToken;
+                        var credentials = Buffer.from(apiToken + ':').toString('base64');
+                        var headers = {
                             Authorization: 'Basic ' + credentials,
                         };
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `https://harvest.greenhouse.io/v1/jobs/${jobId}`,
                             headers: headers,
                         });
 
-                        const unifiedJob: any = await unifyObject<any, UnifiedJob>({
+                        var unifiedJob: any = await unifyObject<any, UnifiedJob>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -60,23 +60,23 @@ const jobServiceAts = new JobService(
                         break;
                     }
                     case TP_ID.lever: {
-                        const headers = { Authorization: `Bearer ${thirdPartyToken}` };
+                        var headers = { Authorization: `Bearer ${thirdPartyToken}` };
 
-                        const env =
+                        var env =
                             connection?.app?.tp_id === 'lever' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        const url =
+                        var url =
                             env === 'Sandbox'
                                 ? `https://api.sandbox.lever.co/v1/postings/${jobId}`
                                 : `https://api.lever.co/v1/postings/${jobId}`;
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: url,
                             headers: headers,
                         });
 
-                        const unifiedJob: any = await unifyObject<any, UnifiedJob>({
+                        var unifiedJob: any = await unifyObject<any, UnifiedJob>({
                             obj: result.data.data,
                             tpId: thirdPartyId,
                             objType,
@@ -105,15 +105,15 @@ const jobServiceAts = new JobService(
         },
         async getJobs(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const fields: any = req.query.fields && JSON.parse(req.query.fields as string);
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var fields: any = req.query.fields && JSON.parse(req.query.fields as string);
 
-                const pageSize = parseInt(String(req.query.pageSize));
-                const cursor = req.query.cursor;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
 
                 logInfo(
                     'Revert::GET ALL JOBS',
@@ -125,9 +125,9 @@ const jobServiceAts = new JobService(
 
                 switch (thirdPartyId) {
                     case TP_ID.greenhouse: {
-                        const apiToken = thirdPartyToken;
-                        const credentials = Buffer.from(apiToken + ':').toString('base64');
-                        const headers = {
+                        var apiToken = thirdPartyToken;
+                        var credentials = Buffer.from(apiToken + ':').toString('base64');
+                        var headers = {
                             Authorization: 'Basic ' + credentials,
                         };
 
@@ -142,13 +142,13 @@ const jobServiceAts = new JobService(
                             pageSize && cursor ? `&page=${cursor}` : ''
                         }${otherParams ? `&${otherParams}` : ''}`;
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `https://harvest.greenhouse.io/v1/jobs?${pagingString}`,
                             headers: headers,
                         });
 
-                        const unifiedJobs = await Promise.all(
+                        var unifiedJobs = await Promise.all(
                             result.data.map(async (job: any) => {
                                 return await unifyObject<any, UnifiedJob>({
                                     obj: job,
@@ -160,10 +160,10 @@ const jobServiceAts = new JobService(
                             }),
                         );
 
-                        const linkHeader = result.headers.link;
+                        var linkHeader = result.headers.link;
                         let nextCursor, previousCursor;
                         if (linkHeader) {
-                            const links = linkHeader.split(',');
+                            var links = linkHeader.split(',');
 
                             links?.forEach((link: any) => {
                                 if (link.includes('rel="next"')) {
@@ -184,9 +184,9 @@ const jobServiceAts = new JobService(
                         break;
                     }
                     case TP_ID.lever: {
-                        const headers = { Authorization: `Bearer ${thirdPartyToken}` };
+                        var headers = { Authorization: `Bearer ${thirdPartyToken}` };
 
-                        const env =
+                        var env =
                             connection?.app?.tp_id === 'lever' && (connection?.app?.app_config as AppConfig)?.env;
 
                         let otherParams = '';
@@ -200,18 +200,18 @@ const jobServiceAts = new JobService(
                             cursor ? `&offset=${cursor}` : ''
                         }${otherParams ? `&${otherParams}` : ''}`;
 
-                        const url =
+                        var url =
                             env === 'Sandbox'
                                 ? `https://api.sandbox.lever.co/v1/postings?${pagingString}`
                                 : `https://api.lever.co/v1/postings?${pagingString}`;
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: url,
                             headers: headers,
                         });
 
-                        const unifiedJobs = await Promise.all(
+                        var unifiedJobs = await Promise.all(
                             result.data.data.map(async (job: any) => {
                                 return await unifyObject<any, UnifiedJob>({
                                     obj: job,
@@ -255,15 +255,15 @@ const jobServiceAts = new JobService(
         },
         async createJob(req, res) {
             try {
-                const jobData: any = req.body as unknown as UnifiedJob;
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                var jobData: any = req.body as unknown as UnifiedJob;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
-                const job: any = await disunifyAtsObject<UnifiedJob>({
+                var job: any = await disunifyAtsObject<UnifiedJob>({
                     obj: jobData,
                     tpId: thirdPartyId,
                     objType,
@@ -280,10 +280,10 @@ const jobServiceAts = new JobService(
                                 error: 'The query parameter "onBehalfOf",which is a greenhouseUser Id, is required and should be included in the "fields" parameter.',
                             });
                         }
-                        const apiToken = thirdPartyToken;
-                        const credentials = Buffer.from(apiToken + ':').toString('base64');
+                        var apiToken = thirdPartyToken;
+                        var credentials = Buffer.from(apiToken + ':').toString('base64');
 
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
                             url: `https://harvest.greenhouse.io/v1/jobs`,
                             headers: {
@@ -304,20 +304,20 @@ const jobServiceAts = new JobService(
                                 error: 'The query parameter "perform_as", is required and should be included in the "fields" parameter.',
                             });
                         }
-                        const env =
+                        var env =
                             connection?.app?.tp_id === 'lever' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        const url =
+                        var url =
                             env === 'Sandbox'
                                 ? `https://api.sandbox.lever.co/v1/postings?perform_as=${fields.perform_as}`
                                 : `https://api.lever.co/v1/postings?perform_as=${fields.perform_as}`;
 
-                        const headers = {
+                        var headers = {
                             Authorization: `Bearer ${thirdPartyToken}`,
                             Accept: 'application/json',
                             'Content-Type': 'application/json',
                         };
-                        const result = await axios({
+                        var result = await axios({
                             method: 'post',
                             url: url,
                             headers: headers,
@@ -346,16 +346,16 @@ const jobServiceAts = new JobService(
         },
         async updateJob(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const jobData = req.body as unknown as UnifiedJob;
-                const jobId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var jobData = req.body as unknown as UnifiedJob;
+                var jobId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
-                const job: any = await disunifyAtsObject<UnifiedJob>({
+                var job: any = await disunifyAtsObject<UnifiedJob>({
                     obj: jobData,
                     tpId: thirdPartyId,
                     objType,
@@ -371,10 +371,10 @@ const jobServiceAts = new JobService(
                                 error: 'The query parameter "onBehalfOf",which is a greenhouseUser Id, is required and should be included in the "fields" parameter.',
                             });
                         }
-                        const apiToken = thirdPartyToken;
-                        const credentials = Buffer.from(apiToken + ':').toString('base64');
+                        var apiToken = thirdPartyToken;
+                        var credentials = Buffer.from(apiToken + ':').toString('base64');
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'patch',
                             url: `https://harvest.greenhouse.io/v1/jobs/${jobId}`,
                             headers: {
@@ -401,20 +401,20 @@ const jobServiceAts = new JobService(
                             });
                         }
 
-                        const env =
+                        var env =
                             connection?.app?.tp_id === 'lever' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        const url =
+                        var url =
                             env === 'Sandbox'
                                 ? `https://api.sandbox.lever.co/v1/postings/${jobId}?perform_as=${fields.perform_as}`
                                 : `https://api.lever.co/v1/postings/${jobId}?perform_as=${fields.perform_as}`;
 
-                        const headers = {
+                        var headers = {
                             Authorization: `Bearer ${thirdPartyToken}`,
                             Accept: 'application/json',
                             'Content-Type': 'application/json',
                         };
-                        const result = await axios({
+                        var result = await axios({
                             method: 'post',
                             url: url,
                             headers: headers,
@@ -444,12 +444,12 @@ const jobServiceAts = new JobService(
 
         async deleteJob(req, res) {
             try {
-                const connection = res.locals.connection;
-                const jobId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                // const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                var connection = res.locals.connection;
+                var jobId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                // var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
                 logInfo(
                     'Revert::DELETE JOB',
