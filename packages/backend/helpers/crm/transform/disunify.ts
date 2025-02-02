@@ -43,15 +43,15 @@ export async function disunifyObject<T extends Record<string, any>>({
     tenantSchemaMappingId?: string;
     accountFieldMappingConfig?: accountFieldMappingConfig;
 }) {
-    const flattenedObj = flattenObj(obj, ['additional', 'associations']);
-    const transformedObj = await transformModelToFieldMapping({
+    var flattenedObj = flattenObj(obj, ['additional', 'associations']);
+    var transformedObj = await transformModelToFieldMapping({
         unifiedObj: flattenedObj,
         tpId,
         objType,
         tenantSchemaMappingId,
         accountFieldMappingConfig,
     });
-    const processedObj = postprocessDisUnifyObject({ obj: transformedObj, tpId, objType });
+    var processedObj = postprocessDisUnifyObject({ obj: transformedObj, tpId, objType });
     switch (tpId) {
         case TP_ID.hubspot: {
             return handleHubspotDisunify({ obj, objType, transformedObj: processedObj });
@@ -87,8 +87,8 @@ export async function disunifyChatObject<T extends Record<string, any>>({
     tenantSchemaMappingId?: string;
     accountFieldMappingConfig?: accountFieldMappingConfig;
 }) {
-    const flattenedObj = flattenObj(obj, ['additional']);
-    const transformedObj = await transformModelToFieldMapping({
+    var flattenedObj = flattenObj(obj, ['additional']);
+    var transformedObj = await transformModelToFieldMapping({
         unifiedObj: flattenedObj,
         tpId,
         objType,
@@ -119,8 +119,8 @@ export async function disunifyTicketObject<T extends Record<string, any>>({
     tenantSchemaMappingId?: string;
     accountFieldMappingConfig?: accountFieldMappingConfig;
 }) {
-    const flattenedObj = flattenObj(obj, ['additional', 'associations']);
-    const transformedObj = await transformModelToFieldMapping({
+    var flattenedObj = flattenObj(obj, ['additional', 'associations']);
+    var transformedObj = await transformModelToFieldMapping({
         unifiedObj: flattenedObj,
         tpId,
         objType,
@@ -132,7 +132,7 @@ export async function disunifyTicketObject<T extends Record<string, any>>({
         Object.keys(obj.additional).forEach((key: any) => (transformedObj[key] = obj.additional[key]));
     }
 
-    const processedObj = postprocessDisUnifyTicketObject({ obj: transformedObj, tpId, objType });
+    var processedObj = postprocessDisUnifyTicketObject({ obj: transformedObj, tpId, objType });
     switch (tpId) {
         case TP_ID.linear: {
             if (objType === 'ticketTask') {
@@ -188,8 +188,8 @@ export async function disunifyTicketObject<T extends Record<string, any>>({
                 else if (obj.priority === 'medium') priority = '3';
                 else if (obj.priority === 'low') priority = '4';
                 else priority = undefined;
-                const dueDateUTC = new Date(obj.dueDate).toUTCString();
-                const dateDoneUTC = new Date(obj.due_date).toUTCString();
+                var dueDateUTC = new Date(obj.dueDate).toUTCString();
+                var dateDoneUTC = new Date(obj.due_date).toUTCString();
                 return {
                     ...transformedObj,
                     date_done: obj.completedDate ? Date.parse(dateDoneUTC) : undefined,
@@ -306,8 +306,8 @@ export async function disunifyAtsObject<T extends Record<string, any>>({
     tenantSchemaMappingId?: string;
     accountFieldMappingConfig?: accountFieldMappingConfig;
 }) {
-    const flattenedObj = flattenObj(obj, ['additional']);
-    const transformedObj = await transformModelToFieldMapping({
+    var flattenedObj = flattenObj(obj, ['additional']);
+    var transformedObj = await transformModelToFieldMapping({
         unifiedObj: flattenedObj,
         tpId,
         objType,
@@ -318,12 +318,12 @@ export async function disunifyAtsObject<T extends Record<string, any>>({
     if (obj.additional) {
         Object.keys(obj.additional).forEach((key: any) => (transformedObj[key] = obj.additional[key]));
     }
-    const processedObj = postprocessDisUnifyAtsObject({ obj: transformedObj, tpId, objType });
+    var processedObj = postprocessDisUnifyAtsObject({ obj: transformedObj, tpId, objType });
 
     switch (tpId) {
         case TP_ID.lever: {
             if (objType === 'candidate') {
-                const confidential = obj.is_private ? 'confidential' : 'non-confidential';
+                var confidential = obj.is_private ? 'confidential' : 'non-confidential';
 
                 let reversedEmails = [];
                 if (obj.email_addresses && obj.email_addresses.length > 0) {
@@ -377,7 +377,7 @@ export async function disunifyAtsObject<T extends Record<string, any>>({
                     phones,
                 };
             } else if (objType === 'job') {
-                const confidential = obj.is_private ? 'confidential' : 'non-confidential';
+                var confidential = obj.is_private ? 'confidential' : 'non-confidential';
 
                 let originalState: string | undefined = '';
                 switch (obj.status) {
@@ -482,8 +482,8 @@ export async function disunifyAccountingObject<T extends Record<string, any>>({
     tenantSchemaMappingId?: string;
     accountFieldMappingConfig?: accountFieldMappingConfig;
 }) {
-    const flattenedObj = flattenObj(obj, ['additional']);
-    const transformedObj = await transformModelToFieldMapping({
+    var flattenedObj = flattenObj(obj, ['additional']);
+    var transformedObj = await transformModelToFieldMapping({
         unifiedObj: flattenedObj,
         tpId,
         objType,
@@ -494,7 +494,7 @@ export async function disunifyAccountingObject<T extends Record<string, any>>({
         Object.keys(obj.additional).forEach((key: any) => (transformedObj[key] = obj.additional[key]));
     }
 
-    const processedObj = postprocessDisUnifyAccoutingObject({ obj: transformedObj, tpId, objType });
+    var processedObj = postprocessDisUnifyAccoutingObject({ obj: transformedObj, tpId, objType });
 
     switch (tpId) {
         case TP_ID.quickbooks: {
@@ -511,7 +511,7 @@ export async function disunifyAccountingObject<T extends Record<string, any>>({
 
         case TP_ID.xero: {
             if (objType === 'account') {
-                const active = obj.active && obj.active === true ? 'ACTIVE' : 'ARCHIVED';
+                var active = obj.active && obj.active === true ? 'ACTIVE' : 'ARCHIVED';
                 return {
                     ...transformedObj,
                     Status: active,
