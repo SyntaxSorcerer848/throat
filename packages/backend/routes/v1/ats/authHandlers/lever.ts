@@ -24,7 +24,7 @@ class LeverAuthHandler extends BaseOAuthHandler {
         response,
         redirectUrl,
     }: IntegrationAuthProps) {
-        const formData = {
+        var formData = {
             grant_type: 'authorization_code',
             client_id: clientId,
             client_secret: clientSecret,
@@ -32,12 +32,12 @@ class LeverAuthHandler extends BaseOAuthHandler {
             redirect_uri: `${config.OAUTH_REDIRECT_BASE}/lever`,
         };
 
-        const env = (account?.apps[0]?.app_config as AppConfig)?.env;
+        var env = (account?.apps[0]?.app_config as AppConfig)?.env;
 
         let url =
             env === 'Sandbox' ? 'https://sandbox-lever.auth0.com/oauth/token' : 'https://auth.lever.co/oauth/token';
 
-        const result: any = await axios({
+        var result: any = await axios({
             method: 'post',
             url: url,
             headers: {
