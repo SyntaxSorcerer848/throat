@@ -15,12 +15,12 @@ if (typeof window !== 'undefined') {
 declare var __CDN_PATH__: string;
 
 export function useRevertConnectScript() {
-    let [loading, setLoading] = useState(true);
-    let [error, setError] = useState<Error | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
-        let src = `${__CDN_PATH__}`;
-        let script = document.createElement('script');
+        const src = `${__CDN_PATH__}`;
+        const script = document.createElement('script');
         script.src = src;
         script.async = true;
 
@@ -43,8 +43,8 @@ export function useRevertConnectScript() {
     return { loading, error };
 }
 export default function useRevertConnect(props: useRevertConnectProps) {
-    let { loading, error } = useRevertConnectScript();
-    let [integrationsLoaded, setIntegrationsLoaded] = useState(false);
+    const { loading, error } = useRevertConnectScript();
+    const [integrationsLoaded, setIntegrationsLoaded] = useState(false);
 
     useEffect(() => {
         if (!loading && typeof window !== 'undefined' && window.Revert && window.Revert.init) {
@@ -58,7 +58,7 @@ export default function useRevertConnect(props: useRevertConnectProps) {
         }
     }, [loading, props.config]);
 
-    let open = (integrationId?: string) => {
+    const open = (integrationId?: string) => {
         if (error) {
             throw new Error(`Error loading Revert script: ${error}`);
         }
