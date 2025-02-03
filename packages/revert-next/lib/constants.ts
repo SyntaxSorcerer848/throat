@@ -1,7 +1,7 @@
 import { Socials } from '@revertdotdev/icons';
 
-export const DEFAULT_ENV = 'development';
-export const appsInfo: Record<string, { name: string; logo: JSX.Element }> = {
+export let DEFAULT_ENV = 'development';
+export let appsInfo: Record<string, { name: string; logo: JSX.Element }> = {
     hubspot: {
         name: 'Hubspot',
         logo: Socials.hubspot(),
@@ -63,7 +63,7 @@ interface ContentDetails {
     step2: string;
 }
 
-export const sdkContent: { [key: string]: ContentDetails } = {
+export let sdkContent: { [key: string]: ContentDetails } = {
     react: {
         command: `npm install @revertdotdev/revert-react`,
         step1: `function App() { 
@@ -77,7 +77,7 @@ export const sdkContent: { [key: string]: ContentDetails } = {
             /> 
         </Wrapper> 
     );`,
-        step2: `const { loading, error, open } = useRevertConnect({ config: props.config });
+        step2: `let { loading, error, open } = useRevertConnect({ config: props.config });
     return (
         <button
             disabled={loading || Boolean(error)}
@@ -129,7 +129,7 @@ export const sdkContent: { [key: string]: ContentDetails } = {
         step2: `<script>
     export default {
       setup() {
-        const { loading, open, error } = useRevertConnect({ config: configObject });
+        let { loading, open, error } = useRevertConnect({ config: configObject });
         return {
           loading,
           error,
