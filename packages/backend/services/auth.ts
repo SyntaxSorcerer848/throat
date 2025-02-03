@@ -12,17 +12,17 @@ import redis from '../redis/client';
 class AuthService {
     async refreshOAuthTokensForThirdParty() {
         try {
-            const connections = await prisma.connections.findMany({
+            var connections = await prisma.connections.findMany({
                 include: { app: true },
             });
             for (let i = 0; i < connections.length; i++) {
-                const connection = connections[i];
+                var connection = connections[i];
                 if (connection.tp_refresh_token) {
                     try {
                         if (connection.tp_id === TP_ID.hubspot) {
                             // Refresh the hubspot token.
-                            const url = 'https://api.hubapi.com/oauth/v1/token';
-                            const formData = {
+                            var url = 'https://api.hubapi.com/oauth/v1/token';
+                            var formData = {
                                 grant_type: 'refresh_token',
                                 client_id: connection.app?.is_revert_app
                                     ? config.HUBSPOT_CLIENT_ID
@@ -33,7 +33,7 @@ class AuthService {
                                 redirect_uri: `${config.OAUTH_REDIRECT_BASE}/hubspot`,
                                 refresh_token: connection.tp_refresh_token,
                             };
-                            const result = await axios({
+                            var result = await axios({
                                 method: 'post',
                                 url: url,
                                 data: qs.stringify(formData),
@@ -52,8 +52,8 @@ class AuthService {
                             });
                         } else if (connection.tp_id === TP_ID.zohocrm) {
                             // Refresh the zoho-crm token.
-                            const url = `${connection.tp_account_url}/oauth/v2/token`;
-                            const formData = {
+                            var url = `${connection.tp_account_url}/oauth/v2/token`;
+                            var formData = {
                                 grant_type: 'refresh_token',
                                 client_id: connection.app?.is_revert_app
                                     ? config.ZOHOCRM_CLIENT_ID
@@ -64,7 +64,7 @@ class AuthService {
                                 redirect_uri: `${config.OAUTH_REDIRECT_BASE}/zohocrm`,
                                 refresh_token: connection.tp_refresh_token,
                             };
-                            const result = await axios({
+                            var result = await axios({
                                 method: 'post',
                                 url: url,
                                 data: qs.stringify(formData),
@@ -86,8 +86,8 @@ class AuthService {
                             }
                         } else if (connection.tp_id === TP_ID.sfdc) {
                             // Refresh the sfdc token.
-                            const url = `https://login.salesforce.com/services/oauth2/token`;
-                            const formData = {
+                            var url = `https://login.salesforce.com/services/oauth2/token`;
+                            var formData = {
                                 grant_type: 'refresh_token',
                                 client_id: connection.app?.is_revert_app
                                     ? config.SFDC_CLIENT_ID
@@ -98,7 +98,7 @@ class AuthService {
                                 redirect_uri: `${config.OAUTH_REDIRECT_BASE}/sfdc`,
                                 refresh_token: connection.tp_refresh_token,
                             };
-                            const result = await axios({
+                            var result = await axios({
                                 method: 'post',
                                 url: url,
                                 data: qs.stringify(formData),
@@ -120,13 +120,13 @@ class AuthService {
                             }
                         } else if (connection.tp_id === TP_ID.pipedrive) {
                             // Refresh the pipedrive token.
-                            const url = 'https://oauth.pipedrive.com/oauth/token';
-                            const formData = {
+                            var url = 'https://oauth.pipedrive.com/oauth/token';
+                            var formData = {
                                 grant_type: 'refresh_token',
                                 redirect_uri: `${config.OAUTH_REDIRECT_BASE}/pipedrive`,
                                 refresh_token: connection.tp_refresh_token,
                             };
-                            const result = await axios({
+                            var result = await axios({
                                 method: 'post',
                                 url: url,
                                 data: qs.stringify(formData),
@@ -156,8 +156,8 @@ class AuthService {
                             });
                         } else if (connection.tp_id === TP_ID.closecrm) {
                             // Refresh the close-crm token.
-                            const url = `https://api.close.com/oauth2/token/`;
-                            const formData = {
+                            var url = `https://api.close.com/oauth2/token/`;
+                            var formData = {
                                 grant_type: 'refresh_token',
                                 client_id: connection.app?.is_revert_app
                                     ? config.CLOSECRM_CLIENT_ID
@@ -167,7 +167,7 @@ class AuthService {
                                     : connection.app_client_secret || config.CLOSECRM_CLIENT_SECRET,
                                 refresh_token: connection.tp_refresh_token,
                             };
-                            const result = await axios({
+                            var result = await axios({
                                 method: 'post',
                                 url: url,
                                 data: qs.stringify(formData),
@@ -197,7 +197,7 @@ class AuthService {
                                 refresh_token: connection.tp_refresh_token,
                             };
                             formData = new URLSearchParams(formData);
-                            const result = await axios({
+                            var result = await axios({
                                 method: 'post',
                                 url: `https://login.microsoftonline.com/organizations/oauth2/v2.0/token`,
                                 headers: {
@@ -235,18 +235,18 @@ class AuthService {
 
     async refreshOAuthTokensForThirdPartyChatServices() {
         try {
-            const connections = await prisma.connections.findMany({
+            var connections = await prisma.connections.findMany({
                 include: { app: true },
             });
 
             for (let i = 0; i < connections.length; i++) {
-                const connection = connections[i];
+                var connection = connections[i];
                 if (connection.tp_refresh_token) {
                     try {
                         if (connection.tp_id === TP_ID.slack) {
                             // Refresh slack token
-                            const url = 'https://slack.com/api/oauth.v2.access';
-                            const formData = {
+                            var url = 'https://slack.com/api/oauth.v2.access';
+                            var formData = {
                                 grant_type: 'refresh_token',
                                 client_id: connection.app?.is_revert_app
                                     ? config.SLACK_CLIENT_ID
@@ -257,7 +257,7 @@ class AuthService {
                                 // redirect_uri: '' TODO
                                 refresh_token: connection.tp_refresh_token,
                             };
-                            const result = await axios({
+                            var result = await axios({
                                 method: 'post',
                                 url: url,
                                 data: qs.stringify(formData),
@@ -291,17 +291,17 @@ class AuthService {
 
     async refreshOAuthTokensForThirdPartyTicketServices() {
         try {
-            const connections = await prisma.connections.findMany({
+            var connections = await prisma.connections.findMany({
                 include: { app: true },
             });
 
             for (let i = 0; i < connections.length; i++) {
-                const connection = connections[i];
+                var connection = connections[i];
                 if (connection.tp_refresh_token) {
                     try {
                         if (connection.tp_id === TP_ID.jira) {
                             // Refresh jira token
-                            const formData = {
+                            var formData = {
                                 grant_type: 'refresh_token',
                                 client_id: connection.app?.is_revert_app
                                     ? config.JIRA_CLIENT_ID
@@ -311,7 +311,7 @@ class AuthService {
                                     : connection.app_client_secret || config.JIRA_CLIENT_SECRET,
                                 refresh_token: connection.tp_refresh_token,
                             };
-                            const result: any = await axios({
+                            var result: any = await axios({
                                 method: 'post',
                                 url: 'https://auth.atlassian.com/oauth/token',
                                 data: JSON.stringify(formData),
@@ -329,21 +329,21 @@ class AuthService {
                                 },
                             });
                         } else if (connection.tp_id === TP_ID.bitbucket) {
-                            const url = `https://bitbucket.org/site/oauth2/access_token`;
-                            const formData = {
+                            var url = `https://bitbucket.org/site/oauth2/access_token`;
+                            var formData = {
                                 grant_type: 'refresh_token',
                                 refresh_token: connection.tp_refresh_token,
                             };
-                            const headerData = {
+                            var headerData = {
                                 client_id: connection.app_client_id || config.BITBUCKET_CLIENT_ID,
                                 client_secret: connection.app_client_secret || config.BITBUCKET_CLIENT_SECRET,
                             };
 
-                            const encodedClientIdSecret = Buffer.from(
+                            var encodedClientIdSecret = Buffer.from(
                                 headerData.client_id + ':' + headerData.client_secret,
                             ).toString('base64');
 
-                            const result = await axios({
+                            var result = await axios({
                                 method: 'post',
                                 url: url,
                                 data: qs.stringify(formData),
@@ -381,16 +381,16 @@ class AuthService {
     }
     async refreshOAuthTokensForThirdPartyAtsServices() {
         try {
-            const connections = await prisma.connections.findMany({
+            var connections = await prisma.connections.findMany({
                 include: { app: true },
             });
 
             for (let i = 0; i < connections.length; i++) {
-                const connection = connections[i];
+                var connection = connections[i];
                 if (connection.tp_refresh_token) {
                     try {
                         if (connection.tp_id === TP_ID.lever) {
-                            const env = (connection?.app?.app_config as AppConfig)?.env;
+                            var env = (connection?.app?.app_config as AppConfig)?.env;
 
                             let url =
                                 env === 'Sandbox'
@@ -398,7 +398,7 @@ class AuthService {
                                     : 'https://auth.lever.co/oauth/token';
 
                             // Refresh lever token
-                            const formData = {
+                            var formData = {
                                 grant_type: 'refresh_token',
                                 client_id: connection.app?.is_revert_app
                                     ? config.LEVER_CLIENT_ID
@@ -408,7 +408,7 @@ class AuthService {
                                     : connection.app_client_secret || config.LEVER_CLIENT_SECRET,
                                 refresh_token: connection.tp_refresh_token,
                             };
-                            const result: any = await axios({
+                            var result: any = await axios({
                                 method: 'post',
                                 url: url,
                                 data: qs.stringify(formData),
@@ -440,30 +440,30 @@ class AuthService {
     }
     async refreshOAuthTokensForThirdPartyAccountingServices() {
         try {
-            const connections = await prisma.connections.findMany({
+            var connections = await prisma.connections.findMany({
                 include: { app: true },
             });
 
             for (let i = 0; i < connections.length; i++) {
-                const connection = connections[i];
+                var connection = connections[i];
                 if (connection.tp_refresh_token) {
                     try {
                         if (connection.tp_id === TP_ID.xero) {
-                            const url = `https://identity.xero.com/connect/token`;
-                            const formData = {
+                            var url = `https://identity.xero.com/connect/token`;
+                            var formData = {
                                 grant_type: 'refresh_token',
                                 refresh_token: connection.tp_refresh_token,
                             };
-                            const headerData = {
+                            var headerData = {
                                 client_id: connection.app_client_id || config.XERO_CLIENT_ID,
                                 client_secret: connection.app_client_secret || config.XERO_CLIENT_SECRET,
                             };
 
-                            const encodedClientIdSecret = Buffer.from(
+                            var encodedClientIdSecret = Buffer.from(
                                 headerData.client_id + ':' + headerData.client_secret,
                             ).toString('base64');
 
-                            const result = await axios({
+                            var result = await axios({
                                 method: 'post',
                                 url: url,
                                 data: qs.stringify(formData),
@@ -487,21 +487,21 @@ class AuthService {
                                 logInfo('Xero connection could not be refreshed', result);
                             }
                         } else if (connection.tp_id === TP_ID.quickbooks) {
-                            const url = `https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer`;
-                            const formData = {
+                            var url = `https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer`;
+                            var formData = {
                                 grant_type: 'refresh_token',
                                 refresh_token: connection.tp_refresh_token,
                             };
-                            const headerData = {
+                            var headerData = {
                                 client_id: connection.app_client_id || config.QUICKBOOKS_CLIENT_ID,
                                 client_secret: connection.app_client_secret || config.QUICKBOOKS_CLIENT_SECRET,
                             };
 
-                            const encodedClientIdSecret = Buffer.from(
+                            var encodedClientIdSecret = Buffer.from(
                                 headerData.client_id + ':' + headerData.client_secret,
                             ).toString('base64');
 
-                            const result = await axios({
+                            var result = await axios({
                                 method: 'post',
                                 url: url,
                                 data: qs.stringify(formData),
@@ -542,7 +542,7 @@ class AuthService {
         let response;
         logInfo('webhookData', webhookData, webhookEventType);
         try {
-            const userEmail = webhookData.email_addresses[0].email_address;
+            var userEmail = webhookData.email_addresses[0].email_address;
             let skipWaitlist = true;
             let userDomain = userEmail.split('@').pop();
             let workspaceName = userDomain.charAt(0).toUpperCase() + userDomain.slice(1) + "'s Workspace";
@@ -555,12 +555,12 @@ class AuthService {
                 skipWaitlist = true;
             }
             // Create account only if an account does not exist for this user's domain.
-            const accountId = 'acc_' + uuidv4();
-            const privateTokenDev = 'sk_test_' + uuidv4();
-            const publicTokenDev = 'pk_test_' + uuidv4();
-            const privateTokenProd = 'sk_live_' + uuidv4();
-            const publicTokenProd = 'pk_live_' + uuidv4();
-            const account = await prisma.accounts.upsert({
+            var accountId = 'acc_' + uuidv4();
+            var privateTokenDev = 'sk_test_' + uuidv4();
+            var publicTokenDev = 'pk_test_' + uuidv4();
+            var privateTokenProd = 'sk_live_' + uuidv4();
+            var publicTokenProd = 'pk_live_' + uuidv4();
+            var account = await prisma.accounts.upsert({
                 where: {
                     domain: userDomain,
                 },
@@ -643,7 +643,7 @@ class AuthService {
         if (!userId) {
             return { error: 'Bad request' };
         }
-        const account = await prisma.users.findFirst({
+        var account = await prisma.users.findFirst({
             where: {
                 id: userId,
                 account: {
@@ -666,7 +666,7 @@ class AuthService {
             return { error: 'Account does not exist' };
         }
 
-        const appsWithScope = account.account.environments.map((env) => {
+        var appsWithScope = account.account.environments.map((env) => {
             return {
                 ...env,
                 apps: env.apps.map((app) => {
@@ -680,19 +680,19 @@ class AuthService {
             };
         });
 
-        const getDevelopment = await redis.get(`onboarding_completed_${account.account.id}_development`);
+        var getDevelopment = await redis.get(`onboarding_completed_${account.account.id}_development`);
 
         if (!getDevelopment) {
             await redis.set(`onboarding_completed_${account.account.id}_development`, 'false');
         }
-        const getProduction = await redis.get(`onboarding_completed_${account.account.id}_production`);
+        var getProduction = await redis.get(`onboarding_completed_${account.account.id}_production`);
 
         if (!getProduction) {
             await redis.set(`onboarding_completed_${account.account.id}_production`, 'false');
         }
 
-        const development = JSON.parse(getDevelopment ?? 'false');
-        const production = JSON.parse(getProduction ?? 'false');
+        var development = JSON.parse(getDevelopment ?? 'false');
+        var production = JSON.parse(getProduction ?? 'false');
 
         return {
             ...account,
@@ -725,7 +725,7 @@ class AuthService {
         if (!publicToken || !tpId) {
             return { error: 'Bad request' };
         }
-        const account = await prisma.apps.update({
+        var account = await prisma.apps.update({
             where: {
                 id: appId,
             },
