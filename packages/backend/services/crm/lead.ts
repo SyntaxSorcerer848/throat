@@ -14,19 +14,19 @@ import { UnifiedLead } from '../../models/unified/lead';
 import { PipedrivePagination, PipedriveLead, PipedriveContact, PipedriveCompany } from '../../constants/pipedrive';
 import { StandardObjects } from '../../constants/common';
 
-var objType = StandardObjects.lead;
+const objType = StandardObjects.lead;
 
-var leadService = new LeadService(
+const leadService = new LeadService(
     {
         async getLead(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var leadId = req.params.id;
-                var fields = req.query.fields;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const leadId = req.params.id;
+                const fields = req.query.fields;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
                 logInfo(
                     'Revert::GET LEAD',
                     connection.app?.env?.accountId,
@@ -38,7 +38,7 @@ var leadService = new LeadService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var formattedFields = [
+                        const formattedFields = [
                             ...String(fields || '').split(','),
                             'hs_lead_status',
                             'firstname',
@@ -68,7 +68,7 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var leads = await axios({
+                        const leads = await axios({
                             method: 'get',
                             url: `https://www.zohoapis.com/crm/v3/Leads/${leadId}?fields=${fields}`,
                             headers: {
@@ -89,8 +89,8 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
-                        var leads = await axios({
+                        const instanceUrl = connection.tp_account_url;
+                        const leads = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Lead/${leadId}`,
                             headers: {
@@ -111,7 +111,7 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var result = await axios.get<{ data: Partial<PipedriveLead> } & PipedrivePagination>(
+                        const result = await axios.get<{ data: Partial<PipedriveLead> } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/leads/${leadId}`,
                             {
                                 headers: {
@@ -119,8 +119,8 @@ var leadService = new LeadService(
                                 },
                             }
                         );
-                        var lead = result.data;
-                        var populatedLead = await populatePersonOrOrganizationForPipedriveLead({
+                        const lead = result.data;
+                        const populatedLead = await populatePersonOrOrganizationForPipedriveLead({
                             lead: lead.data,
                             account_url: connection.tp_account_url as string,
                             thirdPartyToken,
@@ -158,7 +158,7 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/leads(${leadId})`,
                             headers: {
@@ -169,7 +169,7 @@ var leadService = new LeadService(
                             },
                         });
 
-                        var unifiedLead = await unifyObject<any, UnifiedLead>({
+                        const unifiedLead = await unifyObject<any, UnifiedLead>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -194,14 +194,14 @@ var leadService = new LeadService(
         },
         async getLeads(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields = req.query.fields;
-                var pageSize = parseInt(String(req.query.pageSize));
-                var cursor = req.query.cursor;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields = req.query.fields;
+                const pageSize = parseInt(String(req.query.pageSize));
+                const cursor = req.query.cursor;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
                 logInfo(
                     'Revert::GET ALL LEADS',
                     connection.app?.env?.accountId,
@@ -212,7 +212,7 @@ var leadService = new LeadService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var formattedFields = [
+                        const formattedFields = [
                             ...String(fields || '').split(','),
                             'hs_lead_status',
                             'firstname',
@@ -221,7 +221,7 @@ var leadService = new LeadService(
                             'hs_object_id',
                             'phone',
                         ];
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&after=${cursor}` : ''
                         }`;
                         let leads: any = await axios({
@@ -231,7 +231,7 @@ var leadService = new LeadService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = leads.data?.paging?.next?.after || null;
+                        const nextCursor = leads.data?.paging?.next?.after || null;
                         leads = filterLeadsFromContactsForHubspot(leads.data.results as any[]);
                         leads = await Promise.all(
                             leads?.map(
@@ -254,7 +254,7 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let leads: any = await axios({
@@ -264,8 +264,8 @@ var leadService = new LeadService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = leads.data?.info?.next_page_token || null;
-                        var prevCursor = leads.data?.info?.previous_page_token || null;
+                        const nextCursor = leads.data?.info?.next_page_token || null;
+                        const prevCursor = leads.data?.info?.previous_page_token || null;
                         leads = leads.data.data;
                         leads = await Promise.all(
                             leads?.map(
@@ -289,9 +289,9 @@ var leadService = new LeadService(
                         if (!pageSize && !cursor) {
                             pagingString = 'LIMIT 200';
                         }
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         // TODO: Handle "ALL" for Hubspot & Zoho
-                        var query =
+                        const query =
                             !fields || fields === 'ALL'
                                 ? `SELECT+fields(all)+from+Lead+${pagingString}`
                                 : `SELECT+${(fields as string).split(',').join('+,+')}+from+Lead+${pagingString}`;
@@ -302,10 +302,10 @@ var leadService = new LeadService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = pageSize
+                        const nextCursor = pageSize
                             ? String(leads.data?.totalSize + (parseInt(String(cursor)) || 0))
                             : undefined;
-                        var prevCursor =
+                        const prevCursor =
                             cursor && parseInt(String(cursor)) > 0
                                 ? String(parseInt(String(cursor)) - leads.data?.totalSize)
                                 : undefined;
@@ -326,10 +326,10 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&start=${cursor}` : ''
                         }`;
-                        var result = await axios.get<{ data: Partial<PipedriveLead>[] } & PipedrivePagination>(
+                        const result = await axios.get<{ data: Partial<PipedriveLead>[] } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/leads?${pagingString}`,
                             {
                                 headers: {
@@ -337,10 +337,10 @@ var leadService = new LeadService(
                                 },
                             }
                         );
-                        var nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
-                        var prevCursor = undefined;
-                        var leads = result.data.data;
-                        var populatedLeads = await Promise.all(
+                        const nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
+                        const prevCursor = undefined;
+                        const leads = result.data.data;
+                        const populatedLeads = await Promise.all(
                             leads.map(async (lead) => {
                                 return await populatePersonOrOrganizationForPipedriveLead({
                                     lead,
@@ -349,7 +349,7 @@ var leadService = new LeadService(
                                 });
                             })
                         );
-                        var unifiedLeads = await Promise.all(
+                        const unifiedLeads = await Promise.all(
                             populatedLeads?.map(
                                 async (l) =>
                                     await unifyObject<any, UnifiedLead>({
@@ -365,7 +365,7 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.closecrm: {
-                        var pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
                             cursor ? `&_skip=${cursor}` : ''
                         }`;
 
@@ -377,7 +377,7 @@ var leadService = new LeadService(
                                 Accept: 'application/json',
                             },
                         });
-                        var hasMore = leads.data?.has_more;
+                        const hasMore = leads.data?.has_more;
                         leads = leads.data?.data as any[];
                         leads = await Promise.all(
                             leads?.map(
@@ -394,8 +394,8 @@ var leadService = new LeadService(
 
                         let cursorVal = parseInt(String(cursor));
                         if (isNaN(cursorVal)) cursorVal = 0;
-                        var nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
-                        var prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
+                        const nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
+                        const prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
 
                         res.send({
                             status: 'ok',
@@ -407,9 +407,9 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/leads?${pagingString}`,
                             headers: {
@@ -421,7 +421,7 @@ var leadService = new LeadService(
                             },
                         });
 
-                        var unifiedLeads = await Promise.all(
+                        const unifiedLeads = await Promise.all(
                             result.data.value.map(
                                 async (lead: any) =>
                                     await unifyObject<any, UnifiedLead>({
@@ -456,13 +456,13 @@ var leadService = new LeadService(
         },
         async createLead(req, res) {
             try {
-                var leadData = req.body as UnifiedLead;
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var lead = await disunifyObject<UnifiedLead>({
+                const leadData = req.body as UnifiedLead;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const lead = await disunifyObject<UnifiedLead>({
                     obj: leadData,
                     tpId: thirdPartyId,
                     objType,
@@ -473,7 +473,7 @@ var leadService = new LeadService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'post',
                             url: `https://api.hubapi.com/crm/v3/objects/contacts/`,
                             headers: {
@@ -502,8 +502,8 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
-                        var leadCreated = await axios({
+                        const instanceUrl = connection.tp_account_url;
+                        const leadCreated = await axios({
                             method: 'post',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Lead/`,
                             headers: {
@@ -520,9 +520,9 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var instanceUrl = connection.tp_account_url;
-                        var pipedriveLead = lead as Partial<PipedriveLead>;
-                        var leadCreated = await axios.post<{ data: Partial<PipedriveLead> }>(
+                        const instanceUrl = connection.tp_account_url;
+                        const pipedriveLead = lead as Partial<PipedriveLead>;
+                        const leadCreated = await axios.post<{ data: Partial<PipedriveLead> }>(
                             `${instanceUrl}/v1/leads`,
                             pipedriveLead,
                             {
@@ -545,7 +545,7 @@ var leadService = new LeadService(
                         if ((lead.lastName || lead.firstName) && (!lead.firstName || !lead.lastName)) {
                             throw new Error('Both firstName and lastName fields are required for Close CRM.');
                         }
-                        var response = await axios({
+                        const response = await axios({
                             method: 'post',
                             url: 'https://api.close.com/api/v1/lead/',
                             headers: {
@@ -562,7 +562,7 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'post',
                             url: `${connection.tp_account_url}/api/data/v9.2/leads`,
                             headers: {
@@ -597,14 +597,14 @@ var leadService = new LeadService(
         },
         async updateLead(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var leadData = req.body as UnifiedLead;
-                var leadId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var lead = await disunifyObject<UnifiedLead>({
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const leadData = req.body as UnifiedLead;
+                const leadId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const lead = await disunifyObject<UnifiedLead>({
                     obj: leadData,
                     tpId: thirdPartyId,
                     objType,
@@ -644,7 +644,7 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         await axios({
                             method: 'patch',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Lead/${leadId}`,
@@ -658,7 +658,7 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var leadUpdated = await axios.patch<{ data: Partial<PipedriveLead> }>(
+                        const leadUpdated = await axios.patch<{ data: Partial<PipedriveLead> }>(
                             `${connection.tp_account_url}/v1/leads/${leadId}`,
                             lead,
                             {
@@ -682,7 +682,7 @@ var leadService = new LeadService(
                         //     throw new Error('Both firstName and lastName fields are required for Close CRM.');
                         // }
 
-                        var response = await axios({
+                        const response = await axios({
                             method: 'put',
                             url: `https://api.close.com/api/v1/lead/${leadId}`,
                             headers: {
@@ -699,7 +699,7 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'patch',
                             url: `${connection.tp_account_url}/api/data/v9.2/leads(${leadId})`,
                             headers: {
@@ -734,16 +734,16 @@ var leadService = new LeadService(
         },
         async searchLeads(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields = req.query.fields;
-                var searchCriteria: any = req.body.searchCriteria;
-                var formattedFields = (fields || '').split('').filter(Boolean);
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var cursor = req.query.cursor;
-                var pageSize = parseInt(String(req.query.pageSize));
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields = req.query.fields;
+                const searchCriteria: any = req.body.searchCriteria;
+                const formattedFields = (fields || '').split('').filter(Boolean);
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const cursor = req.query.cursor;
+                const pageSize = parseInt(String(req.query.pageSize));
                 logInfo('Revert::SEARCH LEAD', connection.app?.env?.accountId, tenantId, searchCriteria, fields);
 
                 switch (thirdPartyId) {
@@ -770,7 +770,7 @@ var leadService = new LeadService(
                                 ],
                             }),
                         });
-                        var nextCursor = leads.data?.paging?.next?.after || undefined;
+                        const nextCursor = leads.data?.paging?.next?.after || undefined;
 
                         leads = filterLeadsFromContactsForHubspot(leads.data.results as any[]);
                         leads = await Promise.all(
@@ -794,7 +794,7 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let leads: any = await axios({
@@ -804,8 +804,8 @@ var leadService = new LeadService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = leads.data?.info?.next_page_token || undefined;
-                        var prevCursor = leads.data?.info?.previous_page_token || undefined;
+                        const nextCursor = leads.data?.info?.next_page_token || undefined;
+                        const prevCursor = leads.data?.info?.previous_page_token || undefined;
                         leads = leads.data.data;
                         leads = await Promise.all(
                             leads?.map(
@@ -823,7 +823,7 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         let leads: any = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/search?q=${searchCriteria}`,
@@ -848,11 +848,11 @@ var leadService = new LeadService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&start=${cursor}` : ''
                         }`;
-                        var instanceUrl = connection.tp_account_url;
-                        var result = await axios.get<
+                        const instanceUrl = connection.tp_account_url;
+                        const result = await axios.get<
                             {
                                 data: { items: { item: Partial<PipedriveLead> }[]; result_score: number };
                             } & PipedrivePagination
@@ -867,11 +867,11 @@ var leadService = new LeadService(
                             }
                         );
 
-                        var nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
-                        var prevCursor = undefined;
+                        const nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
+                        const prevCursor = undefined;
                         // this api has person and organization auto populated
-                        var leads = result.data.data.items.map((item) => item.item);
-                        var unifiedLeads = await Promise.all(
+                        const leads = result.data.data.items.map((item) => item.item);
+                        const unifiedLeads = await Promise.all(
                             leads?.map(
                                 async (l: any) =>
                                     await unifyObject<any, UnifiedLead>({
@@ -891,9 +891,9 @@ var leadService = new LeadService(
                         if (searchCriteria) {
                             searchString += fields ? `&$filter=${searchCriteria}` : `$filter=${searchCriteria}`;
                         }
-                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/leads?${searchString}${pagingString}`,
                             headers: {
@@ -905,7 +905,7 @@ var leadService = new LeadService(
                             },
                         });
 
-                        var unifiedLeads = await Promise.all(
+                        const unifiedLeads = await Promise.all(
                             result.data.value.map(
                                 async (contact: any) =>
                                     await unifyObject<any, UnifiedLead>({
@@ -945,7 +945,7 @@ var leadService = new LeadService(
 
 export { leadService };
 
-var populatePersonOrOrganizationForPipedriveLead = async ({
+const populatePersonOrOrganizationForPipedriveLead = async ({
     lead,
     account_url,
     thirdPartyToken,
@@ -954,11 +954,11 @@ var populatePersonOrOrganizationForPipedriveLead = async ({
     account_url: string;
     thirdPartyToken: string;
 }) => {
-    var isPerson = !!lead.person_id;
-    var url = isPerson
+    const isPerson = !!lead.person_id;
+    const url = isPerson
         ? `${account_url}/v1/persons/${lead.person_id}`
         : `${account_url}/v1/organizations/${lead.organization_id}`;
-    var result = await axios.get<{ data: Partial<PipedriveContact | PipedriveCompany> } & PipedrivePagination>(url, {
+    const result = await axios.get<{ data: Partial<PipedriveContact | PipedriveCompany> } & PipedrivePagination>(url, {
         headers: {
             Authorization: `Bearer ${thirdPartyToken}`,
         },
