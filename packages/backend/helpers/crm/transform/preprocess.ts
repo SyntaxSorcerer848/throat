@@ -14,7 +14,7 @@ import { PipedriveDealStatus } from '../../../constants/pipedrive';
 import { convertToHHMMInUTC, getDuration, getFormattedDate } from '../../../helpers/timeZoneHelper';
 import dayjs from 'dayjs';
 
-export var preprocessUnifyObject = <T extends Record<string, any>>({
+export const preprocessUnifyObject = <T extends Record<string, any>>({
     obj,
     tpId,
     objType,
@@ -28,7 +28,7 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
         | AtsStandardObjects
         | AccountingStandardObjects;
 }) => {
-    var preprocessMap: any = {
+    const preprocessMap: any = {
         [TP_ID.hubspot]: {
             [StandardObjects.deal]: (obj: T) => {
                 let isWon = false;
@@ -36,9 +36,9 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
                     isWon = true;
                 }
 
-                var probability = obj.hs_deal_stage_probability ? Number(obj.hs_deal_stage_probability) : null;
+                const probability = obj.hs_deal_stage_probability ? Number(obj.hs_deal_stage_probability) : null;
 
-                var amount = obj.amount ? Number(obj.amount) : null;
+                const amount = obj.amount ? Number(obj.amount) : null;
 
                 return { ...obj, hs_is_closed_won: isWon, hs_deal_stage_probability: probability, amount: amount };
             },
@@ -62,8 +62,8 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
         [TP_ID.closecrm]: {
             [StandardObjects.contact]: (obj: T) => {
                 if (obj.name) {
-                    var names = obj.name.split(' ');
-                    var modifiedObj = {
+                    const names = obj.name.split(' ');
+                    const modifiedObj = {
                         ...obj,
                         firstName: names[0],
                         lastName: names[1],
@@ -74,8 +74,8 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
             },
             [StandardObjects.lead]: (obj: T) => {
                 if (obj.name) {
-                    var names = obj.name.split(' ');
-                    var modifiedObj = {
+                    const names = obj.name.split(' ');
+                    const modifiedObj = {
                         ...obj,
                         firstName: names[0],
                         lastName: names[1],
@@ -98,7 +98,7 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
                 return obj.notetext ? obj : { ...obj, notetext: obj.subject };
             },
             [StandardObjects.task]: (obj: T) => {
-                var modifiedObj: any = {};
+                const modifiedObj: any = {};
                 /*
                 Microsoft Priority codes
                     0 : Low
@@ -128,7 +128,7 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
                 return { ...obj, ...modifiedObj };
             },
             [StandardObjects.deal]: (obj: T) => {
-                var modifiedObj: any = {};
+                const modifiedObj: any = {};
 
                 if (obj.closeprobability && obj.closeprobability !== 0) {
                     modifiedObj.closeprobability = obj.closeprobability / 100;
@@ -140,7 +140,7 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
                         3 : Cold
                 */
                 if (obj.opportunityratingcode) {
-                    var ratingCode = obj.opportunityratingcode;
+                    const ratingCode = obj.opportunityratingcode;
                     if (ratingCode === 1) modifiedObj.opportunityratingcode = 'hot';
                     else if (ratingCode === 2) modifiedObj.opportunityratingcode = 'warm';
                     else if (ratingCode === 3) modifiedObj.opportunityratingcode = 'cold';
@@ -154,7 +154,7 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
                         3 : Close
                 */
                 if (obj.salesstagecode) {
-                    var salesstagecode = obj.salesstagecode;
+                    const salesstagecode = obj.salesstagecode;
                     if (salesstagecode === 0) modifiedObj.salesstagecode = 'qualify';
                     else if (salesstagecode === 1) modifiedObj.salesstagecode = 'develop';
                     else if (salesstagecode === 2) modifiedObj.salesstagecode = 'propose';
@@ -232,7 +232,7 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
                 };
             },
             [TicketStandardObjects.ticketComment]: (obj: T) => {
-                var date = new Date(Number(obj.date));
+                const date = new Date(Number(obj.date));
                 return {
                     ...obj,
                     date: date.toISOString(),
@@ -298,29 +298,29 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
 
         [TP_ID.xero]: {
             [AccountingStandardObjects.account]: (obj: T) => {
-                var dateString = obj.UpdatedDateUTC.match(/\/Date\((\d+)\+0000\)\//)[1];
-                var date = dateString ? dayjs(Number(dateString)).format('YYYY-MM-DD') : null;
+                const dateString = obj.UpdatedDateUTC.match(/\/Date\((\d+)\+0000\)\//)[1];
+                const date = dateString ? dayjs(Number(dateString)).format('YYYY-MM-DD') : null;
 
-                var active = obj.Status && obj.Status === 'ACTIVE' ? true : false;
+                const active = obj.Status && obj.Status === 'ACTIVE' ? true : false;
                 return { ...obj, UpdatedDateUTC: date, Status: active };
             },
             [AccountingStandardObjects.vendor]: (obj: T) => {
-                var dateString = obj.UpdatedDateUTC.match(/\/Date\((\d+)\+0000\)\//)[1];
-                var date = dateString ? dayjs(Number(dateString)).format('YYYY-MM-DD') : null;
+                const dateString = obj.UpdatedDateUTC.match(/\/Date\((\d+)\+0000\)\//)[1];
+                const date = dateString ? dayjs(Number(dateString)).format('YYYY-MM-DD') : null;
 
                 return { ...obj, UpdatedDateUTC: date };
             },
             [AccountingStandardObjects.expense]: (obj: T) => {
-                var updateDateString = obj.UpdatedDateUTC.match(/\/Date\((\d+)\+0000\)\//)[1];
+                const updateDateString = obj.UpdatedDateUTC.match(/\/Date\((\d+)\+0000\)\//)[1];
 
-                var updated_at = updateDateString ? dayjs(Number(updateDateString)).format('YYYY-MM-DD') : null;
-                var date = obj.DateString ? dayjs(obj.DateString).format('YYYY-MM-DD') : null;
+                const updated_at = updateDateString ? dayjs(Number(updateDateString)).format('YYYY-MM-DD') : null;
+                const date = obj.DateString ? dayjs(obj.DateString).format('YYYY-MM-DD') : null;
 
-                var line: any[] = [];
+                const line: any[] = [];
 
                 obj.LineItems &&
                     obj.LineItems.map((item: any) => {
-                        var lineItem = {
+                        const lineItem = {
                             id: item.LineItemID,
                             description: item.Description,
                             amount: item.LineAmount,
@@ -366,9 +366,9 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
                     });
                 }
 
-                var created_at = obj.createdAt ? dayjs(Number(obj.createdAt)).toISOString() : null;
-                var updated_at = obj.updatedAt ? dayjs(Number(obj.updatedAt)).toISOString() : null;
-                var last_activity = obj.lastInteractionAt ? dayjs(Number(obj.lastInteractionAt)).toISOString() : null;
+                const created_at = obj.createdAt ? dayjs(Number(obj.createdAt)).toISOString() : null;
+                const updated_at = obj.updatedAt ? dayjs(Number(obj.updatedAt)).toISOString() : null;
+                const last_activity = obj.lastInteractionAt ? dayjs(Number(obj.lastInteractionAt)).toISOString() : null;
 
                 let applications: any = [];
 
@@ -445,8 +445,8 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
                         state = undefined;
                         break;
                 }
-                var created_at = obj.createdAt ? dayjs(Number(obj.createdAt)).toISOString() : null;
-                var updated_at = obj.updatedAt ? dayjs(Number(obj.updatedAt)).toISOString() : null;
+                const created_at = obj.createdAt ? dayjs(Number(obj.createdAt)).toISOString() : null;
+                const updated_at = obj.updatedAt ? dayjs(Number(obj.updatedAt)).toISOString() : null;
 
                 let hiringManager;
                 if (obj.hiringManager && obj.hiringManager.id) {
@@ -479,9 +479,9 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
                 };
             },
             [AtsStandardObjects.offer]: (obj: T) => {
-                var created_at = obj.createdAt ? dayjs(Number(obj.createdAt)).toISOString() : null;
-                var sentAt = obj.createdAt ? dayjs(Number(obj.sentAt)).toISOString() : null;
-                var approvedAt = obj.createdAt ? dayjs(Number(obj.approvedAt)).toISOString() : null;
+                const created_at = obj.createdAt ? dayjs(Number(obj.createdAt)).toISOString() : null;
+                const sentAt = obj.createdAt ? dayjs(Number(obj.sentAt)).toISOString() : null;
+                const approvedAt = obj.createdAt ? dayjs(Number(obj.approvedAt)).toISOString() : null;
 
                 let offerStatus: string | undefined;
                 switch (obj.status) {
@@ -528,7 +528,7 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
                 };
             },
             [AtsStandardObjects.department]: (obj: T) => {
-                var name = obj.text && obj.text;
+                const name = obj.text && obj.text;
                 return {
                     ...obj,
                     name,
@@ -536,11 +536,11 @@ export var preprocessUnifyObject = <T extends Record<string, any>>({
             },
         },
     };
-    var transformFn = (preprocessMap[tpId] || {})[objType];
+    const transformFn = (preprocessMap[tpId] || {})[objType];
     return transformFn ? transformFn(obj) : obj;
 };
 
-export var postprocessDisUnifyObject = <T extends Record<string, any>>({
+export const postprocessDisUnifyObject = <T extends Record<string, any>>({
     obj,
     tpId,
     objType,
@@ -549,7 +549,7 @@ export var postprocessDisUnifyObject = <T extends Record<string, any>>({
     tpId: CRM_TP_ID;
     objType: StandardObjects;
 }) => {
-    var preprocessMap: Record<CRM_TP_ID, Record<any, Function>> = {
+    const preprocessMap: Record<CRM_TP_ID, Record<any, Function>> = {
         [TP_ID.pipedrive]: {
             [StandardObjects.event]: (obj: T) => {
                 let dateObj = {};
@@ -652,11 +652,11 @@ export var postprocessDisUnifyObject = <T extends Record<string, any>>({
         },
         [TP_ID.ms_dynamics_365_sales]: {},
     };
-    var transformFn = (preprocessMap[tpId] || {})[objType];
+    const transformFn = (preprocessMap[tpId] || {})[objType];
     return transformFn ? transformFn(obj) : obj;
 };
 
-export var postprocessDisUnifyTicketObject = <T extends Record<string, any>>({
+export const postprocessDisUnifyTicketObject = <T extends Record<string, any>>({
     obj,
     tpId,
     objType,
@@ -665,7 +665,7 @@ export var postprocessDisUnifyTicketObject = <T extends Record<string, any>>({
     tpId: TICKET_TP_ID;
     objType: TicketStandardObjects;
 }) => {
-    var preprocessMap: Record<TICKET_TP_ID, Record<any, Function>> = {
+    const preprocessMap: Record<TICKET_TP_ID, Record<any, Function>> = {
         [TP_ID.linear]: {
             // [TicketStandardObjects.ticketComment]: (obj: T) => {
             //     return obj;
@@ -678,10 +678,10 @@ export var postprocessDisUnifyTicketObject = <T extends Record<string, any>>({
         [TP_ID.bitbucket]: {},
         [TP_ID.github]: {},
     };
-    var transformFn = (preprocessMap[tpId] || {})[objType];
+    const transformFn = (preprocessMap[tpId] || {})[objType];
     return transformFn ? transformFn(obj) : obj;
 };
-export var postprocessDisUnifyAtsObject = <T extends Record<string, any>>({
+export const postprocessDisUnifyAtsObject = <T extends Record<string, any>>({
     obj,
     tpId,
     objType,
@@ -690,14 +690,14 @@ export var postprocessDisUnifyAtsObject = <T extends Record<string, any>>({
     tpId: ATS_TP_ID;
     objType: AtsStandardObjects;
 }) => {
-    var preprocessMap: Record<ATS_TP_ID, Record<any, Function>> = {
+    const preprocessMap: Record<ATS_TP_ID, Record<any, Function>> = {
         [TP_ID.greenhouse]: {},
         [TP_ID.lever]: {},
     };
-    var transformFn = (preprocessMap[tpId] || {})[objType];
+    const transformFn = (preprocessMap[tpId] || {})[objType];
     return transformFn ? transformFn(obj) : obj;
 };
-export var postprocessDisUnifyAccoutingObject = <T extends Record<string, any>>({
+export const postprocessDisUnifyAccoutingObject = <T extends Record<string, any>>({
     obj,
     tpId,
     objType,
@@ -706,10 +706,10 @@ export var postprocessDisUnifyAccoutingObject = <T extends Record<string, any>>(
     tpId: ACCOUNTING_TP_ID;
     objType: AccountingStandardObjects;
 }) => {
-    var preprocessMap: Record<ACCOUNTING_TP_ID, Record<any, Function>> = {
+    const preprocessMap: Record<ACCOUNTING_TP_ID, Record<any, Function>> = {
         [TP_ID.quickbooks]: {},
         [TP_ID.xero]: {},
     };
-    var transformFn = (preprocessMap[tpId] || {})[objType];
+    const transformFn = (preprocessMap[tpId] || {})[objType];
     return transformFn ? transformFn(obj) : obj;
 };
