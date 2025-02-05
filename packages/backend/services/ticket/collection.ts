@@ -8,18 +8,18 @@ import { TP_ID } from '@prisma/client';
 import { LinearClient } from '@linear/sdk';
 import axios from 'axios';
 
-const collectionServiceTicket = new CollectionService(
+var collectionServiceTicket = new CollectionService(
     {
         async getCollections(req, res) {
             try {
-                const connection = res.locals.connection;
-                // const account = res.locals.account;
-                const fields: any = req.query.fields;
-                const pageSize = parseInt(String(req.query.pageSize));
-                const cursor = req.query.cursor;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var connection = res.locals.connection;
+                // var account = res.locals.account;
+                var fields: any = req.query.fields;
+                var pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
                 logInfo(
                     'Revert::GET ALL COLLECTIONS',
                     connection.app?.env?.accountId,
@@ -30,13 +30,13 @@ const collectionServiceTicket = new CollectionService(
 
                 switch (thirdPartyId) {
                     case TP_ID.linear: {
-                        const linear = new LinearClient({
+                        var linear = new LinearClient({
                             accessToken: thirdPartyToken,
                         });
 
                         let parsedFields: any = fields ? JSON.parse(fields) : undefined;
 
-                        const pagination = {
+                        var pagination = {
                             first: pageSize ? pageSize : null,
                             after: cursor ? cursor : null,
                         };
@@ -82,7 +82,7 @@ const collectionServiceTicket = new CollectionService(
                     }
                     case TP_ID.clickup: {
                         let parsedFields: any = fields ? JSON.parse(fields) : undefined;
-                        const pagingString = `${cursor ? `page=${cursor}` : ''}`;
+                        var pagingString = `${cursor ? `page=${cursor}` : ''}`;
                         let result: any;
                         let pageNumber: any;
                         if (parsedFields && parsedFields.collection_type === 'list') {
@@ -178,7 +178,7 @@ const collectionServiceTicket = new CollectionService(
                         let parsedFields: any = fields ? JSON.parse(fields) : undefined;
                         let result: any;
                         if (parsedFields && parsedFields.collection_type === 'boards') {
-                            const boards = await axios({
+                            var boards = await axios({
                                 method: 'get',
                                 url: `${connection.tp_account_url}/rest/agile/1.0/board`,
                                 headers: {
@@ -188,7 +188,7 @@ const collectionServiceTicket = new CollectionService(
                             });
                             result = boards.data.values;
                         } else if (parsedFields && parsedFields.collection_type === 'projects') {
-                            const projects = await axios({
+                            var projects = await axios({
                                 method: 'get',
                                 url: `${connection.tp_account_url}/rest/api/2/project/search`,
                                 headers: {
@@ -211,7 +211,7 @@ const collectionServiceTicket = new CollectionService(
                         let parsedFields: any = fields ? JSON.parse(fields) : undefined;
                         let result: any;
                         if (parsedFields && parsedFields.collection_type === 'boards') {
-                            const boards = await axios({
+                            var boards = await axios({
                                 method: 'get',
                                 url: `https://api.trello.com/1/members/me/boards?key=${connection.app_client_id}&token=${thirdPartyToken}`,
                                 headers: {
@@ -223,7 +223,7 @@ const collectionServiceTicket = new CollectionService(
                             if (!parsedFields.boardId) {
                                 throw new Error('To retrieve all lists in Trello, boardId is required.');
                             }
-                            const lists = await axios({
+                            var lists = await axios({
                                 method: 'get',
                                 url: `https://api.trello.com/1/boards/${parsedFields.boardId}?lists=all&key=${connection.app_client_id}&token=${thirdPartyToken}`,
                                 headers: {
@@ -245,14 +245,14 @@ const collectionServiceTicket = new CollectionService(
                     case TP_ID.bitbucket: {
                         let parsedFields: any = fields ? JSON.parse(fields) : undefined;
                         let result: any;
-                        const pagingString = `${pageSize ? `page=${pageSize}` : ''}`;
+                        var pagingString = `${pageSize ? `page=${pageSize}` : ''}`;
                         if (parsedFields && parsedFields.collection_type === 'groups') {
                             if (!parsedFields.workspace) {
                                 throw new Error(
                                     "To retrieve all groups in a workspace in Bitbucket, workspace is required. Please set collection_type to 'groups' to verify.",
                                 );
                             }
-                            const groups = await axios({
+                            var groups = await axios({
                                 method: 'get',
                                 url: `https://api.bitbucket.org/1.0/groups/${parsedFields.workspace}?pagelen=10&${pagingString}`,
                                 headers: {
@@ -275,7 +275,7 @@ const collectionServiceTicket = new CollectionService(
                                     "To retrieve all repositories in a workspace in Bitbucket, workspace is required. Please set collection_type to 'repositories' to verify.",
                                 );
                             }
-                            const projects = await axios({
+                            var projects = await axios({
                                 method: 'get',
                                 url: `https://api.bitbucket.org/2.0/repositories/${parsedFields.workspace}?pagelen=10&${pagingString}`,
                                 headers: {
@@ -285,7 +285,7 @@ const collectionServiceTicket = new CollectionService(
                             });
                             result = projects.data;
 
-                            const pageNumber = result.next ? (pageSize ? (pageSize + 1).toString() : '1') : undefined;
+                            var pageNumber = result.next ? (pageSize ? (pageSize + 1).toString() : '1') : undefined;
                             return res.send({
                                 status: 'ok',
                                 next: pageNumber,
@@ -312,7 +312,7 @@ const collectionServiceTicket = new CollectionService(
                                     'To retrieve all projects in a repository in GitHub, "owner" and "repo" are required in the "fields" parameter.',
                                 );
                             }
-                            const projects = await axios({
+                            var projects = await axios({
                                 method: 'get',
                                 url: `https://api.github.com/repos/${parsedFields.owner}/${parsedFields.repo}/projects?${pagingString}`,
                                 headers: {
@@ -322,10 +322,10 @@ const collectionServiceTicket = new CollectionService(
                             });
                             result = projects.data;
 
-                            const linkHeader = projects.headers.link;
+                            var linkHeader = projects.headers.link;
                             let nextCursor, previousCursor;
                             if (linkHeader) {
-                                const links = linkHeader.split(',');
+                                var links = linkHeader.split(',');
 
                                 links?.forEach((link: any) => {
                                     if (link.includes('rel="next"')) {
@@ -348,7 +348,7 @@ const collectionServiceTicket = new CollectionService(
                                     'To retrieve all repositories of an organisation in GitHub, "org" is required in the "fields" parameter.',
                                 );
                             }
-                            const repositories = await axios({
+                            var repositories = await axios({
                                 method: 'get',
                                 url: `https://api.github.com/orgs/${parsedFields.org}/repos?${pagingString}`,
                                 headers: {
@@ -358,10 +358,10 @@ const collectionServiceTicket = new CollectionService(
                             });
                             result = repositories.data;
 
-                            const linkHeader = repositories.headers.link;
+                            var linkHeader = repositories.headers.link;
                             let nextCursor, previousCursor;
                             if (linkHeader) {
-                                const links = linkHeader.split(',');
+                                var links = linkHeader.split(',');
 
                                 links?.forEach((link: any) => {
                                     if (link.includes('rel="next"')) {
