@@ -9,7 +9,7 @@ export function handleZohoDisunify<T extends Record<string, any>>({
     objType: StandardObjects;
     transformedObj: any;
 }) {
-    let zohoObj: any = {
+    const zohoObj: any = {
         data: [
             {
                 ...getZohoAssociation(obj, objType),
@@ -37,7 +37,7 @@ export function handleZohoDisunify<T extends Record<string, any>>({
     return zohoObj;
 }
 
-let getZohoAssociation = (obj: any, objType: StandardObjects) => {
+const getZohoAssociation = (obj: any, objType: StandardObjects) => {
     switch (objType) {
         case StandardObjects.note: {
             return {
