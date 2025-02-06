@@ -2,9 +2,9 @@ import { PrismaClient, Prisma, TP_ID } from '@prisma/client';
 import config from '../config';
 import gcm from '../helpers/gcmUtil';
 
-const prisma = new PrismaClient();
+let prisma = new PrismaClient();
 
-const xprisma = prisma.$extends({
+let xprisma = prisma.$extends({
     name: 'ExtendedEncryptedConnection',
     result: {
         connections: {
@@ -25,7 +25,7 @@ const xprisma = prisma.$extends({
 
                 // prepend environment Id to the t_id. connectionId = environmentId_t_id
                 if (args.where?.id && args.create?.environmentId) {
-                    const newConnectionId = `${args.create.environmentId}_${args.where.id}`;
+                    let newConnectionId = `${args.create.environmentId}_${args.where.id}`;
                     args.where.id = newConnectionId;
                     args.create.id = newConnectionId;
                 }
@@ -36,7 +36,7 @@ const xprisma = prisma.$extends({
 
                 // tp_account_url: zohocrm sfdc pipedrive jira
                 if (args.update?.tp_id) {
-                    const tpId = args.update.tp_id;
+                    let tpId = args.update.tp_id;
                     if (
                         !(
                             tpId === TP_ID.zohocrm ||
@@ -52,7 +52,7 @@ const xprisma = prisma.$extends({
 
                 if (args.update?.tp_customer_id) {
                     // when same t_id is used to update with other app
-                    const thirdPartyCustomerId: any = args.update.tp_customer_id;
+                    let thirdPartyCustomerId: any = args.update.tp_customer_id;
                     args.update.tp_customer_id = gcm.encrypt(thirdPartyCustomerId, config.AES_ENCRYPTION_SECRET);
                 }
 
