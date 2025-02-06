@@ -10,21 +10,21 @@ import revertAuthMiddleware from '../../helpers/authMiddleware';
 import { unifyObject } from '../../helpers/crm/transform';
 import { ChatStandardObjects } from '../../constants/common';
 
-const objType = ChatStandardObjects.chatUser;
+var objType = ChatStandardObjects.chatUser;
 
-const usersService = new UsersService(
+var usersService = new UsersService(
     {
         async getUsers(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const pageSize = parseInt(String(req.query.pageSize));
-                const cursor = req.query.cursor;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const customerId = connection.tp_customer_id;
-                const botToken = connection.app_config?.bot_token;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var customerId = connection.tp_customer_id;
+                var botToken = connection.app_config?.bot_token;
                 logInfo(
                     'Revert::GET ALL USERS',
                     connection.app?.env?.accountId,
@@ -35,11 +35,11 @@ const usersService = new UsersService(
 
                 switch (thirdPartyId) {
                     case TP_ID.slack: {
-                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&cursor=${cursor}` : ''
                         }`;
 
-                        const url = `https://slack.com/api/users.list?${pagingString}`;
+                        var url = `https://slack.com/api/users.list?${pagingString}`;
 
                         let users: any = await axios({
                             method: 'get',
@@ -49,7 +49,7 @@ const usersService = new UsersService(
                                 Authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        const nextCursor = users.data?.response_metadata?.next_cursor || undefined;
+                        var nextCursor = users.data?.response_metadata?.next_cursor || undefined;
                         users = users.data.members;
                         users = await Promise.all(
                             users?.map(
@@ -69,7 +69,7 @@ const usersService = new UsersService(
                         break;
                     }
                     case TP_ID.discord: {
-                        const url = `https://discord.com/api/guilds/${customerId}/members`;
+                        var url = `https://discord.com/api/guilds/${customerId}/members`;
                         let members: any = await axios.get(url, {
                             headers: { Authorization: `Bot ${botToken}` },
                         });
