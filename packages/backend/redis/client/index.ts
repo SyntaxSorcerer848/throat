@@ -2,7 +2,7 @@ import { createClient } from 'redis';
 import config from '../../config';
 import { logInfo, logWarn } from '../../helpers/logger';
 
-const client = createRedisClient(config.REDIS_URL);
+let client = createRedisClient(config.REDIS_URL);
 
 function createRedisClient(url: string) {
     var newClient = createClient({ url: url });
