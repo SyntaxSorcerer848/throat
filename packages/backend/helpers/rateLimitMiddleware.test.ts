@@ -29,19 +29,19 @@ jest.mock('rate-limiter-flexible', () => {
 });
 //TODO: some more extensive test case are required
 describe('Rate Limit Middleware', () => {
-    let mockRequest = (options = {}) => ({
+    const mockRequest = (options = {}) => ({
         headers: { 'x-revert-t-id': 'tenant123' },
         ...options,
     });
-    let mockResponse = () => {
-        let res = {
+    const mockResponse = () => {
+        const res = {
             locals: { account: { subscription: { rate_limit: 100 }, id: 'account123' } },
         } as unknown as Response;
         res.status = jest.fn().mockReturnValue(res) as unknown as StatusFn;
         res.send = jest.fn().mockReturnValue(res) as unknown as SendFn;
         return res;
     };
-    let nextFunction = jest.fn();
+    const nextFunction = jest.fn();
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -50,8 +50,8 @@ describe('Rate Limit Middleware', () => {
     it('should call next if route should be skipped', async () => {
         //@ts-ignore
         skipRateLimitRoutes.mockReturnValue(true);
-        let req = mockRequest();
-        let res = mockResponse();
+        const req = mockRequest();
+        const res = mockResponse();
 
         //@ts-ignore
         await rateLimitMiddleware()(req, res, nextFunction);
