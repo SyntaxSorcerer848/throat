@@ -1,7 +1,7 @@
 import { z } from '@revertdotdev/utils';
 import { appSchema } from './appSchema';
 
-export const accountSchema = z.object({
+export let accountSchema = z.object({
     account: z.object({
         id: z.string(),
         tenant_count: z.number(),
@@ -27,7 +27,7 @@ export const accountSchema = z.object({
     }),
 });
 
-export const accountResponseSchema = z.object({
+export let accountResponseSchema = z.object({
     apps: appSchema,
     isDefaultEnvironment: z.boolean().default(true),
     currentPrivateToken: z.string(),
