@@ -3,8 +3,8 @@ import { AllAssociation } from '../../constants/associations';
 import { StandardObjects } from '../../constants/common';
 import { unifyObject } from './transform';
 
-export const getHubspotAssociationObj = (key: AllAssociation, associateObj: StandardObjects) => {
-    const associationTypeMapping: {
+export var getHubspotAssociationObj = (key: AllAssociation, associateObj: StandardObjects) => {
+    var associationTypeMapping: {
         [x in StandardObjects]: { [y in AllAssociation]: number | undefined };
     } = {
         [StandardObjects.note]: {
@@ -64,7 +64,7 @@ export const getHubspotAssociationObj = (key: AllAssociation, associateObj: Stan
             companyId: undefined,
         },
     };
-    const associationTypeId = associationTypeMapping[associateObj][key];
+    var associationTypeId = associationTypeMapping[associateObj][key];
     if (associationTypeId) {
         return {
             associationCategory: 'HUBSPOT_DEFINED',
@@ -75,8 +75,8 @@ export const getHubspotAssociationObj = (key: AllAssociation, associateObj: Stan
 };
 
 export type PluralObjectType = 'notes' | 'deals' | 'contacts' | 'leads' | 'companies' | 'events' | 'tasks' | 'users';
-export const getStandardObjects = (obj: PluralObjectType) => {
-    const correctStandardObj = {
+export var getStandardObjects = (obj: PluralObjectType) => {
+    var correctStandardObj = {
         notes: StandardObjects.note,
         deals: StandardObjects.deal,
         contacts: StandardObjects.contact,
@@ -87,11 +87,11 @@ export const getStandardObjects = (obj: PluralObjectType) => {
         users: StandardObjects.user,
     };
 
-    const object = correctStandardObj[obj];
+    var object = correctStandardObj[obj];
     return object ? object : null;
 };
 
-export const getAssociationObjects = async (
+export var getAssociationObjects = async (
     originalAssociations: any,
     thirdPartyToken: any,
     thirdPartyId: any,
@@ -99,11 +99,11 @@ export const getAssociationObjects = async (
     account: any,
     invalidAssociations: any,
 ) => {
-    const associatedData: any = {};
+    var associatedData: any = {};
 
     if (originalAssociations) {
         //looping over multiple associations if any.
-        for (const [objectType, associatedDataResult] of Object.entries(originalAssociations)) {
+        for (var [objectType, associatedDataResult] of Object.entries(originalAssociations)) {
             associatedData[objectType] = [];
 
             if (associatedDataResult) {
@@ -114,7 +114,7 @@ export const getAssociationObjects = async (
                 if (hasMoreLink) {
                     //the data is paginated,thus running a loop to get the whole data.
                     while (hasMoreLink) {
-                        const nextPageAssociatedData = await axios({
+                        var nextPageAssociatedData = await axios({
                             method: 'get',
                             url: hasMoreLink,
                             headers: {
@@ -141,17 +141,17 @@ export const getAssociationObjects = async (
                 }
 
                 //collecting all ids for batch request.
-                const ids = (associatedData[objectType] as any[]).map((item) => item.id);
+                var ids = (associatedData[objectType] as any[]).map((item) => item.id);
 
                 if (ids.length > 0) {
                     let index = 0;
                     let fullBatchData: any[] = [];
 
                     while (index < ids.length) {
-                        const batchIds = ids.slice(index, index + 100); //the batch api only takes 100 at a time
+                        var batchIds = ids.slice(index, index + 100); //the batch api only takes 100 at a time
 
                         //bacth request for that object type to get full data for that object.
-                        const responseData = await axios({
+                        var responseData = await axios({
                             method: 'post',
                             url: `https://api.hubapi.com/crm/v3/objects/${objectType}/batch/read`,
                             headers: {
@@ -172,7 +172,7 @@ export const getAssociationObjects = async (
                     }
 
                     //converting the objectType into the correct objType which is needed for unification.
-                    const associatedObjectType = getStandardObjects(objectType as PluralObjectType);
+                    var associatedObjectType = getStandardObjects(objectType as PluralObjectType);
 
                     associatedData[objectType] =
                         associatedObjectType &&
@@ -209,8 +209,8 @@ export const getAssociationObjects = async (
     return associatedData;
 };
 
-export const isValidAssociationTypeRequestedByUser = (str: string) => {
-    const validStrings = [
+export var isValidAssociationTypeRequestedByUser = (str: string) => {
+    var validStrings = [
         'notes',
         'deals',
         'contacts',
@@ -240,7 +240,7 @@ export function handleHubspotDisunify<T extends Record<string, any>, Association
     objType: StandardObjects;
     transformedObj: any;
 }) {
-    const hubspotObj: any = {
+    var hubspotObj: any = {
         ...(objType === StandardObjects.user
             ? { ...transformedObj }
             : {
@@ -265,8 +265,8 @@ export function handleHubspotDisunify<T extends Record<string, any>, Association
         hubspotObj['associations'] = obj.additional.associations;
     }
     if (obj.associations) {
-        const associationObj = obj.associations;
-        const associationArr = Object.keys(associationObj).map((key) => {
+        var associationObj = obj.associations;
+        var associationArr = Object.keys(associationObj).map((key) => {
             return {
                 to: {
                     id: associationObj[key as AssociationType],
