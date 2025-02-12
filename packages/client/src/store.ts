@@ -13,9 +13,9 @@ import {
   applyEdgeChanges,
 } from "react-flow-renderer";
 
-let initialNodes = [];
+const initialNodes = [];
 
-let initialEdges = [];
+const initialEdges = [];
 
 type RFState = {
   nodes: Node[];
@@ -34,7 +34,7 @@ type RFState = {
 };
 
 // this is our useStore hook that we can use in our components to get parts of the store and call actions
-let useStore = create<RFState>((set, get) => ({
+const useStore = create<RFState>((set, get) => ({
   isMoving: false,
   setIsMoving: (isMoving: boolean) => {
     set({
@@ -62,7 +62,7 @@ let useStore = create<RFState>((set, get) => ({
   },
   setNodes: (newNode: Node) => {
     set((state) => {
-      let newNodes = state.nodes.concat(newNode);
+      const newNodes = state.nodes.concat(newNode);
       return {
         ...state,
         nodes: newNodes,
@@ -91,9 +91,9 @@ let useStore = create<RFState>((set, get) => ({
   },
   updateNodeData: (nodeId: string, data: any) => {
     set((state) => {
-      let node = state.nodes.find((n) => n.id === nodeId);
+      const node = state.nodes.find((n) => n.id === nodeId);
       if (!node) return state;
-      let others = state.nodes.filter((n) => n.id !== nodeId);
+      const others = state.nodes.filter((n) => n.id !== nodeId);
       node.data = { ...node.data, ...data };
       return {
         ...state,
@@ -118,7 +118,7 @@ type AppState = {
   setCurrentWorkflowData: any;
 };
 
-export let useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppState>((set) => ({
   currentWorkflowData: undefined,
   currentWorkflowId: undefined,
   currentUser: null,
@@ -165,7 +165,7 @@ type NodeExecutionState = {
   setSeen: (nodeId: string, value: boolean) => void;
 };
 
-export let useNodeExecutionStore = create<NodeExecutionState>((set) => ({
+export const useNodeExecutionStore = create<NodeExecutionState>((set) => ({
   data: {},
   seenMap: {},
   setData: (nodeId, data) =>
