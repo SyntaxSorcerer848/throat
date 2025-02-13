@@ -24,15 +24,15 @@ class HubspotAuthHandler extends BaseOAuthHandler {
         redirectUrl,
     }: IntegrationAuthProps) {
         try {
-            let url = 'https://api.hubapi.com/oauth/v1/token';
-            let formData = {
+            const url = 'https://api.hubapi.com/oauth/v1/token';
+            const formData = {
                 grant_type: 'authorization_code',
                 client_id: clientId || config.HUBSPOT_CLIENT_ID,
                 client_secret: clientSecret || config.HUBSPOT_CLIENT_SECRET,
                 redirect_uri: `${config.OAUTH_REDIRECT_BASE}/hubspot`,
                 code: code,
             };
-            let result = await axios({
+            const result = await axios({
                 method: 'post',
                 url: url,
                 data: qs.stringify(formData),
@@ -41,7 +41,7 @@ class HubspotAuthHandler extends BaseOAuthHandler {
                 },
             });
             logInfo('OAuth creds for hubspot', result.data);
-            let info = await axios({
+            const info = await axios({
                 method: 'get',
                 url: 'https://api.hubapi.com/oauth/v1/access-tokens/' + result.data.access_token,
             });
