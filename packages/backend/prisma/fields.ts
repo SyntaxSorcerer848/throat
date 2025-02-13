@@ -8,7 +8,7 @@ import {
 } from '../constants/common';
 
 // root schema mapping
-export let allFields = {
+export const allFields = {
     [StandardObjects.note]: [
         {
             source_field_name: {
@@ -863,7 +863,7 @@ export let allFields = {
     ],
 };
 
-export let chatFields = {
+export const chatFields = {
     [ChatStandardObjects.channel]: [
         {
             source_field_name: {
@@ -928,7 +928,7 @@ export let chatFields = {
     ],
 };
 
-export let ticketingFields = {
+export const ticketingFields = {
     [TicketStandardObjects.ticketTask]: [
         {
             source_field_name: {
@@ -1269,7 +1269,7 @@ export let ticketingFields = {
     ],
 };
 
-export let atsFields = {
+export const atsFields = {
     [AtsStandardObjects.candidate]: [
         {
             source_field_name: {
@@ -1821,7 +1821,7 @@ export let atsFields = {
         },
     ],
 };
-export let accountingFields = {
+export const accountingFields = {
     [AccountingStandardObjects.account]: [
         {
             source_field_name: {
