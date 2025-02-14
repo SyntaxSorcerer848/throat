@@ -14,20 +14,20 @@ import { PipedriveDeal, PipedrivePagination } from '../../constants/pipedrive';
 import { StandardObjects } from '../../constants/common';
 import { getAssociationObjects, isValidAssociationTypeRequestedByUser } from '../../helpers/crm/hubspot';
 
-const objType = StandardObjects.deal;
+var objType = StandardObjects.deal;
 
-const dealService = new DealService(
+var dealService = new DealService(
     {
         async getDeal(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const dealId = req.params.id;
-                const fields = req.query.fields;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const associations = req.query.associations ? req.query.associations.split(',') : [];
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var dealId = req.params.id;
+                var fields = req.query.fields;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET DEAL',
@@ -40,7 +40,7 @@ const dealService = new DealService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        const formattedFields = [
+                        var formattedFields = [
                             ...String(fields || '').split(','),
                             'dealname',
                             'amount',
@@ -51,15 +51,15 @@ const dealService = new DealService(
                             'hs_is_closed_won',
                             'hs_createdate',
                         ];
-                        const validAssociations = [...associations].filter((item) =>
+                        var validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        const invalidAssociations = [...associations].filter(
+                        var invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        const url =
+                        var url =
                             `https://api.hubapi.com/crm/v3/objects/deals/${dealId}?properties=${formattedFields}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
 
@@ -72,7 +72,7 @@ const dealService = new DealService(
                         });
 
                         deal = ([deal.data] as any[])?.[0];
-                        const associatedData = await getAssociationObjects(
+                        var associatedData = await getAssociationObjects(
                             deal?.associations,
                             thirdPartyToken,
                             thirdPartyId,
@@ -91,7 +91,7 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        const deals = await axios({
+                        var deals = await axios({
                             method: 'get',
                             url: `https://www.zohoapis.com/crm/v3/Deals/${dealId}${fields ? `?fields=${fields}` : ''}`,
                             headers: {
@@ -109,8 +109,8 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        const instanceUrl = connection.tp_account_url;
-                        const deals = await axios({
+                        var instanceUrl = connection.tp_account_url;
+                        var deals = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Opportunity/${dealId}`,
                             headers: {
@@ -128,7 +128,7 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const result = await axios.get<{ data: Partial<PipedriveDeal> } & PipedrivePagination>(
+                        var result = await axios.get<{ data: Partial<PipedriveDeal> } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/deals/${dealId}`,
                             {
                                 headers: {
@@ -136,7 +136,7 @@ const dealService = new DealService(
                                 },
                             },
                         );
-                        const deal = result.data;
+                        var deal = result.data;
                         res.send({
                             status: 'ok',
                             result: await unifyObject<any, UnifiedDeal>({
@@ -170,7 +170,7 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/opportunities(${dealId})`,
                             headers: {
@@ -181,7 +181,7 @@ const dealService = new DealService(
                             },
                         });
 
-                        const unifiedDeal = await unifyObject<any, UnifiedDeal>({
+                        var unifiedDeal = await unifyObject<any, UnifiedDeal>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -207,15 +207,15 @@ const dealService = new DealService(
         },
         async getDeals(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const fields = req.query.fields;
-                const pageSize = parseInt(String(req.query.pageSize));
-                const cursor = req.query.cursor;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const associations = req.query.associations ? req.query.associations.split(',') : [];
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var fields = req.query.fields;
+                var pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET ALL DEAL',
@@ -227,7 +227,7 @@ const dealService = new DealService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        const formattedFields = [
+                        var formattedFields = [
                             ...String(fields || '').split(','),
                             'dealname',
                             'amount',
@@ -238,18 +238,18 @@ const dealService = new DealService(
                             'hs_is_closed_won',
                             'hs_createdate',
                         ];
-                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&after=${cursor}` : ''
                         }`;
-                        const validAssociations = [...associations].filter((item) =>
+                        var validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        const invalidAssociations = [...associations].filter(
+                        var invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        const url =
+                        var url =
                             `https://api.hubapi.com/crm/v3/objects/deals?properties=${formattedFields}${pagingString}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
 
@@ -260,11 +260,11 @@ const dealService = new DealService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        const nextCursor = deals.data?.paging?.next?.after || undefined;
+                        var nextCursor = deals.data?.paging?.next?.after || undefined;
                         deals = deals.data.results as any[];
                         deals = await Promise.all(
                             deals?.map(async (l: any) => {
-                                const associatedData = await getAssociationObjects(
+                                var associatedData = await getAssociationObjects(
                                     l?.associations,
                                     thirdPartyToken,
                                     thirdPartyId,
@@ -290,7 +290,7 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let deals: any = await axios({
@@ -300,8 +300,8 @@ const dealService = new DealService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        const nextCursor = deals.data?.info?.next_page_token || undefined;
-                        const prevCursor = deals.data?.info?.previous_page_token || undefined;
+                        var nextCursor = deals.data?.info?.next_page_token || undefined;
+                        var prevCursor = deals.data?.info?.previous_page_token || undefined;
                         deals = deals.data.data;
                         deals = await Promise.all(
                             deals?.map(
@@ -325,9 +325,9 @@ const dealService = new DealService(
                         if (!pageSize && !cursor) {
                             pagingString = 'LIMIT 200';
                         }
-                        const instanceUrl = connection.tp_account_url;
+                        var instanceUrl = connection.tp_account_url;
                         // TODO: Handle "ALL" for Hubspot & Zoho
-                        const query =
+                        var query =
                             !fields || fields === 'ALL'
                                 ? `SELECT+fields(all)+from+Opportunity+${pagingString}`
                                 : `SELECT+${(fields as string)
@@ -340,10 +340,10 @@ const dealService = new DealService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        const nextCursor = pageSize
+                        var nextCursor = pageSize
                             ? String(deals.data?.totalSize + (parseInt(String(cursor)) || 0))
                             : undefined;
-                        const prevCursor =
+                        var prevCursor =
                             cursor && parseInt(String(cursor)) > 0
                                 ? String(parseInt(String(cursor)) - deals.data?.totalSize)
                                 : undefined;
@@ -364,10 +364,10 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&start=${cursor}` : ''
                         }`;
-                        const result = await axios.get<{ data: Partial<PipedriveDeal>[] } & PipedrivePagination>(
+                        var result = await axios.get<{ data: Partial<PipedriveDeal>[] } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/deals?${pagingString}`,
                             {
                                 headers: {
@@ -375,10 +375,10 @@ const dealService = new DealService(
                                 },
                             },
                         );
-                        const nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
-                        const prevCursor = undefined;
-                        const deals = result.data.data;
-                        const unifiedDeals = await Promise.all(
+                        var nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
+                        var prevCursor = undefined;
+                        var deals = result.data.data;
+                        var unifiedDeals = await Promise.all(
                             deals?.map(
                                 async (d) =>
                                     await unifyObject<any, UnifiedDeal>({
@@ -394,7 +394,7 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.closecrm: {
-                        const pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
                             cursor ? `&_skip=${cursor}` : ''
                         }`;
                         let deals: any = await axios({
@@ -405,7 +405,7 @@ const dealService = new DealService(
                                 Accept: 'application/json',
                             },
                         });
-                        const hasMore = deals.data?.has_more;
+                        var hasMore = deals.data?.has_more;
                         deals = deals.data?.data as any[];
                         deals = await Promise.all(
                             deals?.map(
@@ -422,8 +422,8 @@ const dealService = new DealService(
 
                         let cursorVal = parseInt(String(cursor));
                         if (isNaN(cursorVal)) cursorVal = 0;
-                        const nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
-                        const prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
+                        var nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
+                        var prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
 
                         res.send({
                             status: 'ok',
@@ -434,9 +434,9 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/opportunities?${pagingString}`,
                             headers: {
@@ -448,7 +448,7 @@ const dealService = new DealService(
                             },
                         });
 
-                        const unifiedDeals = await Promise.all(
+                        var unifiedDeals = await Promise.all(
                             result.data.value.map(
                                 async (deal: any) =>
                                     await unifyObject<any, UnifiedDeal>({
@@ -483,13 +483,13 @@ const dealService = new DealService(
         },
         async createDeal(req, res) {
             try {
-                const dealData = req.body as UnifiedDeal;
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const deal = await disunifyObject<UnifiedDeal>({
+                var dealData = req.body as UnifiedDeal;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var deal = await disunifyObject<UnifiedDeal>({
                     obj: dealData,
                     tpId: thirdPartyId,
                     objType,
@@ -500,7 +500,7 @@ const dealService = new DealService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        const response = await axios({
+                        var response = await axios({
                             method: 'post',
                             url: `https://api.hubapi.com/crm/v3/objects/deals/`,
                             headers: {
@@ -529,8 +529,8 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        const instanceUrl = connection.tp_account_url;
-                        const dealCreated = await axios({
+                        var instanceUrl = connection.tp_account_url;
+                        var dealCreated = await axios({
                             method: 'post',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Opportunity/`,
                             headers: {
@@ -547,9 +547,9 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const instanceUrl = connection.tp_account_url;
-                        const pipedriveDeal = deal as Partial<PipedriveDeal>;
-                        const dealCreated = await axios.post<{ data: Partial<PipedriveDeal> }>(
+                        var instanceUrl = connection.tp_account_url;
+                        var pipedriveDeal = deal as Partial<PipedriveDeal>;
+                        var dealCreated = await axios.post<{ data: Partial<PipedriveDeal> }>(
                             `${instanceUrl}/v1/deals`,
                             pipedriveDeal,
                             {
@@ -569,7 +569,7 @@ const dealService = new DealService(
                     }
                     case TP_ID.closecrm: {
                         if (req.body.stage) {
-                            const status = await axios({
+                            var status = await axios({
                                 method: 'get',
                                 url: 'https://api.close.com/api/v1/status/opportunity/',
                                 headers: {
@@ -578,7 +578,7 @@ const dealService = new DealService(
                                 },
                             });
 
-                            const validStatus = status.data.data.filter(
+                            var validStatus = status.data.data.filter(
                                 (l: any) => l.label.toLowerCase() === req.body.stage.toLowerCase(),
                             );
 
@@ -588,7 +588,7 @@ const dealService = new DealService(
 
                             deal['status_id'] = validStatus[0].id;
                         }
-                        const response = await axios({
+                        var response = await axios({
                             method: 'post',
                             url: 'https://api.close.com/api/v1/opportunity/',
                             headers: {
@@ -605,7 +605,7 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        const response = await axios({
+                        var response = await axios({
                             method: 'post',
                             url: `${connection.tp_account_url}/api/data/v9.2/opportunities`,
                             headers: {
@@ -641,14 +641,14 @@ const dealService = new DealService(
         },
         async updateDeal(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const dealData = req.body as UnifiedDeal;
-                const dealId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const deal = await disunifyObject<UnifiedDeal>({
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var dealData = req.body as UnifiedDeal;
+                var dealId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var deal = await disunifyObject<UnifiedDeal>({
                     obj: dealData,
                     tpId: thirdPartyId,
                     objType,
@@ -688,7 +688,7 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        const instanceUrl = connection.tp_account_url;
+                        var instanceUrl = connection.tp_account_url;
                         await axios({
                             method: 'patch',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Opportunity/${dealId}`,
@@ -702,7 +702,7 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const dealUpdated = await axios.put<{ data: Partial<PipedriveDeal> }>(
+                        var dealUpdated = await axios.put<{ data: Partial<PipedriveDeal> }>(
                             `${connection.tp_account_url}/v1/deals/${dealId}`,
                             deal,
                             {
@@ -722,7 +722,7 @@ const dealService = new DealService(
                     }
                     case TP_ID.closecrm: {
                         if (req.body.stage) {
-                            const status = await axios({
+                            var status = await axios({
                                 method: 'get',
                                 url: 'https://api.close.com/api/v1/status/opportunity/',
                                 headers: {
@@ -731,7 +731,7 @@ const dealService = new DealService(
                                 },
                             });
 
-                            const validStatus = status.data.data.filter(
+                            var validStatus = status.data.data.filter(
                                 (l: any) => l.label.toLowerCase() === req.body.stage.toLowerCase(),
                             );
 
@@ -742,7 +742,7 @@ const dealService = new DealService(
                             deal['status_id'] = validStatus[0].id;
                         }
 
-                        const response = await axios({
+                        var response = await axios({
                             method: 'put',
                             url: `https://api.close.com/api/v1/opportunity/${dealId}/`,
                             headers: {
@@ -759,7 +759,7 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        const response = await axios({
+                        var response = await axios({
                             method: 'patch',
                             url: `${connection.tp_account_url}/api/data/v9.2/opportunities(${dealId})`,
                             headers: {
@@ -795,17 +795,17 @@ const dealService = new DealService(
         },
         async searchDeals(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const fields = req.query.fields;
-                const searchCriteria: any = req.body.searchCriteria;
-                const formattedFields = (fields || '').split('').filter(Boolean);
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var fields = req.query.fields;
+                var searchCriteria: any = req.body.searchCriteria;
+                var formattedFields = (fields || '').split('').filter(Boolean);
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
 
-                const cursor = req.query.cursor;
-                const pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
+                var pageSize = parseInt(String(req.query.pageSize));
 
                 logInfo(
                     'Revert::SEARCH DEAL',
@@ -846,7 +846,7 @@ const dealService = new DealService(
                                 ],
                             }),
                         });
-                        const nextCursor = deals.data?.paging?.next?.after || undefined;
+                        var nextCursor = deals.data?.paging?.next?.after || undefined;
 
                         deals = deals.data.results as any[];
                         deals = await Promise.all(
@@ -865,7 +865,7 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let deals: any = await axios({
@@ -876,8 +876,8 @@ const dealService = new DealService(
                             },
                         });
 
-                        const nextCursor = deals.data?.info?.next_page_token || undefined;
-                        const prevCursor = deals.data?.info?.previous_page_token || undefined;
+                        var nextCursor = deals.data?.info?.next_page_token || undefined;
+                        var prevCursor = deals.data?.info?.previous_page_token || undefined;
                         deals = deals.data.data;
                         deals = await Promise.all(
                             deals?.map(
@@ -895,7 +895,7 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        const instanceUrl = connection.tp_account_url;
+                        var instanceUrl = connection.tp_account_url;
                         let deals: any = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/search?q=${searchCriteria}`,
@@ -920,11 +920,11 @@ const dealService = new DealService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&start=${cursor}` : ''
                         }`;
-                        const instanceUrl = connection.tp_account_url;
-                        const result = await axios.get<
+                        var instanceUrl = connection.tp_account_url;
+                        var result = await axios.get<
                             { data: { items: { item: any; result_score: number }[] } } & PipedrivePagination
                         >(
                             `${instanceUrl}/v1/deals/search?term=${searchCriteria}${
@@ -936,10 +936,10 @@ const dealService = new DealService(
                                 },
                             },
                         );
-                        const nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
-                        const prevCursor = undefined;
-                        const deals = result.data.data.items.map((item) => item.item);
-                        const unifiedDeals = await Promise.all(
+                        var nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
+                        var prevCursor = undefined;
+                        var deals = result.data.data.items.map((item) => item.item);
+                        var unifiedDeals = await Promise.all(
                             deals?.map(
                                 async (d: any) =>
                                     await unifyObject<any, UnifiedDeal>({
@@ -959,8 +959,8 @@ const dealService = new DealService(
                         if (searchCriteria) {
                             searchString += fields ? `&$filter=${searchCriteria}` : `$filter=${searchCriteria}`;
                         }
-                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
-                        const result = await axios({
+                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/opportunities?${searchString}${pagingString}`,
                             headers: {
@@ -972,7 +972,7 @@ const dealService = new DealService(
                             },
                         });
 
-                        const unifiedDeals = await Promise.all(
+                        var unifiedDeals = await Promise.all(
                             result.data.value.map(
                                 async (contact: any) =>
                                     await unifyObject<any, UnifiedDeal>({
