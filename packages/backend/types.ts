@@ -17,7 +17,7 @@ export enum NODE_EXECUTION_TYPE {
     NOOP = 'NOOP', // Do nothing
 }
 
-export let NODE_TYPE = {
+export const NODE_TYPE = {
     ...NODE_TRIGGER_TYPE,
     ...NODE_INTEGRATION_TYPE,
     ...NODE_EXECUTION_TYPE,
