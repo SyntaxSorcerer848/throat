@@ -14,20 +14,20 @@ import { PipedriveUser } from '../../constants/pipedrive';
 import { StandardObjects } from '../../constants/common';
 import { getAssociationObjects, isValidAssociationTypeRequestedByUser } from '../../helpers/crm/hubspot';
 
-const objType = StandardObjects.user;
+var objType = StandardObjects.user;
 
-const userService = new UserService(
+var userService = new UserService(
     {
         async getUser(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const userId = req.params.id;
-                const fields = req.query.fields;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const associations = req.query.associations ? req.query.associations.split(',') : [];
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var userId = req.params.id;
+                var fields = req.query.fields;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET USER',
@@ -40,7 +40,7 @@ const userService = new UserService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        const formattedFields = [
+                        var formattedFields = [
                             ...String(fields || '').split(','),
                             'firstname',
                             'email',
@@ -48,15 +48,15 @@ const userService = new UserService(
                             'hs_object_id',
                             'phone',
                         ];
-                        const validAssociations = [...associations].filter((item) =>
+                        var validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        const invalidAssociations = [...associations].filter(
+                        var invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        const url =
+                        var url =
                             `https://api.hubapi.com/settings/v3/users/${userId}?properties=${formattedFields}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
 
@@ -69,7 +69,7 @@ const userService = new UserService(
                         });
                         user = ([user.data] as any[])?.[0];
 
-                        const associatedData = await getAssociationObjects(
+                        var associatedData = await getAssociationObjects(
                             user?.associations,
                             thirdPartyToken,
                             thirdPartyId,
@@ -89,7 +89,7 @@ const userService = new UserService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        const users = await axios({
+                        var users = await axios({
                             method: 'get',
                             url: `https://www.zohoapis.com/crm/v3/users/${userId}`,
                             headers: {
@@ -107,8 +107,8 @@ const userService = new UserService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        const instanceUrl = connection.tp_account_url;
-                        const users = await axios({
+                        var instanceUrl = connection.tp_account_url;
+                        var users = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/User/${userId}`,
                             headers: {
@@ -126,7 +126,7 @@ const userService = new UserService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const result = await axios.get<{ data: Partial<PipedriveUser> }>(
+                        var result = await axios.get<{ data: Partial<PipedriveUser> }>(
                             `${connection.tp_account_url}/v1/users/${userId}`,
                             {
                                 headers: {
@@ -134,7 +134,7 @@ const userService = new UserService(
                                 },
                             },
                         );
-                        const user = result.data;
+                        var user = result.data;
                         res.send({
                             status: 'ok',
                             result: await unifyObject<any, UnifiedUser>({
@@ -168,7 +168,7 @@ const userService = new UserService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/systemusers(${userId})`,
                             headers: {
@@ -179,7 +179,7 @@ const userService = new UserService(
                             },
                         });
 
-                        const unifiedUser = await unifyObject<any, UnifiedUser>({
+                        var unifiedUser = await unifyObject<any, UnifiedUser>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -205,15 +205,15 @@ const userService = new UserService(
         },
         async getUsers(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const fields = req.query.fields;
-                const pageSize = parseInt(String(req.query.pageSize));
-                const cursor = req.query.cursor;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const associations = req.query.associations ? req.query.associations.split(',') : [];
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var fields = req.query.fields;
+                var pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET ALL USER',
@@ -225,7 +225,7 @@ const userService = new UserService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        const formattedFields = [
+                        var formattedFields = [
                             ...String(fields || '').split(','),
                             'firstname',
                             'email',
@@ -233,18 +233,18 @@ const userService = new UserService(
                             'hs_object_id',
                             'phone',
                         ];
-                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&after=${cursor}` : ''
                         }`;
-                        const validAssociations = [...associations].filter((item) =>
+                        var validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        const invalidAssociations = [...associations].filter(
+                        var invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        const url =
+                        var url =
                             `https://api.hubapi.com/settings/v3/users?properties=${formattedFields}${pagingString}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
                         let users: any = await axios({
@@ -254,11 +254,11 @@ const userService = new UserService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        const nextCursor = users.data?.paging?.next?.after || undefined;
+                        var nextCursor = users.data?.paging?.next?.after || undefined;
                         users = users.data.results as any[];
                         users = await Promise.all(
                             users?.map(async (l: any) => {
-                                const associatedData = await getAssociationObjects(
+                                var associatedData = await getAssociationObjects(
                                     l?.associations,
                                     thirdPartyToken,
                                     thirdPartyId,
@@ -285,7 +285,7 @@ const userService = new UserService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`; // FIXME: page_token unsupported.
                         let users: any = await axios({
@@ -295,8 +295,8 @@ const userService = new UserService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        const nextCursor = users.data?.info?.next_page_token || undefined;
-                        const prevCursor = users.data?.info?.previous_page_token || undefined;
+                        var nextCursor = users.data?.info?.next_page_token || undefined;
+                        var prevCursor = users.data?.info?.previous_page_token || undefined;
                         users = users.data.users;
                         users = await Promise.all(
                             users?.map(
@@ -320,9 +320,9 @@ const userService = new UserService(
                         if (!pageSize && !cursor) {
                             pagingString = 'LIMIT 200';
                         }
-                        const instanceUrl = connection.tp_account_url;
+                        var instanceUrl = connection.tp_account_url;
                         // TODO: Handle "ALL" for Hubspot & Zoho
-                        const query =
+                        var query =
                             !fields || fields === 'ALL'
                                 ? `SELECT+fields(all)+from+User+${pagingString}`
                                 : `SELECT+${(fields as string).split(',').join('+,+')}+from+User+${pagingString}`;
@@ -333,10 +333,10 @@ const userService = new UserService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        const nextCursor = pageSize
+                        var nextCursor = pageSize
                             ? String(users.data?.totalSize + (parseInt(String(cursor)) || 0))
                             : undefined;
-                        const prevCursor =
+                        var prevCursor =
                             cursor && parseInt(String(cursor)) > 0
                                 ? String(parseInt(String(cursor)) - users.data?.totalSize)
                                 : undefined;
@@ -357,10 +357,10 @@ const userService = new UserService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&start=${cursor}` : ''
                         }`;
-                        const result = await axios.get<{ data: Partial<PipedriveUser>[] }>(
+                        var result = await axios.get<{ data: Partial<PipedriveUser>[] }>(
                             `${connection.tp_account_url}/v1/users?${pagingString}`,
                             {
                                 headers: {
@@ -368,10 +368,10 @@ const userService = new UserService(
                                 },
                             },
                         );
-                        const nextCursor = undefined;
-                        const prevCursor = undefined;
-                        const users = result.data.data;
-                        const unifiedUsers = await Promise.all(
+                        var nextCursor = undefined;
+                        var prevCursor = undefined;
+                        var users = result.data.data;
+                        var unifiedUsers = await Promise.all(
                             users?.map(
                                 async (l) =>
                                     await unifyObject<any, UnifiedUser>({
@@ -387,7 +387,7 @@ const userService = new UserService(
                         break;
                     }
                     case TP_ID.closecrm: {
-                        const pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
+                        var pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
                             cursor ? `&_skip=${cursor}` : ''
                         }`;
 
@@ -399,7 +399,7 @@ const userService = new UserService(
                                 Accept: 'application/json',
                             },
                         });
-                        const hasMore = users.data?.has_more;
+                        var hasMore = users.data?.has_more;
                         users = users.data?.data as any[];
                         users = await Promise.all(
                             users?.map(
@@ -416,8 +416,8 @@ const userService = new UserService(
 
                         let cursorVal = parseInt(String(cursor));
                         if (isNaN(cursorVal)) cursorVal = 0;
-                        const nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
-                        const prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
+                        var nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
+                        var prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
 
                         res.send({
                             status: 'ok',
@@ -428,9 +428,9 @@ const userService = new UserService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/systemusers?${pagingString}`,
                             headers: {
@@ -442,7 +442,7 @@ const userService = new UserService(
                             },
                         });
 
-                        const unifiedUsers = await Promise.all(
+                        var unifiedUsers = await Promise.all(
                             result.data.value.map(
                                 async (contact: any) =>
                                     await unifyObject<any, UnifiedUser>({
@@ -478,13 +478,13 @@ const userService = new UserService(
         },
         async createUser(req, res) {
             try {
-                const userData = req.body as UnifiedUser;
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const user = await disunifyObject<UnifiedUser>({
+                var userData = req.body as UnifiedUser;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var user = await disunifyObject<UnifiedUser>({
                     obj: userData,
                     tpId: thirdPartyId,
                     objType,
@@ -495,7 +495,7 @@ const userService = new UserService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        const response = await axios({
+                        var response = await axios({
                             method: 'post',
                             url: `https://api.hubapi.com/settings/v3/users`,
                             headers: {
@@ -524,8 +524,8 @@ const userService = new UserService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        const instanceUrl = connection.tp_account_url;
-                        const userCreated = await axios({
+                        var instanceUrl = connection.tp_account_url;
+                        var userCreated = await axios({
                             method: 'post',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/User/`,
                             headers: {
@@ -542,9 +542,9 @@ const userService = new UserService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        const instanceUrl = connection.tp_account_url;
-                        const pipedriveUser = user as Partial<PipedriveUser>;
-                        const userCreated = await axios.post<{ data: Partial<PipedriveUser> }>(
+                        var instanceUrl = connection.tp_account_url;
+                        var pipedriveUser = user as Partial<PipedriveUser>;
+                        var userCreated = await axios.post<{ data: Partial<PipedriveUser> }>(
                             `${instanceUrl}/v1/users`,
                             pipedriveUser,
                             {
@@ -566,7 +566,7 @@ const userService = new UserService(
                         throw new NotFoundError({ error: 'Method not allowed' });
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        const response = await axios({
+                        var response = await axios({
                             method: 'post',
                             url: `${connection.tp_account_url}/api/data/v9.2/systemusers`,
                             headers: {
