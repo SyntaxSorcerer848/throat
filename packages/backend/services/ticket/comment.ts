@@ -11,19 +11,19 @@ import { disunifyTicketObject, unifyObject } from '../../helpers/crm/transform';
 import { UnifiedTicketComment } from '../../models/unified/ticketComment';
 import { TicketStandardObjects } from '../../constants/common';
 
-const objType = TicketStandardObjects.ticketComment;
+var objType = TicketStandardObjects.ticketComment;
 
-const commentServiceTicket = new CommentService(
+var commentServiceTicket = new CommentService(
     {
         async getComment(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const fields: any = req.query.fields;
-                const commentId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var fields: any = req.query.fields;
+                var commentId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
                 logInfo(
                     'Revert::GET COMMENT',
                     connection.app?.env?.accountId,
@@ -35,13 +35,13 @@ const commentServiceTicket = new CommentService(
 
                 switch (thirdPartyId) {
                     case TP_ID.linear: {
-                        const linear = new LinearClient({
+                        var linear = new LinearClient({
                             accessToken: thirdPartyToken,
                         });
 
-                        const comment = await linear.comment(commentId);
+                        var comment = await linear.comment(commentId);
 
-                        const unifiedComment = await unifyObject<any, UnifiedTicketComment>({
+                        var unifiedComment = await unifyObject<any, UnifiedTicketComment>({
                             obj: comment,
                             tpId: thirdPartyId,
                             objType,
@@ -69,7 +69,7 @@ const commentServiceTicket = new CommentService(
                                 'taskId is required for fetching Jira comments. You can also pass taskKey to taskId.',
                             );
                         }
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/rest/api/2/issue/${parsedFields.taskId}/comment/${commentId}`,
                             headers: {
@@ -78,7 +78,7 @@ const commentServiceTicket = new CommentService(
                             },
                         });
 
-                        const unifiedComment = await unifyObject<any, UnifiedTicketComment>({
+                        var unifiedComment = await unifyObject<any, UnifiedTicketComment>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -107,7 +107,7 @@ const commentServiceTicket = new CommentService(
                                 'taskId and "repo" and "workspace" are required for fetching Bitbucket comments and should be included in the "fields" parameter."repo" and "workspace" can either be slug or UUID.',
                             );
                         }
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `https://api.bitbucket.org/2.0/repositories/${parsedFields.workspace}/${parsedFields.repo}/issues/${parsedFields.taskId}/comments/${commentId}`,
                             headers: {
@@ -116,7 +116,7 @@ const commentServiceTicket = new CommentService(
                             },
                         });
 
-                        const unifiedComment = await unifyObject<any, UnifiedTicketComment>({
+                        var unifiedComment = await unifyObject<any, UnifiedTicketComment>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -138,7 +138,7 @@ const commentServiceTicket = new CommentService(
                                 'taskId and "repo" and "owner" are required for fetching GitHub comments and should be included in the "fields" parameter.',
                             );
                         }
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: ` https://api.github.com/repos/${parsedFields.owner}/${parsedFields.repo}/issues/comments/${commentId}`,
                             headers: {
@@ -147,7 +147,7 @@ const commentServiceTicket = new CommentService(
                             },
                         });
 
-                        const unifiedComment = await unifyObject<any, UnifiedTicketComment>({
+                        var unifiedComment = await unifyObject<any, UnifiedTicketComment>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -177,14 +177,14 @@ const commentServiceTicket = new CommentService(
 
         async getComments(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const fields: any = JSON.parse(req.query.fields as string);
-                const pageSize = parseInt(String(req.query.pageSize));
-                const cursor = req.query.cursor;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var fields: any = JSON.parse(req.query.fields as string);
+                var pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
 
                 if (!fields || (fields && !fields.taskId)) {
                     throw new NotFoundError({
@@ -202,10 +202,10 @@ const commentServiceTicket = new CommentService(
 
                 switch (thirdPartyId) {
                     case TP_ID.linear: {
-                        const linear = new LinearClient({
+                        var linear = new LinearClient({
                             accessToken: thirdPartyToken,
                         });
-                        const variables = {
+                        var variables = {
                             first: pageSize ? pageSize : null,
                             after: cursor ? cursor : null,
                             last: null,
@@ -219,9 +219,9 @@ const commentServiceTicket = new CommentService(
                             },
                         };
 
-                        const comments = await linear.comments(variables);
+                        var comments = await linear.comments(variables);
 
-                        const unifiedComments = await Promise.all(
+                        var unifiedComments = await Promise.all(
                             comments.nodes.map(
                                 async (comment: any) =>
                                     await unifyObject<any, UnifiedTicketComment>({
@@ -234,7 +234,7 @@ const commentServiceTicket = new CommentService(
                             ),
                         );
 
-                        const pageInfo = comments.pageInfo;
+                        var pageInfo = comments.pageInfo;
                         let next_cursor: string | undefined = undefined;
                         if (pageInfo.hasNextPage && pageInfo.endCursor) {
                             next_cursor = pageInfo.endCursor;
@@ -262,7 +262,7 @@ const commentServiceTicket = new CommentService(
                                 'Content-Type': 'application/json',
                             },
                         });
-                        const unifiedComments = await Promise.all(
+                        var unifiedComments = await Promise.all(
                             result.data.comments.map(
                                 async (comment: any) =>
                                     await unifyObject<any, UnifiedTicketComment>({
@@ -288,7 +288,7 @@ const commentServiceTicket = new CommentService(
                             pageSize && cursor ? `&startAt=${cursor}` : ''
                         }`;
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/rest/api/2/issue/${fields.taskId}/comment?${pagingString}`,
                             headers: {
@@ -297,7 +297,7 @@ const commentServiceTicket = new CommentService(
                             },
                         });
 
-                        const unifiedComments = await Promise.all(
+                        var unifiedComments = await Promise.all(
                             result.data.comments.map(
                                 async (comment: any) =>
                                     await unifyObject<any, UnifiedTicketComment>({
@@ -310,11 +310,11 @@ const commentServiceTicket = new CommentService(
                             ),
                         );
 
-                        const limit = Number(result.data.maxResults);
-                        const startAt = Number(result.data.startAt);
-                        const total = Number(result.data.total);
-                        const nextCursor = limit + startAt <= total ? String(limit + startAt) : undefined;
-                        const previousCursor = startAt - limit >= 0 ? String(startAt - limit) : undefined;
+                        var limit = Number(result.data.maxResults);
+                        var startAt = Number(result.data.startAt);
+                        var total = Number(result.data.total);
+                        var nextCursor = limit + startAt <= total ? String(limit + startAt) : undefined;
+                        var previousCursor = startAt - limit >= 0 ? String(startAt - limit) : undefined;
 
                         res.send({
                             status: 'ok',
@@ -339,9 +339,9 @@ const commentServiceTicket = new CommentService(
                         });
                         comments = comments.data;
 
-                        const nextCursor = pageSize ? `${comments[comments.length - 1].id}` : undefined;
+                        var nextCursor = pageSize ? `${comments[comments.length - 1].id}` : undefined;
 
-                        const unifiedComments = await Promise.all(
+                        var unifiedComments = await Promise.all(
                             comments.map(
                                 async (comment: any) =>
                                     await unifyObject<any, UnifiedTicketComment>({
@@ -369,7 +369,7 @@ const commentServiceTicket = new CommentService(
                             });
                         }
 
-                        const pagingString = `${pageSize ? `page=${pageSize}` : ''}`;
+                        var pagingString = `${pageSize ? `page=${pageSize}` : ''}`;
                         let result: any = await axios({
                             method: 'get',
                             url: `https://api.bitbucket.org/2.0/repositories/${fields.workspace}/${fields.repo}/issues/${fields.taskId}/comments?pagelen=10&${pagingString}`,
@@ -378,7 +378,7 @@ const commentServiceTicket = new CommentService(
                                 Accept: 'application/json',
                             },
                         });
-                        const unifiedComments = await Promise.all(
+                        var unifiedComments = await Promise.all(
                             result.data.values.map(
                                 async (comment: any) =>
                                     await unifyObject<any, UnifiedTicketComment>({
@@ -391,7 +391,7 @@ const commentServiceTicket = new CommentService(
                             ),
                         );
 
-                        const pageNumber = result.data?.next ? (pageSize ? (pageSize + 1).toString() : '1') : undefined;
+                        var pageNumber = result.data?.next ? (pageSize ? (pageSize + 1).toString() : '1') : undefined;
 
                         res.send({
                             status: 'ok',
@@ -410,7 +410,7 @@ const commentServiceTicket = new CommentService(
                         let pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page=${cursor}` : ''
                         }`;
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `https://api.github.com/repos/${fields.owner}/${fields.repo}/issues/${fields.taskId}/comments?${pagingString}`,
                             headers: {
@@ -419,7 +419,7 @@ const commentServiceTicket = new CommentService(
                             },
                         });
 
-                        const unifiedComments: any = await Promise.all(
+                        var unifiedComments: any = await Promise.all(
                             result.data.map(
                                 async (task: any) =>
                                     await unifyObject<any, UnifiedTicketComment>({
@@ -432,10 +432,10 @@ const commentServiceTicket = new CommentService(
                             ),
                         );
 
-                        const linkHeader = result.headers.link;
+                        var linkHeader = result.headers.link;
                         let nextCursor, previousCursor;
                         if (linkHeader) {
-                            const links = linkHeader.split(',');
+                            var links = linkHeader.split(',');
 
                             links?.forEach((link: any) => {
                                 if (link.includes('rel="next"')) {
@@ -471,16 +471,16 @@ const commentServiceTicket = new CommentService(
         async createComment(req, res) {
             try {
                 let commentData: any = req.body as unknown as UnifiedTicketComment;
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = JSON.parse((req.query as any).fields as string);
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = JSON.parse((req.query as any).fields as string);
                 if (commentData && !commentData.taskId) {
                     throw new Error('The parameter "taskId" is required in request body.');
                 }
-                const comment: any = await disunifyTicketObject<UnifiedTicketComment>({
+                var comment: any = await disunifyTicketObject<UnifiedTicketComment>({
                     obj: commentData,
                     tpId: thirdPartyId,
                     objType,
@@ -491,11 +491,11 @@ const commentServiceTicket = new CommentService(
 
                 switch (thirdPartyId) {
                     case TP_ID.linear: {
-                        const linear = new LinearClient({
+                        var linear = new LinearClient({
                             accessToken: thirdPartyToken,
                         });
 
-                        const result = await linear.createComment(comment);
+                        var result = await linear.createComment(comment);
 
                         res.send({
                             status: 'ok',
@@ -505,7 +505,7 @@ const commentServiceTicket = new CommentService(
                         break;
                     }
                     case TP_ID.clickup: {
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
                             url: `https://api.clickup.com/api/v2/task/${commentData.taskId}/comment`,
                             headers: {
@@ -523,7 +523,7 @@ const commentServiceTicket = new CommentService(
                         break;
                     }
                     case TP_ID.jira: {
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
                             url: `${connection.tp_account_url}/rest/api/2/issue/${commentData.taskId}/comment`,
                             headers: {
@@ -542,7 +542,7 @@ const commentServiceTicket = new CommentService(
                         break;
                     }
                     case TP_ID.trello: {
-                        const commentCreated = await axios({
+                        var commentCreated = await axios({
                             method: 'post',
                             url: `https://api.trello.com/1/cards/${commentData.taskId}/actions/comments?text=${comment.data.text}&key=${connection.app_client_id}&token=${thirdPartyToken}`,
                             headers: {
@@ -563,7 +563,7 @@ const commentServiceTicket = new CommentService(
                                 error: 'The query parameters "repo" and "workspace" are required and should be included in the "fields" parameter."repo" and "workspace" can either be slug or UUID.',
                             });
                         }
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
                             url: `https://api.bitbucket.org/2.0/repositories/${fields.workspace}/${fields.repo}/issues/${commentData.taskId}/comments`,
                             headers: {
@@ -582,7 +582,7 @@ const commentServiceTicket = new CommentService(
                                 error: 'The query parameters "repo" and "owner" are required and should be included in the "fields" parameter.',
                             });
                         }
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
                             url: `https://api.github.com/repos/${fields.owner}/${fields.repo}/issues/${commentData.taskId}/comments `,
                             headers: {
@@ -611,15 +611,15 @@ const commentServiceTicket = new CommentService(
         },
         async updateComment(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const commentData: any = req.body as unknown as UnifiedTicketComment;
-                const commentId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = JSON.parse((req.query as any).fields as string);
-                const comment: any = await disunifyTicketObject<UnifiedTicketComment>({
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var commentData: any = req.body as unknown as UnifiedTicketComment;
+                var commentId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = JSON.parse((req.query as any).fields as string);
+                var comment: any = await disunifyTicketObject<UnifiedTicketComment>({
                     obj: commentData,
                     tpId: thirdPartyId,
                     objType,
@@ -630,11 +630,11 @@ const commentServiceTicket = new CommentService(
 
                 switch (thirdPartyId) {
                     case TP_ID.linear: {
-                        const linear = new LinearClient({
+                        var linear = new LinearClient({
                             accessToken: thirdPartyToken,
                         });
 
-                        const commentCreated = await linear.updateComment(commentId, comment);
+                        var commentCreated = await linear.updateComment(commentId, comment);
 
                         res.send({
                             status: 'ok',
@@ -644,7 +644,7 @@ const commentServiceTicket = new CommentService(
                         break;
                     }
                     case TP_ID.clickup: {
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'put',
                             url: `https://api.clickup.com/api/v2/comment/${commentId}`,
                             headers: {
@@ -667,7 +667,7 @@ const commentServiceTicket = new CommentService(
                                 error: 'taskId is required in request body for updating Jira comment.',
                             });
                         }
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'put',
                             url: `${connection.tp_account_url}/rest/api/2/issue/${commentData.taskId}/comment/${commentId}`,
                             headers: {
@@ -690,7 +690,7 @@ const commentServiceTicket = new CommentService(
                                 error: 'taskId is required in request body for updating trello comment.',
                             });
                         }
-                        const result = await axios({
+                        var result = await axios({
                             method: 'put',
                             url: `https://api.trello.com/1/cards/${commentData.taskId}/actions/${commentId}/comments?text=${comment.data.text}&key=${connection.app_client_id}&token=${thirdPartyToken}`,
                             headers: {
@@ -717,7 +717,7 @@ const commentServiceTicket = new CommentService(
                                 error: 'taskId is required in request body for updating Bitbucket comment.',
                             });
                         }
-                        const result = await axios({
+                        var result = await axios({
                             method: 'put',
                             url: `https://api.bitbucket.org/2.0/repositories/${fields.workspace}/${fields.repo}/issues/${commentData.taskId}/comments/${commentId}`,
                             headers: {
@@ -743,7 +743,7 @@ const commentServiceTicket = new CommentService(
                             });
                         }
 
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'patch',
                             url: `  https://api.github.com/repos/${fields.owner}/${fields.repo}/issues/comments/${commentId}  `,
                             headers: {
