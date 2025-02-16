@@ -26,15 +26,15 @@ class SfdcAuthHandler extends BaseOAuthHandler {
     }: IntegrationAuthProps) {
         try {
             // Handle the received code
-            let url = 'https://login.salesforce.com/services/oauth2/token';
-            let formData = {
+            const url = 'https://login.salesforce.com/services/oauth2/token';
+            const formData = {
                 grant_type: 'authorization_code',
                 client_id: clientId || config.SFDC_CLIENT_ID,
                 client_secret: clientSecret || config.SFDC_CLIENT_SECRET,
                 redirect_uri: `${config.OAUTH_REDIRECT_BASE}/sfdc`,
                 code,
             };
-            let result = await axios({
+            const result = await axios({
                 method: 'post',
                 url: url,
                 data: qs.stringify(formData),
@@ -43,7 +43,7 @@ class SfdcAuthHandler extends BaseOAuthHandler {
                 },
             });
             logInfo('OAuth creds for sfdc', result.data);
-            let info = await axios({
+            const info = await axios({
                 method: 'get',
                 url: 'https://login.salesforce.com/services/oauth2/userinfo',
                 headers: {
