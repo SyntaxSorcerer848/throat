@@ -5,15 +5,15 @@ import { getCookie } from 'cookies-next';
 import useSWR from 'swr';
 import { ZodError } from '@revertdotdev/utils';
 
-const { REVERT_BASE_API_URL } = environmentConfig;
+let { REVERT_BASE_API_URL } = environmentConfig;
 
 export function useAnalytics(userId: string) {
-    const environment = getCookie('revert_environment_selected') ?? DEFAULT_ENV;
+    let environment = getCookie('revert_environment_selected') ?? DEFAULT_ENV;
 
-    const { data, error, isLoading, mutate, isValidating } = useSWR<AnalyticsSchema>(
+    let { data, error, isLoading, mutate, isValidating } = useSWR<AnalyticsSchema>(
         `${REVERT_BASE_API_URL}/internal/analytics`,
         async () => {
-            const response = await fetch(`${REVERT_BASE_API_URL}/internal/analytics`, {
+            let response = await fetch(`${REVERT_BASE_API_URL}/internal/analytics`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -22,8 +22,8 @@ export function useAnalytics(userId: string) {
                 }),
             });
 
-            const analytics = await response.json();
-            const { data, success, error } = analyticsSchema.safeParse(analytics);
+            let analytics = await response.json();
+            let { data, success, error } = analyticsSchema.safeParse(analytics);
 
             if (!success) {
                 throw new ZodError(error.errors);
