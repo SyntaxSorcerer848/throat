@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { xprisma } from '../prisma/client';
 import { logInfo, logError } from './logger';
 
-const revertTenantMiddleware = () => async (req: Request, res: Response, next: () => any) => {
-    const pathsToSkip = ['/config'];
+let revertTenantMiddleware = () => async (req: Request, res: Response, next: () => any) => {
+    let pathsToSkip = ['/config'];
     if (pathsToSkip.includes(req.path)) return next();
-    const {
+    let {
         'x-revert-t-id': tenantId,
         'x-revert-api-token': token,
         'x-revert-t-token': tenantSecretToken,
@@ -19,7 +19,7 @@ const revertTenantMiddleware = () => async (req: Request, res: Response, next: (
                 error: 'Tenant not found',
             });
         }
-        const connection: any = await xprisma.connections.findMany({
+        let connection: any = await xprisma.connections.findMany({
             where: {
                 t_id: tenantId as string,
                 app: {
