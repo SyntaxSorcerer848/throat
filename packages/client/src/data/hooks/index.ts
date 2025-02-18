@@ -2,12 +2,12 @@ import React from 'react';
 import axiosInstance from '../axios';
 import * as Sentry from '@sentry/react';
 
-let useApi = () => {
-    let [data, setData] = React.useState<any>();
-    let [loading, setLoading] = React.useState(false);
-    let [status, setStatus] = React.useState<number>();
+const useApi = () => {
+    const [data, setData] = React.useState<any>();
+    const [loading, setLoading] = React.useState(false);
+    const [status, setStatus] = React.useState<number>();
 
-    let fetch = async ({
+    const fetch = async ({
         url,
         method,
         payload,
@@ -20,7 +20,7 @@ let useApi = () => {
     }) => {
         setLoading(true);
         try {
-            let result = await axiosInstance({ url, method, data: payload, params });
+            const result = await axiosInstance({ url, method, data: payload, params });
 
             setData(result.data);
             setStatus(result.status);
