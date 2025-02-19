@@ -30,15 +30,15 @@ export async function unifyObject<T extends Record<string, any>, K>({
     tenantSchemaMappingId?: string;
     accountFieldMappingConfig?: accountFieldMappingConfig;
 }): Promise<K> {
-    let processedObj = preprocessUnifyObject({ obj, tpId, objType });
-    let transformedObject = await transformFieldMappingToModel({
+    const processedObj = preprocessUnifyObject({ obj, tpId, objType });
+    const transformedObject = await transformFieldMappingToModel({
         obj: processedObj,
         tpId,
         objType,
         tenantSchemaMappingId,
         accountFieldMappingConfig,
     });
-    let unifiedObject: {
+    const unifiedObject: {
         additional: any;
         associations: any | undefined;
     } = {
