@@ -10,18 +10,18 @@ import { UnifiedDepartment } from '../../models/unified/department';
 import { DepartmentService } from '../../generated/typescript/api/resources/ats/resources/department/service/DepartmentService';
 import { AppConfig, AtsStandardObjects } from '../../constants/common';
 
-var objType = AtsStandardObjects.department;
+const objType = AtsStandardObjects.department;
 
-var departmentServiceAts = new DepartmentService(
+const departmentServiceAts = new DepartmentService(
     {
         async getDepartment(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var departmentId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const departmentId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
                 logInfo(
                     'Revert::GET DEPARTMENT',
                     connection.app?.env?.accountId,
@@ -33,18 +33,18 @@ var departmentServiceAts = new DepartmentService(
 
                 switch (thirdPartyId) {
                     case TP_ID.greenhouse: {
-                        var apiToken = thirdPartyToken;
-                        var credentials = Buffer.from(apiToken + ':').toString('base64');
-                        var headers = {
+                        const apiToken = thirdPartyToken;
+                        const credentials = Buffer.from(apiToken + ':').toString('base64');
+                        const headers = {
                             Authorization: 'Basic ' + credentials,
                         };
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `https://harvest.greenhouse.io/v1/departments/${departmentId}`,
                             headers: headers,
                         });
-                        var UnifiedDepartment: any = await unifyObject<any, UnifiedDepartment>({
+                        const UnifiedDepartment: any = await unifyObject<any, UnifiedDepartment>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -81,14 +81,14 @@ var departmentServiceAts = new DepartmentService(
         },
         async getDepartments(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields: any = req.query.fields && JSON.parse(req.query.fields as string);
-                var pageSize = parseInt(String(req.query.pageSize));
-                var cursor = req.query.cursor;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields: any = req.query.fields && JSON.parse(req.query.fields as string);
+                const pageSize = parseInt(String(req.query.pageSize));
+                const cursor = req.query.cursor;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
 
                 logInfo(
                     'Revert::GET ALL DEPARTMENTS',
@@ -100,9 +100,9 @@ var departmentServiceAts = new DepartmentService(
 
                 switch (thirdPartyId) {
                     case TP_ID.greenhouse: {
-                        var apiToken = thirdPartyToken;
-                        var credentials = Buffer.from(apiToken + ':').toString('base64');
-                        var headers = {
+                        const apiToken = thirdPartyToken;
+                        const credentials = Buffer.from(apiToken + ':').toString('base64');
+                        const headers = {
                             Authorization: 'Basic ' + credentials,
                         };
 
@@ -117,13 +117,13 @@ var departmentServiceAts = new DepartmentService(
                             pageSize && cursor ? `&page=${cursor}` : ''
                         }${otherParams ? `&${otherParams}` : ''}`;
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `https://harvest.greenhouse.io/v1/departments?${pagingString}`,
                             headers: headers,
                         });
 
-                        var unifiedDepartments = await Promise.all(
+                        const unifiedDepartments = await Promise.all(
                             result.data.map(async (department: any) => {
                                 return await unifyObject<any, UnifiedDepartment>({
                                     obj: department,
@@ -134,10 +134,10 @@ var departmentServiceAts = new DepartmentService(
                                 });
                             }),
                         );
-                        var linkHeader = result.headers.link;
+                        const linkHeader = result.headers.link;
                         let nextCursor, previousCursor;
                         if (linkHeader) {
-                            var links = linkHeader.split(',');
+                            const links = linkHeader.split(',');
 
                             links?.forEach((link: any) => {
                                 if (link.includes('rel="next"')) {
@@ -158,9 +158,9 @@ var departmentServiceAts = new DepartmentService(
                         break;
                     }
                     case TP_ID.lever: {
-                        var headers = { Authorization: `Bearer ${thirdPartyToken}` };
+                        const headers = { Authorization: `Bearer ${thirdPartyToken}` };
 
-                        var env =
+                        const env =
                             connection?.app?.tp_id === 'lever' && (connection?.app?.app_config as AppConfig)?.env;
 
                         let otherParams = '';
@@ -174,18 +174,18 @@ var departmentServiceAts = new DepartmentService(
                             cursor ? `&offset=${cursor}` : ''
                         }${otherParams ? `&${otherParams}` : ''}`;
 
-                        var url =
+                        const url =
                             env === 'Sandbox'
                                 ? `https://api.sandbox.lever.co/v1/tags?${pagingString}`
                                 : `https://api.lever.co/v1/tags?${pagingString}`;
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: url,
                             headers: headers,
                         });
 
-                        var unifiedDepartments = await Promise.all(
+                        const unifiedDepartments = await Promise.all(
                             result.data.data.map(async (department: any) => {
                                 return await unifyObject<any, UnifiedDepartment>({
                                     obj: department,
@@ -229,15 +229,15 @@ var departmentServiceAts = new DepartmentService(
         },
         async createDepartment(req, res) {
             try {
-                var departmentData: any = req.body as unknown as UnifiedDepartment;
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                const departmentData: any = req.body as unknown as UnifiedDepartment;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
-                var department: any = await disunifyAtsObject<UnifiedDepartment>({
+                const department: any = await disunifyAtsObject<UnifiedDepartment>({
                     obj: departmentData,
                     tpId: thirdPartyId,
                     objType,
@@ -255,10 +255,10 @@ var departmentServiceAts = new DepartmentService(
                             });
                         }
 
-                        var apiToken = thirdPartyToken;
-                        var credentials = Buffer.from(apiToken + ':').toString('base64');
+                        const apiToken = thirdPartyToken;
+                        const credentials = Buffer.from(apiToken + ':').toString('base64');
 
-                        var result: any = await axios({
+                        const result: any = await axios({
                             method: 'post',
                             url: `https://harvest.greenhouse.io/v1/departments`,
                             headers: {
@@ -296,16 +296,16 @@ var departmentServiceAts = new DepartmentService(
         },
         async updateDepartment(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var departmentData = req.body as unknown as UnifiedDepartment;
-                var departmentId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const departmentData = req.body as unknown as UnifiedDepartment;
+                const departmentId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
-                var department: any = await disunifyAtsObject<UnifiedDepartment>({
+                const department: any = await disunifyAtsObject<UnifiedDepartment>({
                     obj: departmentData,
                     tpId: thirdPartyId,
                     objType,
@@ -321,10 +321,10 @@ var departmentServiceAts = new DepartmentService(
                                 error: 'The query parameter "onBehalfOf",which is a greenhouseUser Id, is required and should be included in the "fields" parameter.',
                             });
                         }
-                        var apiToken = thirdPartyToken;
-                        var credentials = Buffer.from(apiToken + ':').toString('base64');
+                        const apiToken = thirdPartyToken;
+                        const credentials = Buffer.from(apiToken + ':').toString('base64');
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'patch',
                             url: `https://harvest.greenhouse.io/v1/departments/${departmentId}`,
                             headers: {
@@ -368,12 +368,12 @@ var departmentServiceAts = new DepartmentService(
 
         async deleteDepartment(req, res) {
             try {
-                var connection = res.locals.connection;
-                var departmentId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                // var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                const connection = res.locals.connection;
+                const departmentId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                // const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
                 logInfo(
                     'Revert::DELETE DEPARTMENT',
