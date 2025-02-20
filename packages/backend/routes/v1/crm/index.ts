@@ -1,7 +1,7 @@
 import express from 'express';
 import authRouter from './auth';
 
-let crmRouter = express.Router();
+const crmRouter = express.Router();
 
 crmRouter.get('/ping', async (_, res) => {
     res.send({
