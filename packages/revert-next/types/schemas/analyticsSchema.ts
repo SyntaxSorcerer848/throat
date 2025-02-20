@@ -1,6 +1,6 @@
 import { z } from '@revertdotdev/utils';
 
-export const analyticsSchema = z
+export let analyticsSchema = z
     .object({
         result: z
             .object({
