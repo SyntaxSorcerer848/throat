@@ -1,6 +1,6 @@
 import { z } from '@revertdotdev/utils';
 
-export const TP_ID = z.enum([
+export let TP_ID = z.enum([
     'hubspot',
     'zohocrm',
     'sfdc',
