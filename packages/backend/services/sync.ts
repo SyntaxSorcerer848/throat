@@ -5,13 +5,13 @@ import revertAuthMiddleware from '../helpers/authMiddleware';
 import revertTenantMiddleware from '../helpers/tenantIdMiddleware';
 import { syncTwentyConnection } from './custom/twenty';
 
-let syncService = new SyncService(
+const syncService = new SyncService(
     {
         async triggerSync(req, res) {
-            let account = res.locals.account;
+            const account = res.locals.account;
             if (account.id === config.TWENTY_ACCOUNT_ID) {
-                let { 'x-connection-api-key': twentyAPIKey } = req.headers;
-                let connection = res.locals.connection as Connection;
+                const { 'x-connection-api-key': twentyAPIKey } = req.headers;
+                const connection = res.locals.connection as Connection;
                 await syncTwentyConnection(connection, twentyAPIKey as string);
                 res.send({
                     status: 'ok',
