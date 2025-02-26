@@ -24,14 +24,14 @@ class CloseAuthHandler extends BaseOAuthHandler {
         redirectUrl,
     }: IntegrationAuthProps) {
         try {
-            let formData = {
+            const formData = {
                 client_id: clientId || config.CLOSECRM_CLIENT_ID,
                 client_secret: clientSecret || config.CLOSECRM_CLIENT_SECRET,
                 grant_type: 'authorization_code',
                 code,
             };
 
-            let result = await axios({
+            const result = await axios({
                 method: 'post',
                 url: 'https://api.close.com/oauth2/token/',
                 data: qs.stringify(formData),
@@ -39,7 +39,7 @@ class CloseAuthHandler extends BaseOAuthHandler {
             });
             logInfo('OAuth creds for close crm', result.data);
 
-            let info = await axios({
+            const info = await axios({
                 method: 'get',
                 url: 'https://api.close.com/api/v1/me/',
                 headers: {
