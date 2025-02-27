@@ -11,10 +11,10 @@ class AppService {
         tpId: TP_ID;
         environment: string;
     }): Promise<any> {
-        const id = `${tpId}_${accountId}_${environment}`;
-        const environmentId = `${accountId}_${environment}`;
+        let id = `${tpId}_${accountId}_${environment}`;
+        let environmentId = `${accountId}_${environment}`;
         try {
-            const createdApp = await prisma.apps.create({
+            let createdApp = await prisma.apps.create({
                 data: {
                     id,
                     tp_id: tpId,
