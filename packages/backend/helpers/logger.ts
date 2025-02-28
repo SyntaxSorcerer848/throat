@@ -1,14 +1,14 @@
 import * as Sentry from '@sentry/node';
 import winston from 'winston';
 
-let enumerateErrorFormat = winston.format((info) => {
+const enumerateErrorFormat = winston.format((info) => {
     if (info instanceof Error) {
         Object.assign(info, { message: info.stack });
     }
     return info;
 });
 
-let logger = winston.createLogger({
+const logger = winston.createLogger({
     level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
     format: winston.format.combine(
         winston.format.timestamp(),
@@ -24,12 +24,12 @@ let logger = winston.createLogger({
     ],
 });
 
-let logError = (error: Error) => {
+const logError = (error: Error) => {
     Sentry.captureException(error);
     logger.error(error);
 };
 
-let logInfo = (message: string, ...args: any[]) => {
+const logInfo = (message: string, ...args: any[]) => {
     if (!args || !args.length) {
         logger.info(message);
         return;
@@ -37,7 +37,7 @@ let logInfo = (message: string, ...args: any[]) => {
     logger.info(`${message} %o`, args);
 };
 
-let logWarn = (message: string, ...args: any[]) => {
+const logWarn = (message: string, ...args: any[]) => {
     if (!args || !args.length) {
         logger.warn(message);
         return;
@@ -45,7 +45,7 @@ let logWarn = (message: string, ...args: any[]) => {
     logger.warn(`${message} %o`, args);
 };
 
-let logDebug = (message: string, arg: any) => {
+const logDebug = (message: string, arg: any) => {
     if (!arg) {
         logger.debug(message);
         return;
