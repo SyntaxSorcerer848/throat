@@ -11,19 +11,19 @@ import { unifyObject } from '../../helpers/crm/transform';
 import { TicketStandardObjects } from '../../constants/common';
 import { LinearClient } from '@linear/sdk';
 
-const objType = TicketStandardObjects.ticketUser;
+var objType = TicketStandardObjects.ticketUser;
 
-const userServiceTicket = new UserService(
+var userServiceTicket = new UserService(
     {
         async getUser(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const userId = req.params.id;
-                // const fields = req.query.fields;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var userId = req.params.id;
+                // var fields = req.query.fields;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
                 logInfo(
                     'Revert::GET USER',
                     connection.app?.env?.accountId,
@@ -35,12 +35,12 @@ const userServiceTicket = new UserService(
 
                 switch (thirdPartyId) {
                     case TP_ID.linear: {
-                        const linear = new LinearClient({
+                        var linear = new LinearClient({
                             accessToken: thirdPartyToken,
                         });
-                        const user = await linear.user(userId);
+                        var user = await linear.user(userId);
 
-                        const unifiedUser = await unifyObject<any, UnifiedTicketUser>({
+                        var unifiedUser = await unifyObject<any, UnifiedTicketUser>({
                             obj: user,
                             tpId: thirdPartyId,
                             objType,
@@ -62,7 +62,7 @@ const userServiceTicket = new UserService(
                         break;
                     }
                     case TP_ID.jira: {
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/rest/api/2/user?accountId=${userId}`,
                             headers: {
@@ -71,7 +71,7 @@ const userServiceTicket = new UserService(
                             },
                         });
 
-                        const unifiedUser = await unifyObject<any, UnifiedTicketUser>({
+                        var unifiedUser = await unifyObject<any, UnifiedTicketUser>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -87,7 +87,7 @@ const userServiceTicket = new UserService(
                         break;
                     }
                     case TP_ID.trello: {
-                        const member: any = await axios({
+                        var member: any = await axios({
                             method: 'get',
                             url: `https://api.trello.com/1/members/${userId}?key=${connection.app_client_id}&token=${thirdPartyToken}`,
                             headers: {
@@ -95,7 +95,7 @@ const userServiceTicket = new UserService(
                             },
                         });
 
-                        const unifiedUser = await unifyObject<any, UnifiedTicketUser>({
+                        var unifiedUser = await unifyObject<any, UnifiedTicketUser>({
                             obj: member.data,
                             tpId: thirdPartyId,
                             objType,
@@ -109,7 +109,7 @@ const userServiceTicket = new UserService(
                         break;
                     }
                     case TP_ID.bitbucket: {
-                        const result = await axios({
+                        var result = await axios({
                             method: 'GET',
                             url: `https://api.bitbucket.org/2.0/users/${userId}`,
                             headers: {
@@ -118,7 +118,7 @@ const userServiceTicket = new UserService(
                             },
                         });
 
-                        const unifiedUser = await unifyObject<any, UnifiedTicketUser>({
+                        var unifiedUser = await unifyObject<any, UnifiedTicketUser>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -134,7 +134,7 @@ const userServiceTicket = new UserService(
                         break;
                     }
                     case TP_ID.github: {
-                        const result = await axios({
+                        var result = await axios({
                             method: 'GET',
                             url: `https://api.github.com/users/${userId}`, //userId has to be username in case of GitHub
                             headers: {
@@ -143,7 +143,7 @@ const userServiceTicket = new UserService(
                             },
                         });
 
-                        const unifiedUser = await unifyObject<any, UnifiedTicketUser>({
+                        var unifiedUser = await unifyObject<any, UnifiedTicketUser>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -173,14 +173,14 @@ const userServiceTicket = new UserService(
         },
         async getUsers(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const fields: any = req.query.fields ? JSON.parse(req.query.fields as string) : undefined;
-                const pageSize = parseInt(String(req.query.pageSize));
-                const cursor = req.query.cursor;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var fields: any = req.query.fields ? JSON.parse(req.query.fields as string) : undefined;
+                var pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
 
                 if (
                     ((thirdPartyId !== TP_ID.jira && !fields) ||
@@ -203,7 +203,7 @@ const userServiceTicket = new UserService(
                 );
                 switch (thirdPartyId) {
                     case TP_ID.linear: {
-                        const linear = new LinearClient({
+                        var linear = new LinearClient({
                             accessToken: thirdPartyToken,
                         });
 
@@ -211,7 +211,7 @@ const userServiceTicket = new UserService(
                             In GraphQL, either 'first' & 'after' or 'last' & 'before' can exist but not both simultaneously.
                             To determine the appropriate pagination direction, an additional flag parameter is required.
                         */
-                        const variables = {
+                        var variables = {
                             first: pageSize ? pageSize : null,
                             after: cursor ? cursor : null,
                             last: null,
@@ -219,7 +219,7 @@ const userServiceTicket = new UserService(
                         };
 
                         let result: any = await linear.users(variables);
-                        const linearGraphqlClient = await linear.client;
+                        var linearGraphqlClient = await linear.client;
                         let membersId: any = await linearGraphqlClient.rawRequest(
                             `query Team($teamId: String!) {
                             team(id: $teamId) {
@@ -236,11 +236,11 @@ const userServiceTicket = new UserService(
                         );
 
                         membersId = membersId.data.team.members.nodes;
-                        const users = result.nodes.filter((user: any) =>
+                        var users = result.nodes.filter((user: any) =>
                             membersId.some((item: any) => item.id === user.id),
                         );
 
-                        const unifiedUsers = await Promise.all(
+                        var unifiedUsers = await Promise.all(
                             users.map(
                                 async (user: any) =>
                                     await unifyObject<any, UnifiedTicketUser>({
@@ -253,7 +253,7 @@ const userServiceTicket = new UserService(
                             ),
                         );
 
-                        const pageInfo = result.pageInfo;
+                        var pageInfo = result.pageInfo;
                         let next_cursor = undefined;
                         if (pageInfo.hasNextPage && pageInfo.endCursor) {
                             next_cursor = pageInfo.endCursor;
@@ -274,8 +274,8 @@ const userServiceTicket = new UserService(
                         break;
                     }
                     case TP_ID.clickup: {
-                        const pagingString = `${cursor ? `page=${cursor}` : ''}`;
-                        const result: any = await axios({
+                        var pagingString = `${cursor ? `page=${cursor}` : ''}`;
+                        var result: any = await axios({
                             method: 'get',
                             url: `https://api.clickup.com/api/v2/list/${fields.listId}/member?${pagingString}`,
                             headers: {
@@ -283,7 +283,7 @@ const userServiceTicket = new UserService(
                                 'Content-Type': 'application/json',
                             },
                         });
-                        const unnifiedMembers: any = await Promise.all(
+                        var unnifiedMembers: any = await Promise.all(
                             result.data.members.map(
                                 async (user: any) =>
                                     await unifyObject<any, UnifiedTicketUser>({
@@ -295,7 +295,7 @@ const userServiceTicket = new UserService(
                                     }),
                             ),
                         );
-                        const pageNumber = !result.data?.last_page
+                        var pageNumber = !result.data?.last_page
                             ? cursor
                                 ? (parseInt(String(cursor)) + 1).toString()
                                 : '1'
@@ -312,7 +312,7 @@ const userServiceTicket = new UserService(
                         let pagingString = `${pageSize ? `&maxResults=${pageSize}` : ''}${
                             pageSize && cursor ? `&startAt=${cursor}` : ''
                         }`;
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/rest/api/2/users/search?${pagingString}`,
                             headers: {
@@ -321,7 +321,7 @@ const userServiceTicket = new UserService(
                             },
                         });
 
-                        const unifiedUsers = await Promise.all(
+                        var unifiedUsers = await Promise.all(
                             result.data.map(async (user: any) => {
                                 return await unifyObject<any, UnifiedTicketUser>({
                                     obj: user,
@@ -333,8 +333,8 @@ const userServiceTicket = new UserService(
                             }),
                         );
 
-                        const nextCursor = pageSize ? Number(cursor ? cursor : 0) + Number(pageSize) : undefined;
-                        const previousCursor =
+                        var nextCursor = pageSize ? Number(cursor ? cursor : 0) + Number(pageSize) : undefined;
+                        var previousCursor =
                             pageSize && cursor && Number(cursor) >= pageSize
                                 ? Number(cursor) - Number(pageSize)
                                 : undefined;
@@ -355,15 +355,15 @@ const userServiceTicket = new UserService(
                             pagingString = pagingString + `&before=${cursor}`;
                         }
 
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'get',
                             url: `https://api.trello.com/1/boards/${fields.listId}/members?key=${connection.app_client_id}&token=${thirdPartyToken}&${pagingString}`,
                             headers: {
                                 Accept: 'application/json',
                             },
                         });
-                        const nextCursor = pageSize ? `${result.data[result.data.length - 1].id}` : undefined;
-                        const unifiedUsers = await Promise.all(
+                        var nextCursor = pageSize ? `${result.data[result.data.length - 1].id}` : undefined;
+                        var unifiedUsers = await Promise.all(
                             result.data.map(
                                 async (user: any) =>
                                     await unifyObject<any, UnifiedTicketUser>({
@@ -395,7 +395,7 @@ const userServiceTicket = new UserService(
                         let pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&since=${cursor}` : ''
                         }`;
-                        const result = await axios({
+                        var result = await axios({
                             method: 'GET',
                             url: `https://api.github.com/users?${pagingString}`,
                             headers: {
@@ -404,7 +404,7 @@ const userServiceTicket = new UserService(
                             },
                         });
 
-                        const unifiedUsers = await Promise.all(
+                        var unifiedUsers = await Promise.all(
                             result.data.map(async (user: any) => {
                                 return await unifyObject<any, UnifiedTicketUser>({
                                     obj: user,
@@ -416,8 +416,8 @@ const userServiceTicket = new UserService(
                             }),
                         );
 
-                        const nextCursor = pageSize ? Number(cursor ? cursor : 0) + Number(pageSize) : undefined;
-                        const previousCursor =
+                        var nextCursor = pageSize ? Number(cursor ? cursor : 0) + Number(pageSize) : undefined;
+                        var previousCursor =
                             pageSize && cursor && Number(cursor) >= pageSize
                                 ? Number(cursor) - Number(pageSize)
                                 : undefined;
