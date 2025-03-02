@@ -6,11 +6,11 @@ import { tp_id } from '@revertdotdev/types/schemas/commonSchema';
 import { AppConfig } from '@revertdotdev/types/schemas/appSchema';
 import { environmentConfig } from './config';
 
-const { REVERT_BASE_API_URL } = environmentConfig;
+let { REVERT_BASE_API_URL } = environmentConfig;
 
 export async function changeEnvironmentMode() {
-    const cookie = cookies();
-    const currentMode = cookie.get('revert_environment_selected')?.value ?? DEFAULT_ENV;
+    let cookie = cookies();
+    let currentMode = cookie.get('revert_environment_selected')?.value ?? DEFAULT_ENV;
 
     if (currentMode.includes(DEFAULT_ENV)) {
         cookie.set('revert_environment_selected', 'production');
@@ -24,7 +24,7 @@ export async function changeEnvironmentMode() {
 }
 
 export async function setOnboardingCompleted({ userId, environment }: { userId: string; environment: string }) {
-    const response = await fetch(`${REVERT_BASE_API_URL}/internal/account/onboarding`, {
+    let response = await fetch(`${REVERT_BASE_API_URL}/internal/account/onboarding`, {
         method: 'POST',
         body: JSON.stringify({
             userId,
@@ -35,7 +35,7 @@ export async function setOnboardingCompleted({ userId, environment }: { userId: 
         },
     });
 
-    const data = await response.json();
+    let data = await response.json();
     revalidatePath('/dashboard/onboarding');
     return data;
 }
@@ -49,7 +49,7 @@ export async function createApplication({
     tpId: tp_id;
     environment: string;
 }) {
-    const response = await fetch(`${REVERT_BASE_API_URL}/internal/account/apps`, {
+    let response = await fetch(`${REVERT_BASE_API_URL}/internal/account/apps`, {
         method: 'POST',
         body: JSON.stringify({
             userId,
@@ -61,7 +61,7 @@ export async function createApplication({
         },
     });
 
-    const data = await response.json();
+    let data = await response.json();
     revalidatePath('/dashboard/integrations');
     return data;
 }
@@ -87,7 +87,7 @@ export async function updateCredentials({
 }) {
     // Todo: handle errors;
     try {
-        const response = await fetch(`${REVERT_BASE_API_URL}/internal/account/credentials`, {
+        let response = await fetch(`${REVERT_BASE_API_URL}/internal/account/credentials`, {
             method: 'POST',
             body: JSON.stringify({
                 clientId,
@@ -104,7 +104,7 @@ export async function updateCredentials({
             },
         });
 
-        const data = await response.json();
+        let data = await response.json();
         revalidatePath(`/dashboard/integrations/config/settings/${appId}`);
         return data;
     } catch (err) {
@@ -117,7 +117,7 @@ export async function updateCredentials({
 
 export async function deleteIntegration({ appId, privateToken }: { appId: string; privateToken: string }) {
     try {
-        const response = await fetch(`${REVERT_BASE_API_URL}/internal/account/apps`, {
+        let response = await fetch(`${REVERT_BASE_API_URL}/internal/account/apps`, {
             method: 'DELETE',
             body: JSON.stringify({
                 appId,
