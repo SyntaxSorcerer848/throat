@@ -31,7 +31,7 @@ type IntegrationCreationOutcome = {
  * @param {string} props.tpCustomerId - The customer ID associated with the third-party integration.
  *
  */
-const processOAuthResult = async ({
+let processOAuthResult = async ({
     error,
     revertPublicKey,
     integrationName,
