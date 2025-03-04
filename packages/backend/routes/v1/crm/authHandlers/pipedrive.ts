@@ -26,14 +26,14 @@ class PipeDriveAuthHandler extends BaseOAuthHandler {
     }: IntegrationAuthProps) {
         try {
             // Handle the received code
-            const url = 'https://oauth.pipedrive.com/oauth/token';
-            const formData = {
+            let url = 'https://oauth.pipedrive.com/oauth/token';
+            let formData = {
                 grant_type: 'authorization_code',
                 redirect_uri: `${config.OAUTH_REDIRECT_BASE}/pipedrive`,
                 code,
             };
             // TODO: Add proper types
-            const result = await axios({
+            let result = await axios({
                 method: 'post',
                 url: url,
                 data: qs.stringify(formData),
@@ -45,7 +45,7 @@ class PipeDriveAuthHandler extends BaseOAuthHandler {
                 },
             });
             logInfo('OAuth creds for pipedrive', result.data);
-            const info = await axios({
+            let info = await axios({
                 method: 'get',
                 url: `${result.data.api_domain}/users/me`,
                 headers: {
