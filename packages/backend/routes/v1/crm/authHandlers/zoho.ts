@@ -25,8 +25,8 @@ class ZohoAuthHandler extends BaseOAuthHandler {
         redirectUrl,
     }: IntegrationAuthProps) {
         try {
-            const url = `${request?.query.accountURL}/oauth/v2/token`;
-            const formData = {
+            let url = `${request?.query.accountURL}/oauth/v2/token`;
+            let formData = {
                 grant_type: 'authorization_code',
                 client_id: clientId || config.ZOHOCRM_CLIENT_ID,
                 client_secret: clientSecret || config.ZOHOCRM_CLIENT_SECRET,
@@ -36,7 +36,7 @@ class ZohoAuthHandler extends BaseOAuthHandler {
 
             logInfo('Zoho', request?.query, formData);
 
-            const result = await axios({
+            let result = await axios({
                 method: 'post',
                 url: url,
                 data: qs.stringify(formData),
@@ -57,7 +57,7 @@ class ZohoAuthHandler extends BaseOAuthHandler {
                     integrationName: mapIntegrationIdToIntegrationName[integrationId],
                 });
             } else {
-                const info = await axios({
+                let info = await axios({
                     method: 'get',
                     url: 'https://accounts.zoho.com/oauth/user/info',
                     headers: {
