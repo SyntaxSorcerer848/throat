@@ -1,3 +1,3 @@
-export let LOCALSTORAGE_KEYS = {
+export const LOCALSTORAGE_KEYS = {
     privateToken: 'privateToken',
 };
