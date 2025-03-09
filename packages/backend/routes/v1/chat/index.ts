@@ -4,7 +4,7 @@ import authRouter from './auth';
 import pubsub, { IntegrationStatusSseMessage, PUBSUB_CHANNELS } from '../../../redis/client/pubsub';
 import { logDebug, logError } from '../../../helpers/logger';
 
-var chatRouter = express.Router();
+const chatRouter = express.Router();
 
 /**
  * Test PING
@@ -21,9 +21,9 @@ chatRouter.use('/', authRouter);
 
 chatRouter.get('/integration-status/:publicToken', async (req, res) => {
     try {
-        var publicToken = req.params.publicToken;
-        var { tenantId } = req.query;
-        var session = await createSession(req, res);
+        const publicToken = req.params.publicToken;
+        const { tenantId } = req.query;
+        const session = await createSession(req, res);
         await pubsub.subscribe(`${PUBSUB_CHANNELS.INTEGRATION_STATUS}_${tenantId}`, async (message: any) => {
             logDebug('pubsub message', message);
             let parsedMessage = JSON.parse(message) as IntegrationStatusSseMessage;
