@@ -9,7 +9,7 @@ export default async function sendConnectionAddedEvent(
     tp_customer_id: string,
 ) {
     try {
-        let isSvixAppExist = await getSvixAccount(svixAppId);
+        const isSvixAppExist = await getSvixAccount(svixAppId);
         if (!isSvixAppExist) {
             return;
         }
@@ -34,7 +34,7 @@ export default async function sendConnectionAddedEvent(
 
 export async function sendConnectionDeletedEvent(svixAppId: string, connection: any) {
     try {
-        let isSvixAppExist = await getSvixAccount(svixAppId);
+        const isSvixAppExist = await getSvixAccount(svixAppId);
         if (!isSvixAppExist) {
             return;
         }
@@ -53,7 +53,7 @@ export async function sendConnectionDeletedEvent(svixAppId: string, connection: 
 
 export async function getSvixAccount(svixAppId: string) {
     try {
-        let svixAccount = await config.svix?.application.get(svixAppId);
+        const svixAccount = await config.svix?.application.get(svixAppId);
         return svixAccount;
     } catch (error) {
         // probably svixAccount doesn't exist
