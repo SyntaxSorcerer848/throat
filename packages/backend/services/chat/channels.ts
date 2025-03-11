@@ -10,21 +10,21 @@ import revertAuthMiddleware from '../../helpers/authMiddleware';
 import { unifyObject } from '../../helpers/crm/transform';
 import { ChatStandardObjects } from '../../constants/common';
 
-var objType = ChatStandardObjects.channel;
+const objType = ChatStandardObjects.channel;
 
-var channelsService = new ChannelsService(
+const channelsService = new ChannelsService(
     {
         async getChannels(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var pageSize = parseInt(String(req.query.pageSize));
-                var cursor = req.query.cursor;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var customerId = connection.tp_customer_id;
-                var botToken = connection.app_config?.bot_token;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const pageSize = parseInt(String(req.query.pageSize));
+                const cursor = req.query.cursor;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const customerId = connection.tp_customer_id;
+                const botToken = connection.app_config?.bot_token;
                 logInfo(
                     'Revert::GET ALL CHANNELS',
                     connection.app?.env?.accountId,
@@ -35,11 +35,11 @@ var channelsService = new ChannelsService(
 
                 switch (thirdPartyId) {
                     case TP_ID.slack: {
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&cursor=${cursor}` : ''
                         }`;
 
-                        var url = `https://slack.com/api/conversations.list?${pagingString}`;
+                        const url = `https://slack.com/api/conversations.list?${pagingString}`;
 
                         let channels: any = await axios({
                             method: 'get',
@@ -50,7 +50,7 @@ var channelsService = new ChannelsService(
                             },
                         });
 
-                        var nextCursor = channels.data?.response_metadata?.next_cursor || undefined;
+                        const nextCursor = channels.data?.response_metadata?.next_cursor || undefined;
                         channels = channels.data.channels;
                         channels = await Promise.all(
                             channels?.map(
@@ -69,7 +69,7 @@ var channelsService = new ChannelsService(
                         break;
                     }
                     case TP_ID.discord: {
-                        var url = `https://discord.com/api/guilds/${customerId}/channels`;
+                        const url = `https://discord.com/api/guilds/${customerId}/channels`;
                         let channels: any = await axios.get(url, {
                             headers: { Authorization: `Bot ${botToken}` },
                         });
