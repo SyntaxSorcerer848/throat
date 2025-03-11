@@ -3,7 +3,7 @@ import { Svix } from 'svix';
 
 dotenv.config();
 
-const config = {
+let config = {
     PORT: process.env.SERVER_PORT || 4001,
     REDIS_URL: process.env.REDIS_SERVER_URL!,
     HUBSPOT_CLIENT_ID: process.env.HUBSPOT_CLIENT_ID,
