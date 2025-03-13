@@ -10,19 +10,19 @@ import { AccountingStandardObjects, AppConfig } from '../../constants/common';
 import { UnifiedVendor } from '../../models/unified/vendor';
 import { VendorService } from '../../generated/typescript/api/resources/accounting/resources/vendor/service/VendorService';
 
-var objType = AccountingStandardObjects.vendor;
+const objType = AccountingStandardObjects.vendor;
 
-var vendorServiceAccounting = new VendorService(
+const vendorServiceAccounting = new VendorService(
     {
         async getVendor(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var vendorId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var fields: any = req.query.fields && JSON.parse(req.query.fields as string);
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const vendorId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const fields: any = req.query.fields && JSON.parse(req.query.fields as string);
                 logInfo(
                     'Revert::GET VENDOR',
                     connection.app?.env?.accountId,
@@ -39,10 +39,10 @@ var vendorServiceAccounting = new VendorService(
                                 error: 'The query parameter "realmID" is required and should be included in the "fields" parameter.',
                             });
                         }
-                        var env =
+                        const env =
                             connection?.app?.tp_id === 'quickbooks' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'GET',
 
                             url: `${
@@ -57,7 +57,7 @@ var vendorServiceAccounting = new VendorService(
                             },
                         });
 
-                        var unifiedVendor: any = await unifyObject<any, UnifiedVendor>({
+                        const unifiedVendor: any = await unifyObject<any, UnifiedVendor>({
                             obj: result.data.Vendor,
                             tpId: thirdPartyId,
                             objType,
@@ -72,7 +72,7 @@ var vendorServiceAccounting = new VendorService(
                         break;
                     }
                     case TP_ID.xero: {
-                        var result = await axios({
+                        const result = await axios({
                             method: 'GET',
                             url: `https://api.xero.com/api.xro/2.0/contacts/${vendorId}`,
                             headers: {
@@ -82,7 +82,7 @@ var vendorServiceAccounting = new VendorService(
                             },
                         });
 
-                        var unifiedVendor: any = await unifyObject<any, UnifiedVendor>({
+                        const unifiedVendor: any = await unifyObject<any, UnifiedVendor>({
                             obj: result.data.Contacts[0],
                             tpId: thirdPartyId,
                             objType,
@@ -111,14 +111,14 @@ var vendorServiceAccounting = new VendorService(
         },
         async getVendors(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields: any = req.query.fields ? JSON.parse(req.query.fields as string) : undefined;
-                var pageSize = parseInt(String(req.query.pageSize));
-                var cursor = req.query.cursor;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields: any = req.query.fields ? JSON.parse(req.query.fields as string) : undefined;
+                const pageSize = parseInt(String(req.query.pageSize));
+                const cursor = req.query.cursor;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
 
                 logInfo(
                     'Revert::GET ALL VENDORS',
@@ -134,14 +134,14 @@ var vendorServiceAccounting = new VendorService(
                                 error: 'The query parameter "realmID" is required and should be included in the "fields" parameter.',
                             });
                         }
-                        var env =
+                        const env =
                             connection?.app?.tp_id === 'quickbooks' && (connection?.app?.app_config as AppConfig)?.env;
 
                         let pagingString = `${cursor ? ` STARTPOSITION +${cursor}+` : ''}${
                             pageSize ? ` MAXRESULTS +${pageSize}` : ''
                         }`;
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'GET',
 
                             url: `${
@@ -156,7 +156,7 @@ var vendorServiceAccounting = new VendorService(
                             },
                         });
 
-                        var unifiedVendors: any = result.data.QueryResponse.Vendor
+                        const unifiedVendors: any = result.data.QueryResponse.Vendor
                             ? await Promise.all(
                                   result.data.QueryResponse.Vendor.map(
                                       async (vendor: any) =>
@@ -170,7 +170,7 @@ var vendorServiceAccounting = new VendorService(
                                   ),
                               )
                             : {};
-                        var nextCursor =
+                        const nextCursor =
                             pageSize && result.data.QueryResponse?.maxResults
                                 ? String(pageSize + (parseInt(String(cursor)) || 0))
                                 : undefined;
@@ -182,9 +182,9 @@ var vendorServiceAccounting = new VendorService(
                         break;
                     }
                     case TP_ID.xero: {
-                        var pagingString = `${cursor ? `page=${cursor}` : ''}`;
+                        const pagingString = `${cursor ? `page=${cursor}` : ''}`;
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'GET',
                             url: `https://api.xero.com/api.xro/2.0/contacts?${pagingString}`,
                             headers: {
@@ -194,7 +194,7 @@ var vendorServiceAccounting = new VendorService(
                             },
                         });
 
-                        var unifiedVendors: any = await Promise.all(
+                        const unifiedVendors: any = await Promise.all(
                             result.data.Contacts.map(
                                 async (contact: any) =>
                                     await unifyObject<any, UnifiedVendor>({
@@ -206,8 +206,8 @@ var vendorServiceAccounting = new VendorService(
                                     }),
                             ),
                         );
-                        var hasMoreResults = result.data.Contacts.length === 100;
-                        var nextCursor = hasMoreResults ? (cursor ? cursor + 1 : 2) : undefined;
+                        const hasMoreResults = result.data.Contacts.length === 100;
+                        const nextCursor = hasMoreResults ? (cursor ? cursor + 1 : 2) : undefined;
 
                         res.send({
                             status: 'ok',
@@ -232,15 +232,15 @@ var vendorServiceAccounting = new VendorService(
 
         async createVendor(req, res) {
             try {
-                var vendorData: any = req.body as unknown as UnifiedVendor;
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                const vendorData: any = req.body as unknown as UnifiedVendor;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
-                var disunifiedVendorData: any = await disunifyAccountingObject<UnifiedVendor>({
+                const disunifiedVendorData: any = await disunifyAccountingObject<UnifiedVendor>({
                     obj: vendorData,
                     tpId: thirdPartyId,
                     objType,
@@ -258,10 +258,10 @@ var vendorServiceAccounting = new VendorService(
                             });
                         }
 
-                        var env =
+                        const env =
                             connection?.app?.tp_id === 'quickbooks' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        var result: any = await axios({
+                        const result: any = await axios({
                             method: 'post',
                             url: `${
                                 (env === 'Sandbox'
@@ -280,7 +280,7 @@ var vendorServiceAccounting = new VendorService(
                         break;
                     }
                     case TP_ID.xero: {
-                        var result: any = await axios({
+                        const result: any = await axios({
                             method: 'post',
                             url: `https://api.xero.com/api.xro/2.0/contacts`,
                             headers: {
@@ -310,20 +310,20 @@ var vendorServiceAccounting = new VendorService(
         },
         async updateVendor(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var vendorData = req.body as unknown as UnifiedVendor;
-                var vendorId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const vendorData = req.body as unknown as UnifiedVendor;
+                const vendorId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
                 if (thirdPartyId === TP_ID.quickbooks && vendorData && !vendorData.id) {
                     throw new Error('The parameter "id" is required in request body.');
                 }
 
-                var disunifiedVendorData: any = await disunifyAccountingObject<UnifiedVendor>({
+                const disunifiedVendorData: any = await disunifyAccountingObject<UnifiedVendor>({
                     obj: vendorData,
                     tpId: thirdPartyId,
                     objType,
@@ -342,10 +342,10 @@ var vendorServiceAccounting = new VendorService(
                         }
                         disunifiedVendorData.Id = vendorId;
 
-                        var env =
+                        const env =
                             connection?.app?.tp_id === 'quickbooks' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        var result: any = await axios({
+                        const result: any = await axios({
                             method: 'post',
 
                             url: `${
@@ -370,7 +370,7 @@ var vendorServiceAccounting = new VendorService(
                         break;
                     }
                     case TP_ID.xero: {
-                        var result: any = await axios({
+                        const result: any = await axios({
                             method: 'post',
                             url: `https://api.xero.com/api.xro/2.0/contacts/${vendorId}`,
                             headers: {
@@ -400,11 +400,11 @@ var vendorServiceAccounting = new VendorService(
         },
         async deleteVendor(req, res) {
             try {
-                var connection = res.locals.connection;
-                var vendorId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
+                const connection = res.locals.connection;
+                const vendorId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
 
                 logInfo(
                     'Revert::DELETE VENDOR',
