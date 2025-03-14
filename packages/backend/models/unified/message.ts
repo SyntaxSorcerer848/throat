@@ -7,7 +7,7 @@ export interface UnifiedMessage {
 }
 
 export function unifyMessage(message: any) {
-    let unifiedMessage: UnifiedMessage = {
+    const unifiedMessage: UnifiedMessage = {
         text: message.message.text,
         channelId: message.channel,
         additional: {},
@@ -32,7 +32,7 @@ export function disunifyMessage(message: UnifiedMessage, integrationId: string):
 }
 
 function toSlackMessage(message: UnifiedMessage): any {
-    let slackMessage: any = {
+    const slackMessage: any = {
         channel: message.channelId,
         text: message.text,
     };
@@ -47,7 +47,7 @@ function toSlackMessage(message: UnifiedMessage): any {
     return slackMessage;
 }
 function toDiscordMessage(message: UnifiedMessage): any {
-    let discordMessage: any = {
+    const discordMessage: any = {
         content: message.text,
     };
 
