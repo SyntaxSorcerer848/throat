@@ -12,22 +12,22 @@ import revertTenantMiddleware from '../../helpers/tenantIdMiddleware';
 import { FieldMappingService } from '../../generated/typescript/api/resources/fieldMapping/service/FieldMappingService';
 import { FieldMappingType } from '../../generated/typescript/api';
 
-const prisma = new PrismaClient();
+let prisma = new PrismaClient();
 
-const fieldMappingService = new FieldMappingService(
+let fieldMappingService = new FieldMappingService(
     {
         async getFieldMappingConfig(_req, res) {
-            const { account, connection } = res.locals;
-            const { accountFieldMappingConfig } = account;
+            let { account, connection } = res.locals;
+            let { accountFieldMappingConfig } = account;
 
             try {
-                const {
+                let {
                     allow_connection_override_custom_fields: canAddCustomMapping = false,
                     mappable_by_connection_field_list: mappableFields = [],
                 } = accountFieldMappingConfig || {};
 
-                const objects = mappableFields.map((f: any) => f.objectName);
-                const fieldList: Record<string, any> = {};
+                let objects = mappableFields.map((f: any) => f.objectName);
+                let fieldList: Record<string, any> = {};
                 await Promise.allSettled(
                     objects.map(async (obj: string) => {
                         fieldList[obj] = await getObjectPropertiesForConnection({ objectName: obj, connection });
@@ -49,18 +49,18 @@ const fieldMappingService = new FieldMappingService(
             }
         },
         async getFieldMappings(_req, res) {
-            const { connection } = res.locals;
-            const tpId = connection.tp_id as TP_ID;
+            let { connection } = res.locals;
+            let tpId = connection.tp_id as TP_ID;
 
             try {
                 if (!connection.schema_mapping_id) {
                     throw new NotFoundError({ error: 'No field mapping found for this connection' });
                 }
-                const fieldMappings = await prisma.fieldMappings.findMany({
+                let fieldMappings = await prisma.fieldMappings.findMany({
                     where: { source_tp_id: tpId, schema: { is: { schema_mapping_id: connection.schema_mapping_id } } },
                     include: { schema: true },
                 });
-                const fieldMappingsResponse: FieldMappingType[] = fieldMappings.map((fm) => {
+                let fieldMappingsResponse: FieldMappingType[] = fieldMappings.map((fm) => {
                     return {
                         sourceFieldName: fm.source_field_name!,
                         targetFieldName: fm.target_field_name!,
@@ -78,28 +78,28 @@ const fieldMappingService = new FieldMappingService(
             }
         },
         async createFieldMapping(req, res) {
-            const { connection } = res.locals;
-            const tpId = connection.tp_id as TP_ID;
+            let { connection } = res.locals;
+            let tpId = connection.tp_id as TP_ID;
 
             try {
                 type mappingReq = { sourceFieldName: string; targetFieldName: string; object: string };
-                const standardMappings: mappingReq[] = req.body.standardMappings || [];
-                const customMappings: mappingReq[] = req.body.customMappings || [];
+                let standardMappings: mappingReq[] = req.body.standardMappings || [];
+                let customMappings: mappingReq[] = req.body.customMappings || [];
 
-                const objects = [
+                let objects = [
                     ...new Set([...standardMappings.map((s) => s.object), ...customMappings.map((c) => c.object)]),
                 ];
 
-                const rootSchema = await prisma.schemas.findMany({
+                let rootSchema = await prisma.schemas.findMany({
                     where: { object: { in: objects }, schema_mapping_id: rootSchemaMappingId },
                     include: { fieldMappings: { where: { source_tp_id: tpId } } },
                 });
 
-                const connectionSchemaMappingId = randomUUID();
+                let connectionSchemaMappingId = randomUUID();
 
-                const customFields = customMappings.map((c) => c.targetFieldName);
+                let customFields = customMappings.map((c) => c.targetFieldName);
 
-                const schemas = objects.map((object) => ({
+                let schemas = objects.map((object) => ({
                     id: randomUUID(),
                     fields: [...(rootSchema.find((s) => s.object === object)?.fields || []), ...customFields],
                     object,
@@ -112,7 +112,7 @@ const fieldMappingService = new FieldMappingService(
                     },
                 });
 
-                const standardFieldMappings = standardMappings.map((standardMapping) => ({
+                let standardFieldMappings = standardMappings.map((standardMapping) => ({
                     id: randomUUID(),
                     source_tp_id: tpId,
                     source_field_name: standardMapping.sourceFieldName,
@@ -120,7 +120,7 @@ const fieldMappingService = new FieldMappingService(
                     is_standard_field: true,
                     schema_id: schemas.find((s) => s.object === standardMapping.object)!.id,
                 }));
-                const customFieldMappings = customMappings.map((customMapping) => ({
+                let customFieldMappings = customMappings.map((customMapping) => ({
                     id: randomUUID(),
                     source_tp_id: tpId,
                     source_field_name: customMapping.sourceFieldName,
@@ -148,7 +148,7 @@ const fieldMappingService = new FieldMappingService(
             }
         },
         async deleteFieldMapping(_req, res) {
-            const { connection } = res.locals;
+            let { connection } = res.locals;
             try {
                 await prisma.schema_mapping.delete({
                     where: { id: connection.schema_mapping_id },
@@ -164,8 +164,8 @@ const fieldMappingService = new FieldMappingService(
             }
         },
         async createAccountFieldMappingConfig(req, res) {
-            const { account } = res.locals;
-            const config = req.body;
+            let { account } = res.locals;
+            let config = req.body;
             try {
                 await prisma.accountFieldMappingConfig.create({
                     data: {
@@ -190,7 +190,7 @@ const fieldMappingService = new FieldMappingService(
             }
         },
         async deleteAccountFieldMappingConfig(_req, res) {
-            const { account } = res.locals;
+            let { account } = res.locals;
             try {
                 await prisma.accountFieldMappingConfig.delete({
                     where: { account_id: account.id },
