@@ -1,17 +1,17 @@
 import { Connection } from '../../generated/typescript/api/resources/common/index.js';
 import config from '../../config';
-var { initSDK } = require('@opensdks/runtime');
-var { veniceSdkDef } = require('@opensdks/sdk-venice');
+const { initSDK } = require('@opensdks/runtime');
+const { veniceSdkDef } = require('@opensdks/sdk-venice');
 
-var syncTwentyConnection = async (connection: Connection, connectionAPIKey: string) => {
-    var connectionId = connection.t_id;
-    var openIntApiKey = config.OPEN_INT_API_KEY;
-    var openIntBaseApiUrl = config.OPEN_INT_BASE_API_URL;
+const syncTwentyConnection = async (connection: Connection, connectionAPIKey: string) => {
+    const connectionId = connection.t_id;
+    const openIntApiKey = config.OPEN_INT_API_KEY;
+    const openIntBaseApiUrl = config.OPEN_INT_BASE_API_URL;
     if (!config.OPEN_INT_API_KEY || !connectionAPIKey) {
         console.log('Credentials absent to make this sync happen for: ', connection.t_id, ' returning early');
         return;
     }
-    var venice = initSDK(
+    const venice = initSDK(
         {
             ...veniceSdkDef,
             oasMeta: {
@@ -26,15 +26,15 @@ var syncTwentyConnection = async (connection: Connection, connectionAPIKey: stri
         }
     );
 
-    var twentyAccessToken = connectionAPIKey;
+    const twentyAccessToken = connectionAPIKey;
 
-    var connectorConfig = await venice.GET('/core/connector_config');
+    const connectorConfig = await venice.GET('/core/connector_config');
 
-    var getConnectorConfig = (cName: string, connectorConfig: any) =>
+    const getConnectorConfig = (cName: string, connectorConfig: any) =>
         connectorConfig?.data?.filter((c: any) => c.connectorName === cName)[0];
 
-    var twenty = getConnectorConfig('twenty', connectorConfig);
-    var revert = getConnectorConfig('revert', connectorConfig);
+    const twenty = getConnectorConfig('twenty', connectorConfig);
+    const revert = getConnectorConfig('revert', connectorConfig);
 
     let revertResource = await venice.GET('/core/resource', {
         params: {
@@ -104,7 +104,7 @@ var syncTwentyConnection = async (connection: Connection, connectionAPIKey: stri
 
     // Create a pipeline between them if not created,
     // Trigger this created pipeline
-    var syncPipeline = await venice.GET('/core/pipeline', {
+    const syncPipeline = await venice.GET('/core/pipeline', {
         params: {
             query: {
                 resourceIds: [twentyResource?.data, revertResource?.data],
@@ -113,7 +113,7 @@ var syncTwentyConnection = async (connection: Connection, connectionAPIKey: stri
     });
 
     if (!syncPipeline?.data[0]) {
-        var createdPipeline = await venice.POST('/core/pipeline', {
+        const createdPipeline = await venice.POST('/core/pipeline', {
             body: {
                 id: `pipe_${connectionId}`,
                 sourceId: revertResource?.data.id,
