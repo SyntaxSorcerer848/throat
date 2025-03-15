@@ -2,19 +2,19 @@ import { environmentConfig } from '@revertdotdev/lib/config';
 import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 
-var { REVERT_BASE_API_URL } = environmentConfig;
+const { REVERT_BASE_API_URL } = environmentConfig;
 
-var fetcher = (url: string) => {
-    var privateToken = localStorage.getItem('privateToken') as string;
+const fetcher = (url: string) => {
+    const privateToken = localStorage.getItem('privateToken') as string;
     return fetch(url, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', 'x-revert-api-token': privateToken },
     })
         .then((res) => res.json())
         .then((data) => {
-            var { error, status } = data;
+            const { error, status } = data;
             if (data.error) {
-                var errorMessage =
+                const errorMessage =
                     error?.code === 'P2002'
                         ? ': Already connected another app. Please disconnect first.'
                         : `${error.message}`;
@@ -36,8 +36,8 @@ var fetcher = (url: string) => {
 };
 
 export function useConnection(integrationId: string) {
-    var searchParams = useSearchParams() as ReadonlyURLSearchParams;
-    var {
+    const searchParams = useSearchParams() as ReadonlyURLSearchParams;
+    const {
         code,
         state,
         location,
@@ -45,11 +45,11 @@ export function useConnection(integrationId: string) {
         oauth_token: OAuthToken,
         oauth_verifier: OAuthVerifier,
     } = Object.fromEntries(searchParams.entries());
-    var { tenantId, revertPublicToken, redirectUrl } = JSON.parse(state);
+    const { tenantId, revertPublicToken, redirectUrl } = JSON.parse(state);
 
     let url!: URL;
 
-    var params = new URLSearchParams();
+    const params = new URLSearchParams();
     params.set('integrationId', integrationId);
     params.set('code', code);
     params.set('t_id', tenantId);
@@ -91,7 +91,7 @@ export function useConnection(integrationId: string) {
             break;
         }
     }
-    var { data, error, isLoading } = useSWR(url.toString(), fetcher, { shouldRetryOnError: false });
+    const { data, error, isLoading } = useSWR(url.toString(), fetcher, { shouldRetryOnError: false });
 
     return {
         data,
