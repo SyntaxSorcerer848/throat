@@ -14,20 +14,20 @@ import { PipedriveCompany, PipedrivePagination } from '../../constants/pipedrive
 import { StandardObjects } from '../../constants/common';
 import { getAssociationObjects, isValidAssociationTypeRequestedByUser } from '../../helpers/crm/hubspot';
 
-var objType = StandardObjects.company;
+const objType = StandardObjects.company;
 
-var companyService = new CompanyService(
+const companyService = new CompanyService(
     {
         async getCompany(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var companyId = req.params.id;
-                var fields = req.query.fields;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var associations = req.query.associations ? req.query.associations.split(',') : [];
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const companyId = req.params.id;
+                const fields = req.query.fields;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const associations = req.query.associations ? req.query.associations.split(',') : [];
                 logInfo(
                     'Revert::GET COMPANY',
                     connection.app?.env?.accountId,
@@ -39,7 +39,7 @@ var companyService = new CompanyService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var formattedFields = [
+                        const formattedFields = [
                             ...String(fields || '').split(','),
                             'name',
                             'hs_object_id',
@@ -52,26 +52,26 @@ var companyService = new CompanyService(
                             'phone',
                             'annualrevenue',
                         ];
-                        var validAssociations = [...associations].filter((item) =>
+                        const validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        var invalidAssociations = [...associations].filter(
+                        const invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        var url =
+                        const url =
                             `https://api.hubapi.com/crm/v3/objects/companies/${companyId}?properties=${formattedFields}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
 
-                        var company = await axios({
+                        const company = await axios({
                             method: 'get',
                             url: url,
                             headers: {
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        var associatedData = await getAssociationObjects(
+                        const associatedData = await getAssociationObjects(
                             company.data?.associations,
                             thirdPartyToken,
                             thirdPartyId,
@@ -114,8 +114,8 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
-                        var company = await axios({
+                        const instanceUrl = connection.tp_account_url;
+                        const company = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Account/${companyId}`,
                             headers: {
@@ -135,7 +135,7 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var result = await axios.get<{ data: Partial<PipedriveCompany> } & PipedrivePagination>(
+                        const result = await axios.get<{ data: Partial<PipedriveCompany> } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/organizations/${companyId}`,
                             {
                                 headers: {
@@ -143,7 +143,7 @@ var companyService = new CompanyService(
                                 },
                             },
                         );
-                        var company = result.data;
+                        const company = result.data;
                         res.send({
                             status: 'ok',
                             result: await unifyObject<any, UnifiedCompany>({
@@ -157,7 +157,7 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/accounts(${companyId})`,
                             headers: {
@@ -168,7 +168,7 @@ var companyService = new CompanyService(
                             },
                         });
 
-                        var unifiedCompany = await unifyObject<any, UnifiedCompany>({
+                        const unifiedCompany = await unifyObject<any, UnifiedCompany>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -194,15 +194,15 @@ var companyService = new CompanyService(
         },
         async getCompanies(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields = req.query.fields;
-                var pageSize = parseInt(String(req.query.pageSize));
-                var cursor = req.query.cursor;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var associations = req.query.associations ? req.query.associations.split(',') : [];
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields = req.query.fields;
+                const pageSize = parseInt(String(req.query.pageSize));
+                const cursor = req.query.cursor;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET ALL COMPANIES',
@@ -214,7 +214,7 @@ var companyService = new CompanyService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var formattedFields = [
+                        const formattedFields = [
                             ...String(fields || '').split(','),
                             'name',
                             'hs_object_id',
@@ -227,18 +227,18 @@ var companyService = new CompanyService(
                             'phone',
                             'annualrevenue',
                         ];
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&after=${cursor}` : ''
                         }`;
-                        var validAssociations = [...associations].filter((item) =>
+                        const validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        var invalidAssociations = [...associations].filter(
+                        const invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        var url =
+                        const url =
                             `https://api.hubapi.com/crm/v3/objects/companies?properties=${formattedFields}${pagingString}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
 
@@ -249,11 +249,11 @@ var companyService = new CompanyService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = companies.data?.paging?.next?.after || undefined;
+                        const nextCursor = companies.data?.paging?.next?.after || undefined;
                         companies = companies.data.results as any[];
                         companies = await Promise.all(
                             companies?.map(async (c: any) => {
-                                var associatedData = await getAssociationObjects(
+                                const associatedData = await getAssociationObjects(
                                     c?.associations,
                                     thirdPartyToken,
                                     thirdPartyId,
@@ -279,7 +279,7 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let companies: any = await axios({
@@ -289,8 +289,8 @@ var companyService = new CompanyService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = companies.data?.info?.next_page_token || undefined;
-                        var prevCursor = companies.data?.info?.previous_page_token || undefined;
+                        const nextCursor = companies.data?.info?.next_page_token || undefined;
+                        const prevCursor = companies.data?.info?.previous_page_token || undefined;
                         companies = companies.data.data;
                         companies = await Promise.all(
                             companies?.map(
@@ -314,9 +314,9 @@ var companyService = new CompanyService(
                         if (!pageSize && !cursor) {
                             pagingString = 'LIMIT 200';
                         }
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         // NOTE: Handle "ALL" for Hubspot & Zoho
-                        var query =
+                        const query =
                             !fields || fields === 'ALL'
                                 ? `SELECT+fields(all)+from+Account+${pagingString}`
                                 : `SELECT+${(fields as string).split(',').join('+,+')}+from+Account+${pagingString}`;
@@ -327,10 +327,10 @@ var companyService = new CompanyService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = pageSize
+                        const nextCursor = pageSize
                             ? String(companies.data?.totalSize + (parseInt(String(cursor)) || 0))
                             : undefined;
-                        var prevCursor =
+                        const prevCursor =
                             cursor && parseInt(String(cursor)) > 0
                                 ? String(parseInt(String(cursor)) - companies.data?.totalSize)
                                 : undefined;
@@ -351,10 +351,10 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&start=${cursor}` : ''
                         }`;
-                        var result = await axios.get<{ data: Partial<PipedriveCompany>[] } & PipedrivePagination>(
+                        const result = await axios.get<{ data: Partial<PipedriveCompany>[] } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/organizations?${pagingString}`,
                             {
                                 headers: {
@@ -362,10 +362,10 @@ var companyService = new CompanyService(
                                 },
                             },
                         );
-                        var nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
-                        var prevCursor = undefined;
-                        var companies = result.data.data;
-                        var unifiedCompanies = await Promise.all(
+                        const nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
+                        const prevCursor = undefined;
+                        const companies = result.data.data;
+                        const unifiedCompanies = await Promise.all(
                             companies?.map(
                                 async (d) =>
                                     await unifyObject<any, UnifiedCompany>({
@@ -381,9 +381,9 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/accounts?${pagingString}`,
                             headers: {
@@ -395,7 +395,7 @@ var companyService = new CompanyService(
                             },
                         });
 
-                        var unifiedCompanies = await Promise.all(
+                        const unifiedCompanies = await Promise.all(
                             result.data.value.map(
                                 async (company: any) =>
                                     await unifyObject<any, UnifiedCompany>({
@@ -431,13 +431,13 @@ var companyService = new CompanyService(
         },
         async createCompany(req, res) {
             try {
-                var companyData = req.body as UnifiedCompany;
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var company = await disunifyObject<UnifiedCompany>({
+                const companyData = req.body as UnifiedCompany;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const company = await disunifyObject<UnifiedCompany>({
                     obj: companyData,
                     tpId: thirdPartyId,
                     objType,
@@ -448,7 +448,7 @@ var companyService = new CompanyService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'post',
                             url: `https://api.hubapi.com/crm/v3/objects/companies/`,
                             headers: {
@@ -465,7 +465,7 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var result = await axios({
+                        const result = await axios({
                             method: 'post',
                             url: `https://www.zohoapis.com/crm/v3/Accounts`,
                             headers: {
@@ -490,8 +490,8 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
-                        var companyCreated = await axios({
+                        const instanceUrl = connection.tp_account_url;
+                        const companyCreated = await axios({
                             method: 'post',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Account/`,
                             headers: {
@@ -519,9 +519,9 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var instanceUrl = connection.tp_account_url;
-                        var pipedriveCompany = company as Partial<PipedriveCompany>;
-                        var companyCreated = await axios.post<{ data: Partial<PipedriveCompany> }>(
+                        const instanceUrl = connection.tp_account_url;
+                        const pipedriveCompany = company as Partial<PipedriveCompany>;
+                        const companyCreated = await axios.post<{ data: Partial<PipedriveCompany> }>(
                             `${instanceUrl}/v1/organizations`,
                             pipedriveCompany,
                             {
@@ -540,7 +540,7 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'post',
                             url: `${connection.tp_account_url}/api/data/v9.2/accounts`,
                             headers: {
@@ -576,14 +576,14 @@ var companyService = new CompanyService(
         },
         async updateCompany(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var companyData = req.body as UnifiedCompany;
-                var companyId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var company = await disunifyObject<UnifiedCompany>({
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const companyData = req.body as UnifiedCompany;
+                const companyId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const company = await disunifyObject<UnifiedCompany>({
                     obj: companyData,
                     tpId: thirdPartyId,
                     objType,
@@ -623,7 +623,7 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         await axios({
                             method: 'patch',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Account/${companyId}`,
@@ -637,7 +637,7 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var companyUpdated = await axios.put<{ data: Partial<PipedriveCompany> }>(
+                        const companyUpdated = await axios.put<{ data: Partial<PipedriveCompany> }>(
                             `${connection.tp_account_url}/v1/organizations/${companyId}`,
                             company,
                             {
@@ -656,7 +656,7 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'patch',
                             url: `${connection.tp_account_url}/api/data/v9.2/accounts(${companyId})`,
                             headers: {
@@ -687,16 +687,16 @@ var companyService = new CompanyService(
         },
         async searchCompanies(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields = req.query.fields;
-                var searchCriteria: any = req.body.searchCriteria;
-                var formattedFields = (fields || '').split('').filter(Boolean);
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var pageSize = parseInt(String(req.query.pageSize));
-                var cursor = req.query.cursor;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields = req.query.fields;
+                const searchCriteria: any = req.body.searchCriteria;
+                const formattedFields = (fields || '').split('').filter(Boolean);
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const pageSize = parseInt(String(req.query.pageSize));
+                const cursor = req.query.cursor;
 
                 logInfo('Revert::SEARCH COMPANY', connection.app?.env?.accountId, tenantId, searchCriteria, fields);
 
@@ -729,7 +729,7 @@ var companyService = new CompanyService(
                             }),
                         });
 
-                        var nextCursor = companies.data?.paging?.next?.after || undefined;
+                        const nextCursor = companies.data?.paging?.next?.after || undefined;
 
                         companies = companies.data.results as any[];
                         companies = await Promise.all(
@@ -753,7 +753,7 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let companies: any = await axios({
@@ -763,8 +763,8 @@ var companyService = new CompanyService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = companies.data?.info?.next_page_token || undefined;
-                        var prevCursor = companies.data?.info?.previous_page_token || undefined;
+                        const nextCursor = companies.data?.info?.next_page_token || undefined;
+                        const prevCursor = companies.data?.info?.previous_page_token || undefined;
                         companies = companies.data.data;
                         companies = await Promise.all(
                             companies?.map(
@@ -782,7 +782,7 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         let companies: any = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/search?q=${searchCriteria}`,
@@ -807,11 +807,11 @@ var companyService = new CompanyService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var instanceUrl = connection.tp_account_url;
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const instanceUrl = connection.tp_account_url;
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&start=${cursor}` : ''
                         }`;
-                        var result = await axios.get<
+                        const result = await axios.get<
                             { data: { items: { item: any; result_score: number }[] } } & PipedrivePagination
                         >(
                             `${instanceUrl}/v1/organizations/search?term=${searchCriteria}${
@@ -823,11 +823,11 @@ var companyService = new CompanyService(
                                 },
                             },
                         );
-                        var nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
-                        var prevCursor = undefined;
+                        const nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
+                        const prevCursor = undefined;
 
-                        var companies = result.data.data.items.map((item) => item.item);
-                        var unifiedCompanies = await Promise.all(
+                        const companies = result.data.data.items.map((item) => item.item);
+                        const unifiedCompanies = await Promise.all(
                             companies?.map(
                                 async (d: any) =>
                                     await unifyObject<any, UnifiedCompany>({
@@ -847,8 +847,8 @@ var companyService = new CompanyService(
                         if (searchCriteria) {
                             searchString += fields ? `&$filter=${searchCriteria}` : `$filter=${searchCriteria}`;
                         }
-                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
-                        var result = await axios({
+                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/accounts?${searchString}${pagingString}`,
                             headers: {
@@ -860,7 +860,7 @@ var companyService = new CompanyService(
                             },
                         });
 
-                        var unifiedCompanies = await Promise.all(
+                        const unifiedCompanies = await Promise.all(
                             result.data.value.map(
                                 async (contact: any) =>
                                     await unifyObject<any, UnifiedCompany>({
