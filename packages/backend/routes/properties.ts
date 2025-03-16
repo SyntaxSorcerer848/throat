@@ -6,14 +6,14 @@ import { logError } from '../helpers/logger';
 import revertTenantMiddleware from '../helpers/tenantIdMiddleware';
 import { PropertiesService } from '../generated/typescript/api/resources/crm/resources/properties/service/PropertiesService';
 
-let propertiesService = new PropertiesService(
+const propertiesService = new PropertiesService(
     {
         async getObjectProperties(req, res) {
-            let { connection } = res.locals;
-            let objectName = req.params.objectName;
+            const { connection } = res.locals;
+            const objectName = req.params.objectName;
 
             try {
-                let result = await getObjectPropertiesForConnection({ objectName, connection });
+                const result = await getObjectPropertiesForConnection({ objectName, connection });
                 res.send(result);
             } catch (error: any) {
                 logError(error);
@@ -25,11 +25,11 @@ let propertiesService = new PropertiesService(
             }
         },
         async setCustomProperties(req, res) {
-            let { connection } = res.locals;
-            let objectName = req.params.objectName;
-            let objectProperties = req.body;
+            const { connection } = res.locals;
+            const objectName = req.params.objectName;
+            const objectProperties = req.body;
             try {
-                let result = await setObjectPropertiesForConnection({ objectName, objectProperties, connection });
+                const result = await setObjectPropertiesForConnection({ objectName, objectProperties, connection });
                 res.send(result);
             } catch (error: any) {
                 logError(error);
