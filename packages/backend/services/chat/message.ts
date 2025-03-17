@@ -10,20 +10,20 @@ import revertAuthMiddleware from '../../helpers/authMiddleware';
 import { disunifyChatObject } from '../../helpers/crm/transform';
 import { ChatStandardObjects } from '../../constants/common';
 
-var objType = ChatStandardObjects.message;
+const objType = ChatStandardObjects.message;
 
-var messageService = new MessagesService(
+const messageService = new MessagesService(
     {
         async createMessage(req, res) {
             try {
-                var messageData = req.body as UnifiedMessage;
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var botToken = connection.app_config?.bot_token;
-                var message = await disunifyChatObject<UnifiedMessage>({
+                const messageData = req.body as UnifiedMessage;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const botToken = connection.app_config?.bot_token;
+                const message = await disunifyChatObject<UnifiedMessage>({
                     obj: messageData,
                     tpId: thirdPartyId,
                     objType,
@@ -56,7 +56,7 @@ var messageService = new MessagesService(
                         break;
                     }
                     case TP_ID.discord: {
-                        var url = `https://discord.com/api/channels/${messageData.channelId}/messages`;
+                        const url = `https://discord.com/api/channels/${messageData.channelId}/messages`;
 
                         let response: any = await axios({
                             method: 'post',
