@@ -5,7 +5,7 @@ class SvixService {
     // clerk userId
     async deleteAssociatedSvixAccountForUser(userId: string) {
         try {
-            const accountInformation = await prisma.users.findUnique({
+            let accountInformation = await prisma.users.findUnique({
                 where: {
                     id: userId,
                 },
@@ -23,11 +23,11 @@ class SvixService {
                 },
             });
 
-            const accountId = accountInformation?.account.id!;
+            let accountId = accountInformation?.account.id!;
 
             // delete all the associated svixAccount
             accountInformation?.account.environments.map(async (e) => {
-                const svixId = `${accountId}_${e.env}`;
+                let svixId = `${accountId}_${e.env}`;
                 try {
                     await config.svix?.application.delete(svixId);
                 } catch (error) {
@@ -44,7 +44,7 @@ class SvixService {
 
     async createSvixAccount({ accountId, environment }: { accountId: string; environment: string }) {
         try {
-            const createdSvixAccount = await config.svix?.application.create({
+            let createdSvixAccount = await config.svix?.application.create({
                 name: `${accountId}_${environment}`,
                 uid: `${accountId}_${environment}`,
             });
@@ -57,7 +57,7 @@ class SvixService {
 
     async getSvixAccount({ accountId, environment }: { accountId: string; environment: string }) {
         try {
-            const getSvixAccount = await config.svix?.application.get(`${accountId}_${environment}`);
+            let getSvixAccount = await config.svix?.application.get(`${accountId}_${environment}`);
             return getSvixAccount;
         } catch (error) {
             // probably App doesn't exist
@@ -67,7 +67,7 @@ class SvixService {
 
     async createAppPortalMagicLink(appId: string) {
         try {
-            const createMagicLink = await config.svix?.authentication.appPortalAccess(appId, {});
+            let createMagicLink = await config.svix?.authentication.appPortalAccess(appId, {});
             return createMagicLink;
         } catch (error) {
             // probably App doesn't exist
