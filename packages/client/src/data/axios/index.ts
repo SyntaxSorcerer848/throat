@@ -2,13 +2,13 @@ import axios from 'axios';
 import { REVERT_BASE_API_URL } from '../../constants';
 import { LOCALSTORAGE_KEYS } from '../localstorage';
 
-const axiosInstance = axios.create({
+let axiosInstance = axios.create({
     baseURL: REVERT_BASE_API_URL,
 });
 
 axiosInstance.interceptors.request.use(
     async (config) => {
-        const token = localStorage.getItem(LOCALSTORAGE_KEYS.privateToken);
+        let token = localStorage.getItem(LOCALSTORAGE_KEYS.privateToken);
         if (token) {
             config.headers['x-revert-api-token'] = token;
         }
