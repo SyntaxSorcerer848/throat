@@ -14,20 +14,20 @@ import { PipedriveEvent, PipedrivePagination } from '../../constants/pipedrive';
 import { StandardObjects } from '../../constants/common';
 import { getAssociationObjects, isValidAssociationTypeRequestedByUser } from '../../helpers/crm/hubspot';
 
-var objType = StandardObjects.event;
+const objType = StandardObjects.event;
 
-var eventService = new EventService(
+const eventService = new EventService(
     {
         async getEvent(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var eventId = req.params.id;
-                var fields = req.query.fields;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var associations = req.query.associations ? req.query.associations.split(',') : [];
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const eventId = req.params.id;
+                const fields = req.query.fields;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET EVENT',
@@ -40,7 +40,7 @@ var eventService = new EventService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var formattedFields = [
+                        const formattedFields = [
                             ...String(fields || '').split(','),
                             'hs_meeting_title',
                             'hs_meeting_body',
@@ -50,15 +50,15 @@ var eventService = new EventService(
                             'hs_activity_type',
                             'hs_object_id',
                         ];
-                        var validAssociations = [...associations].filter((item) =>
+                        const validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        var invalidAssociations = [...associations].filter(
+                        const invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        var url =
+                        const url =
                             `https://api.hubapi.com/crm/v3/objects/meetings/${eventId}?properties=${formattedFields}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
 
@@ -70,7 +70,7 @@ var eventService = new EventService(
                             },
                         });
                         event = ([event.data] as any[])?.[0];
-                        var associatedData = await getAssociationObjects(
+                        const associatedData = await getAssociationObjects(
                             event?.associations,
                             thirdPartyToken,
                             thirdPartyId,
@@ -89,7 +89,7 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var events = await axios({
+                        const events = await axios({
                             method: 'get',
                             url: `https://www.zohoapis.com/crm/v3/Events/${eventId}?fields=${fields}`,
                             headers: {
@@ -107,8 +107,8 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
-                        var events = await axios({
+                        const instanceUrl = connection.tp_account_url;
+                        const events = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Event/${eventId}`,
                             headers: {
@@ -126,7 +126,7 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var result = await axios.get<{ data: Partial<PipedriveEvent> } & PipedrivePagination>(
+                        const result = await axios.get<{ data: Partial<PipedriveEvent> } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/activities/${eventId}`,
                             {
                                 headers: {
@@ -134,7 +134,7 @@ var eventService = new EventService(
                                 },
                             },
                         );
-                        var event = result.data;
+                        const event = result.data;
                         res.send({
                             status: 'ok',
                             result: await unifyObject<any, UnifiedEvent>({
@@ -168,7 +168,7 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/appointments(${eventId})`,
                             headers: {
@@ -179,7 +179,7 @@ var eventService = new EventService(
                             },
                         });
 
-                        var unifiedEvent = await unifyObject<any, UnifiedEvent>({
+                        const unifiedEvent = await unifyObject<any, UnifiedEvent>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -204,15 +204,15 @@ var eventService = new EventService(
         },
         async getEvents(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields = req.query.fields;
-                var pageSize = parseInt(String(req.query.pageSize));
-                var cursor = req.query.cursor;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var associations = req.query.associations ? req.query.associations.split(',') : [];
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields = req.query.fields;
+                const pageSize = parseInt(String(req.query.pageSize));
+                const cursor = req.query.cursor;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const associations = req.query.associations ? req.query.associations.split(',') : [];
 
                 logInfo(
                     'Revert::GET ALL EVENT',
@@ -224,7 +224,7 @@ var eventService = new EventService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var formattedFields = [
+                        const formattedFields = [
                             ...String(fields || '').split(','),
                             'hs_meeting_title',
                             'hs_meeting_body',
@@ -234,18 +234,18 @@ var eventService = new EventService(
                             'hs_activity_type',
                             'hs_object_id',
                         ];
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&after=${cursor}` : ''
                         }`;
-                        var validAssociations = [...associations].filter((item) =>
+                        const validAssociations = [...associations].filter((item) =>
                             isValidAssociationTypeRequestedByUser(item),
                         );
-                        var invalidAssociations = [...associations].filter(
+                        const invalidAssociations = [...associations].filter(
                             (item) =>
                                 item !== 'undefined' && item !== 'null' && !isValidAssociationTypeRequestedByUser(item),
                         );
 
-                        var url =
+                        const url =
                             `https://api.hubapi.com/crm/v3/objects/meetings?properties=${formattedFields}${pagingString}` +
                             (validAssociations.length > 0 ? `&associations=${validAssociations}` : '');
 
@@ -256,11 +256,11 @@ var eventService = new EventService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = events.data?.paging?.next?.after || undefined;
+                        const nextCursor = events.data?.paging?.next?.after || undefined;
                         events = events.data.results as any[];
                         events = await Promise.all(
                             events?.map(async (l: any) => {
-                                var associatedData = await getAssociationObjects(
+                                const associatedData = await getAssociationObjects(
                                     l?.associations,
                                     thirdPartyToken,
                                     thirdPartyId,
@@ -287,7 +287,7 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let events: any = await axios({
@@ -297,8 +297,8 @@ var eventService = new EventService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = events.data?.info?.next_page_token || undefined;
-                        var prevCursor = events.data?.info?.previous_page_token || undefined;
+                        const nextCursor = events.data?.info?.next_page_token || undefined;
+                        const prevCursor = events.data?.info?.previous_page_token || undefined;
                         events = events.data.data;
                         events = await Promise.all(
                             events?.map(
@@ -322,9 +322,9 @@ var eventService = new EventService(
                         if (!pageSize && !cursor) {
                             pagingString = 'LIMIT 200';
                         }
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         // TODO: Handle "ALL" for Hubspot & Zoho
-                        var query =
+                        const query =
                             !fields || fields === 'ALL'
                                 ? `SELECT+fields(all)+from+Event+${pagingString}`
                                 : `SELECT+${(fields as string).split(',').join('+,+')}+from+Event+${pagingString}`;
@@ -335,10 +335,10 @@ var eventService = new EventService(
                                 authorization: `Bearer ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = pageSize
+                        const nextCursor = pageSize
                             ? String(events.data?.totalSize + (parseInt(String(cursor)) || 0))
                             : undefined;
-                        var prevCursor =
+                        const prevCursor =
                             cursor && parseInt(String(cursor)) > 0
                                 ? String(parseInt(String(cursor)) - events.data?.totalSize)
                                 : undefined;
@@ -359,10 +359,10 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&limit=${pageSize}` : ''}${
                             cursor ? `&start=${cursor}` : ''
                         }`;
-                        var result = await axios.get<{ data: Partial<PipedriveEvent>[] } & PipedrivePagination>(
+                        const result = await axios.get<{ data: Partial<PipedriveEvent>[] } & PipedrivePagination>(
                             `${connection.tp_account_url}/v1/activities?type=meeting${pagingString}`,
                             {
                                 headers: {
@@ -370,10 +370,10 @@ var eventService = new EventService(
                                 },
                             },
                         );
-                        var nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
-                        var prevCursor = undefined;
-                        var events = result.data.data;
-                        var unifiedEvents = await Promise.all(
+                        const nextCursor = String(result.data?.additional_data?.pagination.next_start) || undefined;
+                        const prevCursor = undefined;
+                        const events = result.data.data;
+                        const unifiedEvents = await Promise.all(
                             events?.map(
                                 async (d) =>
                                     await unifyObject<any, UnifiedEvent>({
@@ -389,7 +389,7 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.closecrm: {
-                        var pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&_limit=${pageSize}` : ''}${
                             cursor ? `&_skip=${cursor}` : ''
                         }`;
 
@@ -401,7 +401,7 @@ var eventService = new EventService(
                                 Accept: 'application/json',
                             },
                         });
-                        var hasMore = meetings.data?.has_more;
+                        const hasMore = meetings.data?.has_more;
                         meetings = meetings.data?.data as any[];
                         meetings = await Promise.all(
                             meetings?.map(
@@ -418,8 +418,8 @@ var eventService = new EventService(
 
                         let cursorVal = parseInt(String(cursor));
                         if (isNaN(cursorVal)) cursorVal = 0;
-                        var nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
-                        var prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
+                        const nextSkipVal = hasMore ? cursorVal + pageSize : undefined;
+                        const prevSkipVal = cursorVal > 0 ? String(Math.max(cursorVal - pageSize, 0)) : undefined;
 
                         res.send({
                             status: 'ok',
@@ -430,9 +430,9 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/appointments?${pagingString}`,
                             headers: {
@@ -444,7 +444,7 @@ var eventService = new EventService(
                             },
                         });
 
-                        var unifiedEvents = await Promise.all(
+                        const unifiedEvents = await Promise.all(
                             result.data.value.map(
                                 async (event: any) =>
                                     await unifyObject<any, UnifiedEvent>({
@@ -480,13 +480,13 @@ var eventService = new EventService(
         },
         async createEvent(req, res) {
             try {
-                var eventData = req.body as UnifiedEvent;
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var event = await disunifyObject<UnifiedEvent>({
+                const eventData = req.body as UnifiedEvent;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const event = await disunifyObject<UnifiedEvent>({
                     obj: eventData,
                     tpId: thirdPartyId,
                     objType,
@@ -497,7 +497,7 @@ var eventService = new EventService(
 
                 switch (thirdPartyId) {
                     case TP_ID.hubspot: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'post',
                             url: `https://api.hubapi.com/crm/v3/objects/meetings/`,
                             headers: {
@@ -514,7 +514,7 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var eventCreated: any = await axios({
+                        const eventCreated: any = await axios({
                             method: 'post',
                             url: `https://www.zohoapis.com/crm/v3/Events`,
                             headers: {
@@ -530,8 +530,8 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
-                        var eventCreated = await axios({
+                        const instanceUrl = connection.tp_account_url;
+                        const eventCreated = await axios({
                             method: 'post',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Event/`,
                             headers: {
@@ -544,9 +544,9 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var instanceUrl = connection.tp_account_url;
-                        var pipedriveEvent = event as Partial<PipedriveEvent>;
-                        var eventCreated = await axios.post<{ data: Partial<PipedriveEvent> }>(
+                        const instanceUrl = connection.tp_account_url;
+                        const pipedriveEvent = event as Partial<PipedriveEvent>;
+                        const eventCreated = await axios.post<{ data: Partial<PipedriveEvent> }>(
                             `${instanceUrl}/v1/activities`,
                             pipedriveEvent,
                             {
@@ -568,7 +568,7 @@ var eventService = new EventService(
                         throw new NotFoundError({ error: 'Method not allowed' });
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'post',
                             url: `${connection.tp_account_url}/api/data/v9.2/appointments`,
                             headers: {
@@ -605,14 +605,14 @@ var eventService = new EventService(
         },
         async updateEvent(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var eventData = req.body as UnifiedEvent;
-                var eventId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var event = await disunifyObject<UnifiedEvent>({
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const eventData = req.body as UnifiedEvent;
+                const eventId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const event = await disunifyObject<UnifiedEvent>({
                     obj: eventData,
                     tpId: thirdPartyId,
                     objType,
@@ -648,7 +648,7 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         await axios({
                             method: 'patch',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Event/${eventId}`,
@@ -662,7 +662,7 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.pipedrive: {
-                        var eventUpdated = await axios.put<{ data: Partial<PipedriveEvent> }>(
+                        const eventUpdated = await axios.put<{ data: Partial<PipedriveEvent> }>(
                             `${connection.tp_account_url}/v1/activities/${eventId}`,
                             event,
                             {
@@ -684,7 +684,7 @@ var eventService = new EventService(
                         throw new NotFoundError({ error: 'Method not allowed' });
                     }
                     case TP_ID.ms_dynamics_365_sales: {
-                        var response = await axios({
+                        const response = await axios({
                             method: 'patch',
                             url: `${connection.tp_account_url}/api/data/v9.2/appointments(${eventId})`,
                             headers: {
@@ -720,16 +720,16 @@ var eventService = new EventService(
         },
         async searchEvents(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields = req.query.fields;
-                var searchCriteria: any = req.body.searchCriteria;
-                var formattedFields = String(fields || '').split(',');
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var cursor = req.query.cursor;
-                var pageSize = parseInt(String(req.query.pageSize));
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields = req.query.fields;
+                const searchCriteria: any = req.body.searchCriteria;
+                const formattedFields = String(fields || '').split(',');
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const cursor = req.query.cursor;
+                const pageSize = parseInt(String(req.query.pageSize));
 
                 logInfo('Revert::SEARCH EVENT', connection.app?.env?.accountId, tenantId, searchCriteria, fields);
 
@@ -758,7 +758,7 @@ var eventService = new EventService(
                                 ],
                             }),
                         });
-                        var nextCursor = events.data?.paging?.next?.after || undefined;
+                        const nextCursor = events.data?.paging?.next?.after || undefined;
 
                         events = events.data.results as any[];
                         events = await Promise.all(
@@ -777,7 +777,7 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.zohocrm: {
-                        var pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
+                        const pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page_token=${cursor}` : ''
                         }`;
                         let events: any = await axios({
@@ -787,8 +787,8 @@ var eventService = new EventService(
                                 authorization: `Zoho-oauthtoken ${thirdPartyToken}`,
                             },
                         });
-                        var nextCursor = events.data?.info?.next_page_token || undefined;
-                        var prevCursor = events.data?.info?.previous_page_token || undefined;
+                        const nextCursor = events.data?.info?.next_page_token || undefined;
+                        const prevCursor = events.data?.info?.previous_page_token || undefined;
                         events = events.data.data;
                         events = await Promise.all(
                             events?.map(
@@ -806,7 +806,7 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         let events: any = await axios({
                             method: 'get',
                             url: `${instanceUrl}/services/data/v56.0/search?q=${searchCriteria}`,
@@ -838,8 +838,8 @@ var eventService = new EventService(
                         if (searchCriteria) {
                             searchString += fields ? `&$filter=${searchCriteria}` : `$filter=${searchCriteria}`;
                         }
-                        var pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
-                        var result = await axios({
+                        const pagingString = cursor ? encodeURI(cursor).split('?')[1] : '';
+                        const result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/api/data/v9.2/appointments?${searchString}${pagingString}`,
                             headers: {
@@ -851,7 +851,7 @@ var eventService = new EventService(
                             },
                         });
 
-                        var unifiedEvents = await Promise.all(
+                        const unifiedEvents = await Promise.all(
                             result.data.value.map(
                                 async (contact: any) =>
                                     await unifyObject<any, UnifiedEvent>({
@@ -887,11 +887,11 @@ var eventService = new EventService(
         },
         async deleteEvent(req, res) {
             try {
-                var connection = res.locals.connection;
-                var eventId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
+                const connection = res.locals.connection;
+                const eventId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
                 logInfo(
                     'Revert::DELETE EVENT',
                     connection.app?.env?.accountId,
@@ -925,7 +925,7 @@ var eventService = new EventService(
                         break;
                     }
                     case TP_ID.sfdc: {
-                        var instanceUrl = connection.tp_account_url;
+                        const instanceUrl = connection.tp_account_url;
                         await axios({
                             method: 'delete',
                             url: `${instanceUrl}/services/data/v56.0/sobjects/Event/${eventId}`,
