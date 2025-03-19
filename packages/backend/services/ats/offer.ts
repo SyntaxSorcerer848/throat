@@ -10,18 +10,18 @@ import { disunifyAtsObject, unifyObject } from '../../helpers/crm/transform';
 import { UnifiedOffer } from '../../models/unified/offer';
 import { OfferService } from '../../generated/typescript/api/resources/ats/resources/offer/service/OfferService';
 
-var objType = AtsStandardObjects.offer;
+const objType = AtsStandardObjects.offer;
 
-var offerServiceAts = new OfferService(
+const offerServiceAts = new OfferService(
     {
         async getOffer(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var offerId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const offerId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
                 logInfo(
                     'Revert::GET OFFER',
                     connection.app?.env?.accountId,
@@ -33,18 +33,18 @@ var offerServiceAts = new OfferService(
 
                 switch (thirdPartyId) {
                     case TP_ID.greenhouse: {
-                        var apiToken = thirdPartyToken;
-                        var credentials = Buffer.from(apiToken + ':').toString('base64');
-                        var headers = {
+                        const apiToken = thirdPartyToken;
+                        const credentials = Buffer.from(apiToken + ':').toString('base64');
+                        const headers = {
                             Authorization: 'Basic ' + credentials,
                         };
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `https://harvest.greenhouse.io/v1/offers/${offerId}`,
                             headers: headers,
                         });
-                        var unifiedOffer: any = await unifyObject<any, UnifiedOffer>({
+                        const unifiedOffer: any = await unifyObject<any, UnifiedOffer>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -81,14 +81,14 @@ var offerServiceAts = new OfferService(
         },
         async getOffers(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var fields: any = req.query.fields && JSON.parse(req.query.fields as string);
-                var pageSize = parseInt(String(req.query.pageSize));
-                var cursor = req.query.cursor;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const fields: any = req.query.fields && JSON.parse(req.query.fields as string);
+                const pageSize = parseInt(String(req.query.pageSize));
+                const cursor = req.query.cursor;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
 
                 logInfo(
                     'Revert::GET ALL OFFERS',
@@ -100,9 +100,9 @@ var offerServiceAts = new OfferService(
 
                 switch (thirdPartyId) {
                     case TP_ID.greenhouse: {
-                        var apiToken = thirdPartyToken;
-                        var credentials = Buffer.from(apiToken + ':').toString('base64');
-                        var headers = {
+                        const apiToken = thirdPartyToken;
+                        const credentials = Buffer.from(apiToken + ':').toString('base64');
+                        const headers = {
                             Authorization: 'Basic ' + credentials,
                         };
 
@@ -117,12 +117,12 @@ var offerServiceAts = new OfferService(
                             pageSize && cursor ? `&page=${cursor}` : ''
                         }${otherParams ? `&${otherParams}` : ''}`;
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: `https://harvest.greenhouse.io/v1/offers?${pagingString}`,
                             headers: headers,
                         });
-                        var unifiedOffers = await Promise.all(
+                        const unifiedOffers = await Promise.all(
                             result.data.map(async (job: any) => {
                                 return await unifyObject<any, UnifiedOffer>({
                                     obj: job,
@@ -133,10 +133,10 @@ var offerServiceAts = new OfferService(
                                 });
                             }),
                         );
-                        var linkHeader = result.headers.link;
+                        const linkHeader = result.headers.link;
                         let nextCursor, previousCursor;
                         if (linkHeader) {
-                            var links = linkHeader.split(',');
+                            const links = linkHeader.split(',');
 
                             links?.forEach((link: any) => {
                                 if (link.includes('rel="next"')) {
@@ -161,10 +161,10 @@ var offerServiceAts = new OfferService(
                                 error: 'The query parameter "opportunityId" is required and should be included in the "fields" parameter.',
                             });
                         }
-                        var env =
+                        const env =
                             connection?.app?.tp_id === 'lever' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        var headers = { Authorization: `Bearer ${thirdPartyToken}` };
+                        const headers = { Authorization: `Bearer ${thirdPartyToken}` };
 
                         let otherParams = '';
                         if (fields) {
@@ -177,17 +177,17 @@ var offerServiceAts = new OfferService(
                             cursor ? `&offset=${cursor}` : ''
                         }${otherParams ? `&${otherParams}` : ''}`;
 
-                        var url =
+                        const url =
                             env === 'Sandbox'
                                 ? `https://api.sandbox.lever.co/v1/opportunities/${fields.opportunityId}/offers?${pagingString}`
                                 : `https://api.lever.co/v1/opportunities/${fields.opportunityId}/offers?${pagingString}`;
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'get',
                             url: url,
                             headers: headers,
                         });
-                        var unifiedOffers = await Promise.all(
+                        const unifiedOffers = await Promise.all(
                             result.data.data.map(async (job: any) => {
                                 return await unifyObject<any, UnifiedOffer>({
                                     obj: job,
@@ -228,15 +228,15 @@ var offerServiceAts = new OfferService(
         },
         async createOffer(req, res) {
             try {
-                var offerData: any = req.body as unknown as UnifiedOffer;
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var thirdPartyId = connection.tp_id;
-                //  var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                // var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                const offerData: any = req.body as unknown as UnifiedOffer;
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const thirdPartyId = connection.tp_id;
+                //  const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                // const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
-                var offer: any = await disunifyAtsObject<UnifiedOffer>({
+                const offer: any = await disunifyAtsObject<UnifiedOffer>({
                     obj: offerData,
                     tpId: thirdPartyId,
                     objType,
@@ -278,16 +278,16 @@ var offerServiceAts = new OfferService(
         },
         async updateOffer(req, res) {
             try {
-                var connection = res.locals.connection;
-                var account = res.locals.account;
-                var offerData = req.body as unknown as UnifiedOffer;
-                //var offerId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                const connection = res.locals.connection;
+                const account = res.locals.account;
+                const offerData = req.body as unknown as UnifiedOffer;
+                //const offerId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
-                var offer: any = await disunifyAtsObject<UnifiedOffer>({
+                const offer: any = await disunifyAtsObject<UnifiedOffer>({
                     obj: offerData,
                     tpId: thirdPartyId,
                     objType,
@@ -304,10 +304,10 @@ var offerServiceAts = new OfferService(
                             });
                         }
 
-                        var apiToken = thirdPartyToken;
-                        var credentials = Buffer.from(apiToken + ':').toString('base64');
+                        const apiToken = thirdPartyToken;
+                        const credentials = Buffer.from(apiToken + ':').toString('base64');
 
-                        var result = await axios({
+                        const result = await axios({
                             method: 'patch',
                             url: `https://harvest.greenhouse.io/v1/applications/${fields.applicationId}/offers/current_offer`,
                             headers: {
@@ -351,12 +351,12 @@ var offerServiceAts = new OfferService(
 
         async deleteOffer(req, res) {
             try {
-                var connection = res.locals.connection;
-                var offerId = req.params.id;
-                var thirdPartyId = connection.tp_id;
-                var thirdPartyToken = connection.tp_access_token;
-                var tenantId = connection.t_id;
-                // var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                const connection = res.locals.connection;
+                const offerId = req.params.id;
+                const thirdPartyId = connection.tp_id;
+                const thirdPartyToken = connection.tp_access_token;
+                const tenantId = connection.t_id;
+                // const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
                 logInfo(
                     'Revert::DELETE OFFER',
