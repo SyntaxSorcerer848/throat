@@ -24,11 +24,11 @@ class DiscordAuthHandler extends BaseOAuthHandler {
         response,
         redirectUrl,
     }: IntegrationAuthProps) {
-        const botToken = account?.apps[0]?.is_revert_app
+        let botToken = account?.apps[0]?.is_revert_app
             ? undefined
             : (account?.apps[0]?.app_config as AppConfig).bot_token;
 
-        const formData = {
+        let formData = {
             client_id: clientId || config.DISCORD_CLIENT_ID,
             client_secret: clientSecret || config.DISCORD_CLIENT_SECRET,
             grant_type: 'authorization_code',
@@ -36,17 +36,17 @@ class DiscordAuthHandler extends BaseOAuthHandler {
             redirect_uri: `${config.OAUTH_REDIRECT_BASE}/discord`,
         };
 
-        const result = await axios.post('https://discord.com/api/oauth2/token', qs.stringify(formData));
+        let result = await axios.post('https://discord.com/api/oauth2/token', qs.stringify(formData));
 
         logInfo('OAuth creds for discord', result.data);
 
-        const info = await axios.get('https://discord.com/api/users/@me', {
+        let info = await axios.get('https://discord.com/api/users/@me', {
             headers: {
                 authorization: `${result.data.token_type} ${result.data.access_token}`,
             },
         });
         logInfo('OAuth token info', info.data);
-        const guildId = result.data?.guild?.id;
+        let guildId = result.data?.guild?.id;
         try {
             await xprisma.connections.upsert({
                 where: {
