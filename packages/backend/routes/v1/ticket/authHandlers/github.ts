@@ -24,7 +24,7 @@ class GitHubAuthHandler extends BaseOAuthHandler {
         response,
         redirectUrl,
     }: IntegrationAuthProps) {
-        let formData = {
+        const formData = {
             grant_type: 'authorization_code',
             client_id: clientId || config.GITHUB_CLIENT_ID,
             client_secret: clientSecret || config.GITHUB_CLIENT_SECRET,
@@ -32,7 +32,7 @@ class GitHubAuthHandler extends BaseOAuthHandler {
             redirect_uri: `${config.OAUTH_REDIRECT_BASE}/github`,
         };
 
-        let result = await axios({
+        const result = await axios({
             method: 'post',
             url: 'https://github.com/login/oauth/access_token',
             headers: {
@@ -43,9 +43,9 @@ class GitHubAuthHandler extends BaseOAuthHandler {
 
         logInfo('OAuth token from GitHub', result.data);
 
-        let auth = 'Bearer ' + result.data?.access_token;
+        const auth = 'Bearer ' + result.data?.access_token;
 
-        let info = await axios({
+        const info = await axios({
             method: 'GET',
             url: `https://api.github.com/user`,
             headers: {
