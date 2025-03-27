@@ -3,9 +3,9 @@ import { TelemetryService } from '../../generated/typescript/api/resources/inter
 import config from '../../config';
 import logger from '../../helpers/logger';
 
-let telemetryService = new TelemetryService({
+const telemetryService = new TelemetryService({
     async createTelemetryEntry(req, res) {
-        let telemetryData = req.body;
+        const telemetryData = req.body;
         logger.info('telemetry data received: ', telemetryData);
         if (config.DISABLE_REVERT_TELEMETRY) {
             logger.info('Telemetry has been disabled, not recording any stats');
