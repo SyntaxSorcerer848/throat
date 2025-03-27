@@ -6,20 +6,20 @@ import { FieldDetailsTypeRequest, FieldDetailsTypeRead } from '../../generated/t
 import { logError } from '../../helpers/logger';
 import { isStandardError } from '../../helpers/error';
 
-export let getObjectPropertiesForConnection = async ({
+export const getObjectPropertiesForConnection = async ({
     objectName,
     connection,
 }: {
     objectName: string;
     connection: connections;
 }): Promise<Array<FieldDetailsTypeRead>> => {
-    let thirdPartyToken = connection.tp_access_token;
-    let tpId = connection.tp_id as CRM_TP_ID;
-    let crmObjectName = (objectNameMapping[objectName] || {})[tpId] || objectName;
+    const thirdPartyToken = connection.tp_access_token;
+    const tpId = connection.tp_id as CRM_TP_ID;
+    const crmObjectName = (objectNameMapping[objectName] || {})[tpId] || objectName;
 
     switch (tpId) {
         case TP_ID.hubspot: {
-            let response = await axios.get(`https://api.hubapi.com/crm/v3/properties/${crmObjectName}`, {
+            const response = await axios.get(`https://api.hubapi.com/crm/v3/properties/${crmObjectName}`, {
                 headers: { authorization: `Bearer ${thirdPartyToken}` },
             });
             return (response.data.results || []).map((f: any) => ({
@@ -30,7 +30,7 @@ export let getObjectPropertiesForConnection = async ({
             }));
         }
         case TP_ID.zohocrm: {
-            let response = await axios.get(
+            const response = await axios.get(
                 `https://www.zohoapis.com/crm/v3/settings/fields?module=${crmObjectName}`,
                 {
                     headers: { authorization: `Zoho-oauthtoken ${thirdPartyToken}` },
@@ -44,8 +44,8 @@ export let getObjectPropertiesForConnection = async ({
             }));
         }
         case TP_ID.sfdc: {
-            let instanceUrl = connection.tp_account_url;
-            let response = await axios.get(`${instanceUrl}/services/data/v56.0/sobjects/${crmObjectName}/describe`, {
+            const instanceUrl = connection.tp_account_url;
+            const response = await axios.get(`${instanceUrl}/services/data/v56.0/sobjects/${crmObjectName}/describe`, {
                 headers: { authorization: `Bearer ${thirdPartyToken}` },
             });
             return (response.data.fields || []).map((f: any) => ({
@@ -56,8 +56,8 @@ export let getObjectPropertiesForConnection = async ({
             }));
         }
         case TP_ID.pipedrive: {
-            let instanceUrl = connection.tp_account_url;
-            let response = await axios.get(`${instanceUrl}/v1/${crmObjectName}Fields`, {
+            const instanceUrl = connection.tp_account_url;
+            const response = await axios.get(`${instanceUrl}/v1/${crmObjectName}Fields`, {
                 headers: { authorization: `Bearer ${thirdPartyToken}` },
             });
             return (response.data.data || []).map((f: any) => ({
@@ -69,7 +69,7 @@ export let getObjectPropertiesForConnection = async ({
         }
         case TP_ID.ms_dynamics_365_sales: {
             // @see: https://learn.microsoft.com/en-us/previous-versions/dynamicscrm-2016/developers-guide/gg326975(v=crm.8)
-            let response = await axios({
+            const response = await axios({
                 method: 'get',
                 url: `${connection.tp_account_url}/api/data/v9.2/EntityDefinitions(LogicalName='${crmObjectName}')/Attributes`,
                 headers: {
@@ -92,7 +92,7 @@ export let getObjectPropertiesForConnection = async ({
     }
 };
 
-export let setObjectPropertiesForConnection = async ({
+export const setObjectPropertiesForConnection = async ({
     objectName,
     objectProperties,
     connection,
@@ -101,14 +101,14 @@ export let setObjectPropertiesForConnection = async ({
     objectProperties: FieldDetailsTypeRequest;
     connection: connections;
 }) => {
-    let thirdPartyToken = connection.tp_access_token;
-    let tpId = connection.tp_id as CRM_TP_ID;
-    let crmObjectName = (objectNameMapping[objectName] || {})[tpId] || objectName;
+    const thirdPartyToken = connection.tp_access_token;
+    const tpId = connection.tp_id as CRM_TP_ID;
+    const crmObjectName = (objectNameMapping[objectName] || {})[tpId] || objectName;
 
     try {
         switch (tpId) {
             case TP_ID.hubspot: {
-                let response = await axios({
+                const response = await axios({
                     method: 'POST',
                     url: `https://api.hubapi.com/crm/v3/properties/${crmObjectName}`,
                     headers: {
@@ -141,8 +141,8 @@ export let setObjectPropertiesForConnection = async ({
                 };
             }
             case TP_ID.pipedrive: {
-                let instanceUrl = connection.tp_account_url;
-                let response = await axios.post(
+                const instanceUrl = connection.tp_account_url;
+                const response = await axios.post(
                     `${instanceUrl}/v1/${crmObjectName}Fields`,
                     {
                         field_type: objectProperties.type,
