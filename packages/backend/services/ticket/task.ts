@@ -11,19 +11,19 @@ import { disunifyTicketObject, unifyObject } from '../../helpers/crm/transform';
 import { TicketStandardObjects } from '../../constants/common';
 import { LinearClient } from '@linear/sdk';
 
-const objType = TicketStandardObjects.ticketTask;
+var objType = TicketStandardObjects.ticketTask;
 
-const taskServiceTicket = new TaskService(
+var taskServiceTicket = new TaskService(
     {
         async getTask(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const taskId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = JSON.parse(req.query.fields as string);
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var taskId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = JSON.parse(req.query.fields as string);
                 logInfo(
                     'Revert::GET TASK',
                     connection.app?.env?.accountId,
@@ -35,14 +35,14 @@ const taskServiceTicket = new TaskService(
 
                 switch (thirdPartyId) {
                     case TP_ID.linear: {
-                        const linear = new LinearClient({
+                        var linear = new LinearClient({
                             accessToken: thirdPartyToken,
                         });
-                        const task: any = await linear.issue(taskId);
-                        const state = await linear.workflowState(task._state.id);
+                        var task: any = await linear.issue(taskId);
+                        var state = await linear.workflowState(task._state.id);
                         let modifiedTask = { ...task, state: { name: state.name } };
 
-                        const unifiedTask: any = await unifyObject<any, UnifiedTicketTask>({
+                        var unifiedTask: any = await unifyObject<any, UnifiedTicketTask>({
                             obj: modifiedTask,
                             tpId: thirdPartyId,
                             objType,
@@ -57,7 +57,7 @@ const taskServiceTicket = new TaskService(
                         break;
                     }
                     case TP_ID.clickup: {
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `https://api.clickup.com/api/v2/task/${taskId}`,
                             headers: {
@@ -66,7 +66,7 @@ const taskServiceTicket = new TaskService(
                             },
                         });
 
-                        const unifiedTask: any = await unifyObject<any, UnifiedTicketTask>({
+                        var unifiedTask: any = await unifyObject<any, UnifiedTicketTask>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -81,7 +81,7 @@ const taskServiceTicket = new TaskService(
                         break;
                     }
                     case TP_ID.jira: {
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/rest/api/2/issue/${taskId}`,
                             headers: {
@@ -90,7 +90,7 @@ const taskServiceTicket = new TaskService(
                             },
                         });
                         result.data.fields.id = result.data.id;
-                        const unifiedTask: any = await unifyObject<any, UnifiedTicketTask>({
+                        var unifiedTask: any = await unifyObject<any, UnifiedTicketTask>({
                             obj: result.data.fields,
                             tpId: thirdPartyId,
                             objType,
@@ -105,7 +105,7 @@ const taskServiceTicket = new TaskService(
                         break;
                     }
                     case TP_ID.trello: {
-                        const card = await axios({
+                        var card = await axios({
                             method: 'get',
                             url: `https://api.trello.com/1/cards/${taskId}?key=${connection.app_client_id}&token=${thirdPartyToken}`,
                             headers: {
@@ -113,7 +113,7 @@ const taskServiceTicket = new TaskService(
                             },
                         });
 
-                        const unifiedTask: any = await unifyObject<any, UnifiedTicketTask>({
+                        var unifiedTask: any = await unifyObject<any, UnifiedTicketTask>({
                             obj: card.data,
                             tpId: thirdPartyId,
                             objType,
@@ -134,7 +134,7 @@ const taskServiceTicket = new TaskService(
                             });
                         }
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'GET',
                             url: `https://api.bitbucket.org/2.0/repositories/${fields.workspace}/${fields.repo}/issues/${taskId}`,
                             headers: {
@@ -143,7 +143,7 @@ const taskServiceTicket = new TaskService(
                             },
                         });
 
-                        const unifiedTask: any = await unifyObject<any, UnifiedTicketTask>({
+                        var unifiedTask: any = await unifyObject<any, UnifiedTicketTask>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -164,7 +164,7 @@ const taskServiceTicket = new TaskService(
                             });
                         }
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `https://api.github.com/repos/${fields.owner}/${fields.repo}/issues/${taskId}`,
                             headers: {
@@ -173,7 +173,7 @@ const taskServiceTicket = new TaskService(
                             },
                         });
 
-                        const unifiedTask: any = await unifyObject<any, UnifiedTicketTask>({
+                        var unifiedTask: any = await unifyObject<any, UnifiedTicketTask>({
                             obj: result.data,
                             tpId: thirdPartyId,
                             objType,
@@ -202,14 +202,14 @@ const taskServiceTicket = new TaskService(
         },
         async getTasks(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const fields: any = JSON.parse(req.query.fields as string);
-                const pageSize = parseInt(String(req.query.pageSize));
-                const cursor = req.query.cursor;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var fields: any = JSON.parse(req.query.fields as string);
+                var pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
 
                 if (
                     thirdPartyId !== TP_ID.bitbucket &&
@@ -232,14 +232,14 @@ const taskServiceTicket = new TaskService(
                 switch (thirdPartyId) {
                     // @TODO Query won't fetch data for fields provided in additional column
                     case TP_ID.linear: {
-                        const linear = new LinearClient({
+                        var linear = new LinearClient({
                             accessToken: thirdPartyToken,
                         });
                         /*
                             In GraphQL, either 'first' & 'after' or 'last' & 'before' can exist but not both simultaneously.
                             To determine the appropriate pagination direction, an additional flag parameter is required.
                         */
-                        const variables = {
+                        var variables = {
                             first: pageSize ? pageSize : null,
                             after: cursor ? cursor : null,
                             last: null,
@@ -252,11 +252,11 @@ const taskServiceTicket = new TaskService(
                                 },
                             },
                         };
-                        const result: any = await linear.issues(variables);
+                        var result: any = await linear.issues(variables);
 
-                        const unifiedTasks: any = await Promise.all(
+                        var unifiedTasks: any = await Promise.all(
                             result.nodes.map(async (task: any) => {
-                                const state = await linear.workflowState(task._state.id);
+                                var state = await linear.workflowState(task._state.id);
                                 let modifiedTask = { ...task, state: { name: state.name } };
                                 return await unifyObject<any, UnifiedTicketTask>({
                                     obj: modifiedTask,
@@ -267,7 +267,7 @@ const taskServiceTicket = new TaskService(
                                 });
                             }),
                         );
-                        const pageInfo = result.pageInfo;
+                        var pageInfo = result.pageInfo;
                         let next_cursor = undefined;
                         if (pageInfo.hasNextPage && pageInfo.endCursor) {
                             next_cursor = pageInfo.endCursor;
@@ -288,9 +288,9 @@ const taskServiceTicket = new TaskService(
                         break;
                     }
                     case TP_ID.clickup: {
-                        const pagingString = `${cursor ? `page=${cursor}` : ''}`;
+                        var pagingString = `${cursor ? `page=${cursor}` : ''}`;
                         // &statuses[]=complete
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `https://api.clickup.com/api/v2/list/${fields.listId}/task?${pagingString}`,
                             headers: {
@@ -299,7 +299,7 @@ const taskServiceTicket = new TaskService(
                             },
                         });
 
-                        const unifiedTasks: any = await Promise.all(
+                        var unifiedTasks: any = await Promise.all(
                             result.data.tasks.map(
                                 async (task: any) =>
                                     await unifyObject<any, UnifiedTicketTask>({
@@ -312,7 +312,7 @@ const taskServiceTicket = new TaskService(
                             ),
                         );
 
-                        const pageNumber = !result.data?.last_page
+                        var pageNumber = !result.data?.last_page
                             ? cursor
                                 ? (parseInt(String(cursor)) + 1).toString()
                                 : '1'
@@ -331,7 +331,7 @@ const taskServiceTicket = new TaskService(
                             pageSize && cursor ? `&startAt=${cursor}` : ''
                         }`;
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `${connection.tp_account_url}/rest/api/2/search?jql=project=${fields.listId}&${pagingString}`,
                             headers: {
@@ -340,7 +340,7 @@ const taskServiceTicket = new TaskService(
                             },
                         });
 
-                        const unifiedTasks = await Promise.all(
+                        var unifiedTasks = await Promise.all(
                             result.data.issues.map(async (issue: any) => {
                                 issue.fields.id = issue.id;
                                 return await unifyObject<any, UnifiedTicketTask>({
@@ -352,11 +352,11 @@ const taskServiceTicket = new TaskService(
                                 });
                             }),
                         );
-                        const limit = Number(result.data.maxResults);
-                        const startAt = Number(result.data.startAt);
-                        const total = Number(result.data.total);
-                        const nextCursor = limit + startAt <= total ? String(limit + startAt) : undefined;
-                        const previousCursor = startAt - limit >= 0 ? String(startAt - limit) : undefined;
+                        var limit = Number(result.data.maxResults);
+                        var startAt = Number(result.data.startAt);
+                        var total = Number(result.data.total);
+                        var nextCursor = limit + startAt <= total ? String(limit + startAt) : undefined;
+                        var previousCursor = startAt - limit >= 0 ? String(startAt - limit) : undefined;
 
                         res.send({
                             status: 'ok',
@@ -383,8 +383,8 @@ const taskServiceTicket = new TaskService(
                             },
                         });
                         cards = cards.data;
-                        const nextCursor = pageSize ? `${cards[cards.length - 1].id}` : undefined;
-                        const unifiedTasks: any = await Promise.all(
+                        var nextCursor = pageSize ? `${cards[cards.length - 1].id}` : undefined;
+                        var unifiedTasks: any = await Promise.all(
                             cards.map(
                                 async (task: any) =>
                                     await unifyObject<any, UnifiedTicketTask>({
@@ -411,8 +411,8 @@ const taskServiceTicket = new TaskService(
                                 error: 'The query parameters "repo" and "workspace" are required and should be included in the "fields" parameter."repo" and "workspace" can either be slug or UUID.',
                             });
                         }
-                        const pagingString = `${pageSize ? `page=${pageSize}` : ''}`;
-                        const result = await axios({
+                        var pagingString = `${pageSize ? `page=${pageSize}` : ''}`;
+                        var result = await axios({
                             method: 'get',
                             url: `https://api.bitbucket.org/2.0/repositories/${fields.workspace}/${fields.repo}/issues?pagelen=10&${pagingString}`,
                             headers: {
@@ -421,7 +421,7 @@ const taskServiceTicket = new TaskService(
                             },
                         });
 
-                        const unifiedTasks: any = await Promise.all(
+                        var unifiedTasks: any = await Promise.all(
                             result.data.values.map(
                                 async (task: any) =>
                                     await unifyObject<any, UnifiedTicketTask>({
@@ -434,7 +434,7 @@ const taskServiceTicket = new TaskService(
                             ),
                         );
 
-                        const pageNumber = result.data?.next ? (pageSize ? (pageSize + 1).toString() : '1') : undefined;
+                        var pageNumber = result.data?.next ? (pageSize ? (pageSize + 1).toString() : '1') : undefined;
 
                         res.send({
                             status: 'ok',
@@ -453,7 +453,7 @@ const taskServiceTicket = new TaskService(
                         let pagingString = `${pageSize ? `&per_page=${pageSize}` : ''}${
                             cursor ? `&page=${cursor}` : ''
                         }`;
-                        const result = await axios({
+                        var result = await axios({
                             method: 'get',
                             url: `  https://api.github.com/repos/${fields.owner}/${fields.repo}/issues?${pagingString}`,
                             headers: {
@@ -462,7 +462,7 @@ const taskServiceTicket = new TaskService(
                             },
                         });
 
-                        const unifiedTasks: any = await Promise.all(
+                        var unifiedTasks: any = await Promise.all(
                             result.data.map(
                                 async (task: any) =>
                                     await unifyObject<any, UnifiedTicketTask>({
@@ -475,10 +475,10 @@ const taskServiceTicket = new TaskService(
                             ),
                         );
 
-                        const linkHeader = result.headers.link;
+                        var linkHeader = result.headers.link;
                         let nextCursor, previousCursor;
                         if (linkHeader) {
-                            const links = linkHeader.split(',');
+                            var links = linkHeader.split(',');
 
                             links?.forEach((link: any) => {
                                 if (link.includes('rel="next"')) {
@@ -512,17 +512,17 @@ const taskServiceTicket = new TaskService(
         },
         async createTask(req, res) {
             try {
-                const taskData: any = req.body as unknown as UnifiedTicketTask;
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = JSON.parse((req.query as any).fields as string);
+                var taskData: any = req.body as unknown as UnifiedTicketTask;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = JSON.parse((req.query as any).fields as string);
                 if (thirdPartyId !== TP_ID.bitbucket && thirdPartyId !== TP_ID.github && taskData && !taskData.listId) {
                     throw new Error('The parameter "listId" is required in request body.');
                 }
-                const task: any = await disunifyTicketObject<UnifiedTicketTask>({
+                var task: any = await disunifyTicketObject<UnifiedTicketTask>({
                     obj: taskData,
                     tpId: thirdPartyId,
                     objType,
@@ -535,12 +535,12 @@ const taskServiceTicket = new TaskService(
                 switch (thirdPartyId) {
                     // @TODO Query will fail if additional fields are posted
                     case TP_ID.linear: {
-                        const linear = new LinearClient({
+                        var linear = new LinearClient({
                             accessToken: thirdPartyToken,
                         });
 
                         if (task.state && task.teamId) {
-                            const linearGraphqlClient = linear.client;
+                            var linearGraphqlClient = linear.client;
                             let states: any = await linearGraphqlClient.rawRequest(
                                 `query Query($teamId: String!) {
                                     team(id: $teamId) {
@@ -556,7 +556,7 @@ const taskServiceTicket = new TaskService(
                             );
                             states = states.data.team.states.nodes;
 
-                            const state = states.find(
+                            var state = states.find(
                                 (state: any) => String(state.name).toLowerCase() === task.state.toLowerCase(),
                             );
 
@@ -564,12 +564,12 @@ const taskServiceTicket = new TaskService(
                             delete task.state;
                         }
 
-                        const issueCreated = await linear.createIssue(task);
+                        var issueCreated = await linear.createIssue(task);
                         res.send({ status: 'ok', message: 'Linear task created', result: issueCreated });
                         break;
                     }
                     case TP_ID.clickup: {
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
                             url: `https://api.clickup.com/api/v2/list/${task.listId}/task`,
                             headers: {
@@ -596,7 +596,7 @@ const taskServiceTicket = new TaskService(
                             task.fields.status = undefined;
                         }
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'post',
                             url: `${connection.tp_account_url}/rest/api/2/issue`,
                             headers: {
@@ -610,7 +610,7 @@ const taskServiceTicket = new TaskService(
                         // status provided in request body
                         if (statusval) {
                             // since creating a transition requires id, get call for validation. Not sure if id's are same
-                            const allTransitions = await axios({
+                            var allTransitions = await axios({
                                 method: 'get',
                                 url: `${connection.tp_account_url}/rest/api/2/issue/${result.data.id}/transitions`,
                                 headers: {
@@ -657,7 +657,7 @@ const taskServiceTicket = new TaskService(
                         break;
                     }
                     case TP_ID.trello: {
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
                             url: `https://api.trello.com/1/cards?key=${connection.app_client_id}&token=${thirdPartyToken}`,
                             headers: {
@@ -681,7 +681,7 @@ const taskServiceTicket = new TaskService(
                             });
                         }
 
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
                             url: `https://api.bitbucket.org/2.0/repositories/${fields.workspace}/${fields.repo}/issues`,
                             headers: {
@@ -702,7 +702,7 @@ const taskServiceTicket = new TaskService(
                             });
                         }
 
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
                             url: `https://api.github.com/repos/${fields.owner}/${fields.repo}/issues`,
                             headers: {
@@ -730,15 +730,15 @@ const taskServiceTicket = new TaskService(
         },
         async updateTask(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const taskData = req.body as unknown as UnifiedTicketTask;
-                const taskId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = JSON.parse((req.query as any).fields as string);
-                const task: any = await disunifyTicketObject<UnifiedTicketTask>({
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var taskData = req.body as unknown as UnifiedTicketTask;
+                var taskId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = JSON.parse((req.query as any).fields as string);
+                var task: any = await disunifyTicketObject<UnifiedTicketTask>({
                     obj: taskData,
                     tpId: thirdPartyId,
                     objType,
@@ -751,12 +751,12 @@ const taskServiceTicket = new TaskService(
                     /* @TODO This might encounter issues with unrecognized patterns or schema, for instance, attempting to set 'issueID' within the request body of the 'revert' API 
                     might not conform to the expected GraphQL syntax, such as {issue: {id}}. */
                     case TP_ID.linear: {
-                        const linear = new LinearClient({
+                        var linear = new LinearClient({
                             accessToken: thirdPartyToken,
                         });
 
                         if (task.state) {
-                            const linearGraphqlClient = linear.client;
+                            var linearGraphqlClient = linear.client;
                             let teamId: any = await linearGraphqlClient.rawRequest(
                                 `query Issue($issueId: String!) {
                                     issue(id: $issueId) {
@@ -786,7 +786,7 @@ const taskServiceTicket = new TaskService(
 
                             states = states.data.team.states.nodes;
 
-                            const state = states.find(
+                            var state = states.find(
                                 (state: any) => String(state.name).toLowerCase() === task.state.toLowerCase(),
                             );
 
@@ -794,7 +794,7 @@ const taskServiceTicket = new TaskService(
                             delete task.state;
                         }
 
-                        const updatedTask = await linear.updateIssue(taskId, task);
+                        var updatedTask = await linear.updateIssue(taskId, task);
 
                         res.send({
                             status: 'ok',
@@ -805,7 +805,7 @@ const taskServiceTicket = new TaskService(
                         break;
                     }
                     case TP_ID.clickup: {
-                        const result = await axios({
+                        var result = await axios({
                             method: 'put',
                             url: `https://api.clickup.com/api/v2/task/${taskId}`,
                             headers: {
@@ -830,7 +830,7 @@ const taskServiceTicket = new TaskService(
                             statusval = task.fields.status.name;
                             task.fields.status = undefined;
                         }
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'put',
                             url: `${connection.tp_account_url}/rest/api/2/issue/${taskId}`,
                             headers: {
@@ -844,7 +844,7 @@ const taskServiceTicket = new TaskService(
                         // status provided in request body
                         if (statusval) {
                             // since creating a transition requires id, get call for validation. Not sure if id's are same
-                            const allTransitions = await axios({
+                            var allTransitions = await axios({
                                 method: 'get',
                                 url: `${connection.tp_account_url}/rest/api/2/issue/${taskId}/transitions`,
                                 headers: {
@@ -890,7 +890,7 @@ const taskServiceTicket = new TaskService(
                         break;
                     }
                     case TP_ID.trello: {
-                        const result = await axios({
+                        var result = await axios({
                             method: 'put',
                             url: `https://api.trello.com/1/cards/${taskId}?key=${connection.app_client_id}&token=${thirdPartyToken}`,
                             headers: {
@@ -913,7 +913,7 @@ const taskServiceTicket = new TaskService(
                             });
                         }
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'put',
                             url: `https://api.bitbucket.org/2.0/repositories/${fields.workspace}/${fields.repo}/issues/${taskId}`,
                             headers: {
@@ -938,7 +938,7 @@ const taskServiceTicket = new TaskService(
                             });
                         }
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'patch',
                             url: `https://api.github.com/repos/${fields.owner}/${fields.repo}/issues/${taskId}`,
                             headers: {
