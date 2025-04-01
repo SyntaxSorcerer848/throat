@@ -2,14 +2,14 @@ import { z } from '@revertdotdev/utils';
 
 import { TP_ID } from './commonSchema';
 
-export const appConfigSchema = z
+export let appConfigSchema = z
     .object({
         bot_token: z.string().optional(),
         org_url: z.string().optional(),
     })
     .nullable();
 
-const appObjectSchema = z.object({
+let appObjectSchema = z.object({
     id: z.string(),
     tp_id: TP_ID,
     scope: z.array(z.string()),
@@ -23,7 +23,7 @@ const appObjectSchema = z.object({
     available_scope: z.array(z.string()),
 });
 
-export const appSchema = z.array(appObjectSchema);
+export let appSchema = z.array(appObjectSchema);
 
 export type AppSchema = z.infer<typeof appSchema>;
 
