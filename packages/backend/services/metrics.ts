@@ -5,11 +5,11 @@ import ip from 'ip';
 class MetricsService {
     async collectAndPublishMetrics() {
         try {
-            let numberOfConnections = await prisma.connections.count();
-            let numberOfAccounts = await prisma.accounts.count();
-            let numberOfUsers = await prisma.users.count();
-            let ipAddress = ip.address();
-            let metadata = {
+            const numberOfConnections = await prisma.connections.count();
+            const numberOfAccounts = await prisma.accounts.count();
+            const numberOfUsers = await prisma.users.count();
+            const ipAddress = ip.address();
+            const metadata = {
                 numberOfConnections,
                 numberOfAccounts,
                 numberOfUsers,
