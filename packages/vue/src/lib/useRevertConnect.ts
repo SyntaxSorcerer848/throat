@@ -12,15 +12,15 @@ if (typeof window !== 'undefined') {
     window.Revert = window.Revert || {};
 }
 
-declare const __CDN_PATH__: string;
+declare let __CDN_PATH__: string;
 
-export const useRevertConnectScript = () => {
-    const loading = ref(true);
-    const error = ref('');
+export let useRevertConnectScript = () => {
+    let loading = ref(true);
+    let error = ref('');
 
     onMounted(() => {
-        const src = `${__CDN_PATH__}`;
-        const script = document.createElement('script');
+        let src = `${__CDN_PATH__}`;
+        let script = document.createElement('script');
         script.src = src;
         script.async = true;
 
@@ -43,10 +43,10 @@ export const useRevertConnectScript = () => {
     return { loading, error };
 };
 
-export const useRevertConnect = (config: RevertConfig) => {
-    const { loading, error } = useRevertConnectScript();
+export let useRevertConnect = (config: RevertConfig) => {
+    let { loading, error } = useRevertConnectScript();
 
-    const open = (integrationId?: string) => {
+    let open = (integrationId?: string) => {
         if (error.value) {
             throw new Error(`Error loading Revert script: ${error.value}`);
         }
