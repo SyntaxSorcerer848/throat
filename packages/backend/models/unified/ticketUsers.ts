@@ -15,7 +15,7 @@ export interface UnifiedTicketUser {
 export function unifyTicketUser(user: any, thirdPartyId: any): UnifiedTicketUser {
     switch (thirdPartyId) {
         case TP_ID.linear: {
-            const unifiedUser: UnifiedTicketUser = {
+            let unifiedUser: UnifiedTicketUser = {
                 id: String(user.id),
                 email: user.email,
                 name: user.name,
@@ -29,7 +29,7 @@ export function unifyTicketUser(user: any, thirdPartyId: any): UnifiedTicketUser
             return unifiedUser;
         }
         case TP_ID.jira: {
-            const unifiedUser: UnifiedTicketUser = {
+            let unifiedUser: UnifiedTicketUser = {
                 id: String(user.accountId),
                 email: user.emailAddress || null,
                 name: user.displayName,
