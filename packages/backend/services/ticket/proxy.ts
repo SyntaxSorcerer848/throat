@@ -8,19 +8,19 @@ import { TP_ID } from '@prisma/client';
 import axios from 'axios';
 import { LinearClient } from '@linear/sdk';
 
-const proxyServiceTicket = new ProxyService(
+let proxyServiceTicket = new ProxyService(
     {
         async tunnel(req, res) {
             try {
-                const connection = res.locals.connection;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const request = req.body;
-                const path = request.path;
-                const body: any = request.body;
-                const method = request.method;
-                const queryParams = request.queryParams;
+                let connection = res.locals.connection;
+                let thirdPartyId = connection.tp_id;
+                let thirdPartyToken = connection.tp_access_token;
+                let tenantId = connection.t_id;
+                let request = req.body;
+                let path = request.path;
+                let body: any = request.body;
+                let method = request.method;
+                let queryParams = request.queryParams;
 
                 logInfo(
                     'Revert::POST PROXY FOR TICKETING APP',
@@ -32,12 +32,12 @@ const proxyServiceTicket = new ProxyService(
 
                 switch (thirdPartyId) {
                     case TP_ID.linear: {
-                        const linear = new LinearClient({
+                        let linear = new LinearClient({
                             accessToken: thirdPartyToken,
                         });
 
-                        const linearGraphqlClient = await linear.client;
-                        const result: any = await linearGraphqlClient.request(String(body.query), body.input);
+                        let linearGraphqlClient = await linear.client;
+                        let result: any = await linearGraphqlClient.request(String(body.query), body.input);
 
                         res.send({
                             result: result,
@@ -45,7 +45,7 @@ const proxyServiceTicket = new ProxyService(
                         break;
                     }
                     case TP_ID.clickup: {
-                        const result = await axios({
+                        let result = await axios({
                             method: method,
                             url: `https://api.clickup.com/api/v2/${path}`,
                             headers: {
@@ -62,7 +62,7 @@ const proxyServiceTicket = new ProxyService(
                         break;
                     }
                     case TP_ID.jira: {
-                        const result = await axios({
+                        let result = await axios({
                             method: method,
                             url: `${connection.tp_account_url}/${path}`,
                             headers: {
@@ -80,7 +80,7 @@ const proxyServiceTicket = new ProxyService(
                         break;
                     }
                     case TP_ID.trello: {
-                        const result: any = await axios({
+                        let result: any = await axios({
                             method: method,
                             url: `https://api.trello.com/1/${path}?key=${connection.app_client_id}&token=${thirdPartyToken}`,
                             headers: {
@@ -95,7 +95,7 @@ const proxyServiceTicket = new ProxyService(
                         break;
                     }
                     case TP_ID.bitbucket: {
-                        const result: any = await axios({
+                        let result: any = await axios({
                             method: method,
                             url: `https://api.bitbucket.org/2.0/${path}`,
                             headers: {
@@ -112,7 +112,7 @@ const proxyServiceTicket = new ProxyService(
                         break;
                     }
                     case TP_ID.github: {
-                        const result: any = await axios({
+                        let result: any = await axios({
                             method: method,
                             url: `https://api.github.com/${path}`,
                             headers: {
