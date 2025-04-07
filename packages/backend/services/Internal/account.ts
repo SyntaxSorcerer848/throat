@@ -12,11 +12,11 @@ import AppService from '../app';
 import prisma from '../../prisma/client';
 import redis from '../../redis/client';
 
-let accountService = new AccountService({
+const accountService = new AccountService({
     async getAccountDetails(req, res) {
         try {
-            let userId = req.body.userId;
-            let result = await AuthService.getAccountForUser(userId);
+            const userId = req.body.userId;
+            const result = await AuthService.getAccountForUser(userId);
             if (result?.error) {
                 throw new NotFoundError({ error: 'Could not get the account for user' });
             } else {
@@ -30,9 +30,9 @@ let accountService = new AccountService({
     },
     async updateAccountCredentials(req, res) {
         try {
-            let { clientId, clientSecret, scopes, tpId, isRevertApp, appId, appConfig } = req.body;
-            let { 'x-revert-api-token': token } = req.headers;
-            let account = await prisma.accounts.findFirst({
+            const { clientId, clientSecret, scopes, tpId, isRevertApp, appId, appConfig } = req.body;
+            const { 'x-revert-api-token': token } = req.headers;
+            const account = await prisma.accounts.findFirst({
                 where: {
                     private_token: token as string,
                 },
@@ -45,7 +45,7 @@ let accountService = new AccountService({
                     error: 'Api token unauthorized',
                 });
             }
-            let result = await AuthService.setAppCredentialsForUser({
+            const result = await AuthService.setAppCredentialsForUser({
                 appId,
                 publicToken: account.public_token,
                 clientId,
@@ -68,14 +68,14 @@ let accountService = new AccountService({
     },
     async createRevertAppForAccount(req, res) {
         try {
-            let { userId, tpId, environment } = req.body;
-            let result = await AuthService.getAccountForUser(userId);
+            const { userId, tpId, environment } = req.body;
+            const result = await AuthService.getAccountForUser(userId);
 
             if (result?.error) {
                 throw new NotFoundError({ error: 'Could not get the account for user' });
             }
 
-            let isCreated = await AppService.createRevertAppForAccount({
+            const isCreated = await AppService.createRevertAppForAccount({
                 accountId: result.account.id as string,
                 tpId,
                 environment,
@@ -85,7 +85,7 @@ let accountService = new AccountService({
                 throw new InternalServerError({ error: 'Internal Server Error' });
             }
 
-            let finalResult = await AuthService.getAccountForUser(userId);
+            const finalResult = await AuthService.getAccountForUser(userId);
             res.send({ ...finalResult });
         } catch (error: any) {
             logError(error);
@@ -95,8 +95,8 @@ let accountService = new AccountService({
 
     async createSvixAccount(req, res) {
         try {
-            let { accountId, environment } = req.body;
-            let svixAccount = await SvixService.createSvixAccount({ accountId, environment });
+            const { accountId, environment } = req.body;
+            const svixAccount = await SvixService.createSvixAccount({ accountId, environment });
             if (svixAccount) {
                 return res.send({
                     account: svixAccount as SvixAccount,
@@ -114,9 +114,9 @@ let accountService = new AccountService({
 
     async getSvixAccount(req, res) {
         try {
-            let { id } = req.params;
-            let { environment } = req.query;
-            let svixAccount = await SvixService.getSvixAccount({ accountId: id, environment });
+            const { id } = req.params;
+            const { environment } = req.query;
+            const svixAccount = await SvixService.getSvixAccount({ accountId: id, environment });
 
             if (!svixAccount) {
                 return res.send({ exist: false, environment });
@@ -130,9 +130,9 @@ let accountService = new AccountService({
     },
     async createSvixAccountMagicLink(req, res) {
         try {
-            let { appId } = req.body;
-            let environment = appId.split('_')[2];
-            let portalMagicLink = await SvixService.createAppPortalMagicLink(appId);
+            const { appId } = req.body;
+            const environment = appId.split('_')[2];
+            const portalMagicLink = await SvixService.createAppPortalMagicLink(appId);
             if (!portalMagicLink) {
                 return res.send({ key: '', environment });
             }
@@ -145,9 +145,9 @@ let accountService = new AccountService({
     },
     async deleteRevertAppforAccount(req, res) {
         try {
-            let { appId } = req.body;
-            let { 'x-revert-api-token': token } = req.headers;
-            let account = await prisma.accounts.findFirst({
+            const { appId } = req.body;
+            const { 'x-revert-api-token': token } = req.headers;
+            const account = await prisma.accounts.findFirst({
                 where: {
                     private_token: token as string,
                 },
@@ -162,13 +162,13 @@ let accountService = new AccountService({
                 });
             }
 
-            let result = await prisma.apps.delete({
+            const result = await prisma.apps.delete({
                 where: {
                     id: appId,
                 },
             });
 
-            let { id } = result;
+            const { id } = result;
             res.send({ appId: id, delete: true });
         } catch (error: any) {
             logError(error);
@@ -178,8 +178,8 @@ let accountService = new AccountService({
 
     async setOnboardingCompleted(req, res) {
         try {
-            let { userId, environment } = req.body;
-            let result = await AuthService.getAccountForUser(userId);
+            const { userId, environment } = req.body;
+            const result = await AuthService.getAccountForUser(userId);
 
             if (result?.error) {
                 throw new NotFoundError({ error: 'Could not get the account for user' });
