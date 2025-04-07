@@ -61,7 +61,7 @@ import { offerServiceAts } from '../services/ats/offer';
 import { jobServiceAts } from '../services/ats/job';
 import { proxyServiceAts } from '../services/ats/proxy';
 
-var router = express.Router();
+const router = express.Router();
 
 router.get('/health-check', (_, response) => {
     response.send({
@@ -81,8 +81,8 @@ router.get('/debug-sentry', () => {
 
 router.post('/debug-svix', (req, res) => {
     try {
-        var secret = config.SVIX_ENDPOINT_SECRET;
-        var verified = verifyRevertWebhook(req, secret);
+        const secret = config.SVIX_ENDPOINT_SECRET;
+        const verified = verifyRevertWebhook(req, secret);
         console.log('verified', verified, req.body);
         if (verified) {
             res.json({ status: 'Verified!' });
@@ -98,9 +98,9 @@ router.post('/debug-svix', (req, res) => {
 
 router.post('/slack-alert', async (req, res) => {
     try {
-        var email = req.body.email;
-        var name = req.body.name;
-        var message = req.body.message;
+        const email = req.body.email;
+        const name = req.body.name;
+        const message = req.body.message;
         await axios({
             method: 'post',
             url: config.SLACK_URL,
@@ -146,7 +146,7 @@ router.post('/clerk/webhook', async (req, res) => {
                 }
                 // currently looks like db records isn't cleared
                 case 'user.deleted': {
-                    var userId = webhookData.id;
+                    const userId = webhookData.id;
                     await SvixService.deleteAssociatedSvixAccountForUser(userId);
                     res.status(200).send({ status: 200 });
                     break;
@@ -161,9 +161,9 @@ router.post('/clerk/webhook', async (req, res) => {
 
 router.get('/connection/integration-status/:publicToken', async (req, res) => {
     try {
-        var publicToken = req.params.publicToken;
-        var { tenantId } = req.query;
-        var session = await createSession(req, res);
+        const publicToken = req.params.publicToken;
+        const { tenantId } = req.query;
+        const session = await createSession(req, res);
         await pubsub.subscribe(`${PUBSUB_CHANNELS.INTEGRATION_STATUS}_${tenantId}`, async (message: any) => {
             logDebug('pubsub message', message);
             let parsedMessage = JSON.parse(message) as IntegrationStatusSseMessage;
