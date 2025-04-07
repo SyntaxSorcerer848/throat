@@ -1,43 +1,43 @@
-let crypto = require('crypto');
+const crypto = require('crypto');
 
-let CIPHER_ALGORITHM = 'aes-256-gcm';
-let IV_LENGTH = 16;
-let TAG_LENGTH = 16;
-let SALT_LENGTH = 64;
-let ITERATIONS = 10000;
+const CIPHER_ALGORITHM = 'aes-256-gcm';
+const IV_LENGTH = 16;
+const TAG_LENGTH = 16;
+const SALT_LENGTH = 64;
+const ITERATIONS = 10000;
 
-let tagPosition = SALT_LENGTH + IV_LENGTH;
-let encryptedPosition = tagPosition + TAG_LENGTH;
+const tagPosition = SALT_LENGTH + IV_LENGTH;
+const encryptedPosition = tagPosition + TAG_LENGTH;
 
-let getKey = (salt, secret) => {
+const getKey = (salt, secret) => {
     return crypto.pbkdf2Sync(secret, salt, ITERATIONS, 32, 'sha256');
 };
 
-let gcm = {
+const gcm = {
     encrypt: (input, secret) => {
-        let iv = crypto.randomBytes(IV_LENGTH);
-        let salt = crypto.randomBytes(SALT_LENGTH);
+        const iv = crypto.randomBytes(IV_LENGTH);
+        const salt = crypto.randomBytes(SALT_LENGTH);
 
-        let AES_KEY = getKey(salt, secret);
+        const AES_KEY = getKey(salt, secret);
 
-        let cipher = crypto.createCipheriv(CIPHER_ALGORITHM, AES_KEY, iv);
-        let encrypted = Buffer.concat([cipher.update(String(input), 'utf8'), cipher.final()]);
+        const cipher = crypto.createCipheriv(CIPHER_ALGORITHM, AES_KEY, iv);
+        const encrypted = Buffer.concat([cipher.update(String(input), 'utf8'), cipher.final()]);
 
-        let tag = cipher.getAuthTag();
+        const tag = cipher.getAuthTag();
 
         return Buffer.concat([salt, iv, tag, encrypted]).toString('hex');
     },
 
     decrypt: (input, secret) => {
-        let inputValue = Buffer.from(String(input), 'hex');
-        let salt = inputValue.subarray(0, SALT_LENGTH);
-        let iv = inputValue.subarray(SALT_LENGTH, tagPosition);
-        let tag = inputValue.subarray(tagPosition, encryptedPosition);
-        let encrypted = inputValue.subarray(encryptedPosition);
+        const inputValue = Buffer.from(String(input), 'hex');
+        const salt = inputValue.subarray(0, SALT_LENGTH);
+        const iv = inputValue.subarray(SALT_LENGTH, tagPosition);
+        const tag = inputValue.subarray(tagPosition, encryptedPosition);
+        const encrypted = inputValue.subarray(encryptedPosition);
 
-        let key = getKey(salt, secret);
+        const key = getKey(salt, secret);
 
-        let decipher = crypto.createDecipheriv(CIPHER_ALGORITHM, key, iv);
+        const decipher = crypto.createDecipheriv(CIPHER_ALGORITHM, key, iv);
 
         decipher.setAuthTag(tag);
 
