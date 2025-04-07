@@ -23,11 +23,11 @@ class TrelloAuthHandler extends BaseOAuthHandler {
         request,
         redirectUrl,
     }: IntegrationAuthProps) {
-        const trelloClientId = clientId ? clientId : config.TRELLO_CLIENT_ID;
-        const trelloClientSecret = clientId ? clientId : config.TRELLO_CLIENT_SECRET;
-        const requestURL = 'https://trello.com/1/OAuthGetRequestToken';
-        const accessURL = 'https://trello.com/1/OAuthGetAccessToken';
-        const oauth = new OAuth(
+        var trelloClientId = clientId ? clientId : config.TRELLO_CLIENT_ID;
+        var trelloClientSecret = clientId ? clientId : config.TRELLO_CLIENT_SECRET;
+        var requestURL = 'https://trello.com/1/OAuthGetRequestToken';
+        var accessURL = 'https://trello.com/1/OAuthGetAccessToken';
+        var oauth = new OAuth(
             requestURL,
             accessURL,
             String(trelloClientId),
@@ -36,11 +36,11 @@ class TrelloAuthHandler extends BaseOAuthHandler {
             null,
             'HMAC-SHA1',
         );
-        const token = String(request.query.oauth_token);
-        const verifier = String(request.query.oauth_verifier);
-        const tokenSecret = await redis.get(`trello_dev_oauth_token_${request.query.oauth_token}`);
+        var token = String(request.query.oauth_token);
+        var verifier = String(request.query.oauth_verifier);
+        var tokenSecret = await redis.get(`trello_dev_oauth_token_${request.query.oauth_token}`);
         try {
-            const { accessToken, accessTokenSecret }: { accessToken: string; accessTokenSecret: string } =
+            var { accessToken, accessTokenSecret }: { accessToken: string; accessTokenSecret: string } =
                 await new Promise((resolve, reject) => {
                     oauth.getOAuthAccessToken(
                         token,
@@ -56,7 +56,7 @@ class TrelloAuthHandler extends BaseOAuthHandler {
                     );
                 });
             await redis.setEx(`trello_dev_access_token_secret_${accessToken}`, 3600 * 24 * 10, accessTokenSecret);
-            const access_creds: { access_token: string; access_secret: string } = {
+            var access_creds: { access_token: string; access_secret: string } = {
                 access_token: accessToken,
                 access_secret: accessTokenSecret,
             };
