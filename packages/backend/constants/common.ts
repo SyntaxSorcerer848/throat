@@ -7,7 +7,7 @@ export type ACCOUNTING_TP_ID = 'quickbooks' | 'xero';
 export type ATS_TP_ID = 'greenhouse' | 'lever';
 export type TICKET_TP_ID = 'linear' | 'clickup' | 'asana' | 'jira' | 'trello' | 'bitbucket' | 'github';
 
-export let DEFAULT_SCOPE = {
+export const DEFAULT_SCOPE = {
     [TP_ID.hubspot]: [
         'crm.objects.contacts.read',
         'settings.users.read',
@@ -88,7 +88,7 @@ export let DEFAULT_SCOPE = {
     ],
 };
 
-export let mapIntegrationIdToIntegrationName = {
+export const mapIntegrationIdToIntegrationName = {
     [TP_ID.hubspot]: 'Hubspot',
     [TP_ID.pipedrive]: 'Pipedrive',
     [TP_ID.sfdc]: 'Salesforce',
@@ -110,7 +110,7 @@ export let mapIntegrationIdToIntegrationName = {
     [TP_ID.github]: 'GitHub',
 };
 
-export let rootSchemaMappingId = 'revertRootSchemaMapping';
+export const rootSchemaMappingId = 'revertRootSchemaMapping';
 
 export enum StandardObjects {
     company = 'company',
@@ -148,7 +148,7 @@ export enum AtsStandardObjects {
     department = 'department',
 }
 
-export let objectNameMapping: Record<string, Record<CRM_TP_ID, string | undefined>> = {
+export const objectNameMapping: Record<string, Record<CRM_TP_ID, string | undefined>> = {
     [StandardObjects.company]: {
         [TP_ID.hubspot]: 'companies',
         [TP_ID.pipedrive]: 'organization',
