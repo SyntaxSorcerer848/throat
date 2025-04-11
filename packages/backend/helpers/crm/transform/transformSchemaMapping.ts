@@ -10,9 +10,9 @@ import {
 } from '../../../constants/common';
 import { logDebug } from '../../logger';
 
-const prisma = new PrismaClient();
+var prisma = new PrismaClient();
 
-export const transformFieldMappingToModel = async ({
+export var transformFieldMappingToModel = async ({
     obj,
     tpId,
     objType,
@@ -32,7 +32,7 @@ export const transformFieldMappingToModel = async ({
     accountFieldMappingConfig?: accountFieldMappingConfig;
 }) => {
     logDebug('transformFieldMappingToModel obj:', obj);
-    const connectionSchema = await prisma.schemas.findFirst({
+    var connectionSchema = await prisma.schemas.findFirst({
         where: {
             AND: [
                 { object: objType },
@@ -41,7 +41,7 @@ export const transformFieldMappingToModel = async ({
         },
         include: { fieldMappings: { where: { source_tp_id: tpId } } },
     });
-    const rootSchema = await prisma.schemas.findFirst({
+    var rootSchema = await prisma.schemas.findFirst({
         where: {
             AND: [
                 {
@@ -55,7 +55,7 @@ export const transformFieldMappingToModel = async ({
     });
     let transformedObj: Record<string, any> = {};
     (connectionSchema?.fields || rootSchema?.fields)?.forEach((field) => {
-        const fieldMapping =
+        var fieldMapping =
             connectionSchema?.fieldMappings?.find(
                 (r) =>
                     r?.target_field_name === field &&
@@ -68,7 +68,7 @@ export const transformFieldMappingToModel = async ({
                             : accountFieldMappingConfig?.allow_connection_override_custom_fields)),
             ) || rootSchema?.fieldMappings?.find((r) => r?.target_field_name === field);
 
-        const transformedKey = fieldMapping?.source_field_name;
+        var transformedKey = fieldMapping?.source_field_name;
         if (transformedKey) {
             if (fieldMapping.is_standard_field) {
                 transformedObj = assignValueToObject(transformedObj, field, get(obj, transformedKey));
@@ -85,7 +85,7 @@ export const transformFieldMappingToModel = async ({
     return transformedObj;
 };
 
-export const transformModelToFieldMapping = async ({
+export var transformModelToFieldMapping = async ({
     unifiedObj,
     tpId,
     objType,
@@ -104,19 +104,19 @@ export const transformModelToFieldMapping = async ({
     accountFieldMappingConfig?: accountFieldMappingConfig;
 }) => {
     logDebug('transformModelToFieldMapping unifiedObj:', unifiedObj);
-    const connectionSchema = await prisma.schemas.findFirst({
+    var connectionSchema = await prisma.schemas.findFirst({
         where: { object: objType, schema_mapping_id: !!tenantSchemaMappingId ? tenantSchemaMappingId : undefined },
         include: { fieldMappings: { where: { source_tp_id: tpId } } },
     });
 
-    const rootSchema = await prisma.schemas.findFirst({
+    var rootSchema = await prisma.schemas.findFirst({
         where: { object: objType, schema_mapping_id: rootSchemaMappingId },
         include: { fieldMappings: { where: { source_tp_id: tpId } } },
     });
 
     let crmObj: Record<string, string> = {};
     Object.keys(unifiedObj).forEach((key) => {
-        const tenantFieldMapping = connectionSchema?.fieldMappings?.find(
+        var tenantFieldMapping = connectionSchema?.fieldMappings?.find(
             (r) =>
                 r?.target_field_name === key &&
                 (!accountFieldMappingConfig?.id ||
@@ -127,8 +127,8 @@ export const transformModelToFieldMapping = async ({
                               .includes(key)
                         : accountFieldMappingConfig?.allow_connection_override_custom_fields)),
         );
-        const rootFieldMapping = rootSchema?.fieldMappings?.filter((r) => r?.target_field_name === key);
-        const crmKey = tenantFieldMapping?.source_field_name;
+        var rootFieldMapping = rootSchema?.fieldMappings?.filter((r) => r?.target_field_name === key);
+        var crmKey = tenantFieldMapping?.source_field_name;
         if (crmKey) {
             crmObj = assignValueToObject(crmObj, crmKey, get(unifiedObj, key));
         }
@@ -142,9 +142,9 @@ export const transformModelToFieldMapping = async ({
     return crmObj;
 };
 
-export const assignValueToObject = (obj: Record<string, any>, key: string, value: any) => {
+export var assignValueToObject = (obj: Record<string, any>, key: string, value: any) => {
     if (key.includes('.')) {
-        const keys = key.split('.');
+        var keys = key.split('.');
         let result;
         for (let i = keys.length - 1; i >= 0; i--) {
             if (i === keys.length - 1) {
