@@ -24,19 +24,19 @@ class QuickBooksAuthHandler extends BaseOAuthHandler {
         response,
         redirectUrl,
     }: IntegrationAuthProps) {
-        let formData = {
+        const formData = {
             grant_type: 'authorization_code',
             code: code,
             redirect_uri: `${config.OAUTH_REDIRECT_BASE}/quickbooks`,
         };
-        let headerData = {
+        const headerData = {
             client_id: clientId || config.QUICKBOOKS_CLIENT_ID,
             client_secret: clientSecret || config.QUICKBOOKS_CLIENT_SECRET,
         };
-        let encodedClientIdSecret = Buffer.from(headerData.client_id + ':' + headerData.client_secret).toString(
+        const encodedClientIdSecret = Buffer.from(headerData.client_id + ':' + headerData.client_secret).toString(
             'base64',
         );
-        let result: any = await axios({
+        const result: any = await axios({
             method: 'post',
             url: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer',
             headers: {
