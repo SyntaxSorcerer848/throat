@@ -24,13 +24,13 @@ class ClickUpAuthHandler extends BaseOAuthHandler {
         response,
         redirectUrl,
     }: IntegrationAuthProps) {
-        let formData = {
+        const formData = {
             client_id: clientId || config.CLICKUP_CLIENT_ID,
             client_secret: clientSecret || config.CLICKUP_CLIENT_SECRET,
             code,
         };
         logInfo('client credentials ', formData);
-        let result = await axios({
+        const result = await axios({
             method: 'post',
             url: 'https://api.clickup.com/api/v2/oauth/token',
             data: qs.stringify(formData),
@@ -41,7 +41,7 @@ class ClickUpAuthHandler extends BaseOAuthHandler {
 
         logInfo('OAuth creds for Clickup', result.data);
 
-        let info = await axios({
+        const info = await axios({
             method: 'get',
             url: 'https://api.clickup.com/api/v2/user',
             headers: {
