@@ -5,7 +5,7 @@ import {
     UnAuthorizedError,
 } from '../generated/typescript/api/resources/common';
 
-export let isStandardError = (error: any) => {
+export const isStandardError = (error: any) => {
     return (
         error instanceof NotFoundError ||
         error instanceof BadRequestError ||
