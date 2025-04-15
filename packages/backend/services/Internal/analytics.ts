@@ -7,17 +7,17 @@ import { InternalServerError } from '../../generated/typescript/api/resources/co
 import AuthService from '../auth';
 import { getLastSevenDays } from '../../helpers/timeZoneHelper';
 
-var analyticsService = new AnalyticsService({
+const analyticsService = new AnalyticsService({
     async getAnalytics(req, res) {
         try {
-            var userId = req.body.userId;
-            var environment = req.body.environment;
-            var user = await AuthService.getAccountForUser(userId);
+            const userId = req.body.userId;
+            const environment = req.body.environment;
+            const user = await AuthService.getAccountForUser(userId);
             let token = user.account.environments.find((e: any) => e.env === environment);
-            var environmentId = token.id;
+            const environmentId = token.id;
             if (token && token.env) token = token.private_token;
 
-            var countConnections = await prisma.connections.aggregate({
+            const countConnections = await prisma.connections.aggregate({
                 where: {
                     app: {
                         env: {
@@ -31,8 +31,8 @@ var analyticsService = new AnalyticsService({
                     id: true,
                 },
             });
-            var totalConnections = countConnections._count.id;
-            var connections = await prisma.connections.findMany({
+            const totalConnections = countConnections._count.id;
+            const connections = await prisma.connections.findMany({
                 where: {
                     app: {
                         env: {
@@ -135,11 +135,11 @@ var analyticsService = new AnalyticsService({
 
             let recentApiCalls: any = await redis.lRange(`recent_routes_${token}`, 0, -1);
             recentApiCalls = recentApiCalls.map((apiCall: any) => JSON.parse(apiCall));
-            var totalApiCalls = Number(await redis.get(`request_count_${environmentId}`)) ?? 0;
-            var summary = await redis.hGetAll(`summary_api_calls_${environmentId}`);
-            var last7days = getLastSevenDays();
-            var summaryApiCalls = last7days.map((day) => {
-                var numberOfCalls = summary[day];
+            const totalApiCalls = Number(await redis.get(`request_count_${environmentId}`)) ?? 0;
+            const summary = await redis.hGetAll(`summary_api_calls_${environmentId}`);
+            const last7days = getLastSevenDays();
+            const summaryApiCalls = last7days.map((day) => {
+                const numberOfCalls = summary[day];
                 if (!numberOfCalls) {
                     return { date: day, numberOfCalls: 0 };
                 }
