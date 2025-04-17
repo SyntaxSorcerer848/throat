@@ -25,7 +25,7 @@ class JiraAuthHandler extends BaseOAuthHandler {
         response,
         redirectUrl,
     }: IntegrationAuthProps) {
-        const formData = {
+        var formData = {
             grant_type: 'authorization_code',
             client_id: clientId || config.JIRA_CLIENT_ID,
             client_secret: clientSecret || config.JIRA_CLIENT_SECRET,
@@ -33,7 +33,7 @@ class JiraAuthHandler extends BaseOAuthHandler {
             redirect_uri: `${config.OAUTH_REDIRECT_BASE}/jira`,
         };
 
-        const result: any = await axios({
+        var result: any = await axios({
             method: 'post',
             url: 'https://auth.atlassian.com/oauth/token',
             headers: {
@@ -41,11 +41,11 @@ class JiraAuthHandler extends BaseOAuthHandler {
             },
             data: formData,
         });
-        const auth = 'Bearer ' + result.data.access_token;
+        var auth = 'Bearer ' + result.data.access_token;
         logInfo('OAuth creds for jira', result.data);
 
         // fetch the cloud id, required for further requests
-        const resources = await axios({
+        var resources = await axios({
             method: 'get',
             url: 'https://api.atlassian.com/oauth/token/accessible-resources',
             headers: {
@@ -61,10 +61,10 @@ class JiraAuthHandler extends BaseOAuthHandler {
             throw new Error('Unable to fetch cloud_id for jira token');
         }
 
-        const jiraBaseUrl = `https://api.atlassian.com/ex/jira/${cloud_id}`;
+        var jiraBaseUrl = `https://api.atlassian.com/ex/jira/${cloud_id}`;
 
         // fetch user info
-        const info = await axios({
+        var info = await axios({
             method: 'get',
             url: `${jiraBaseUrl}/rest/api/2/myself`,
             headers: {
@@ -73,7 +73,7 @@ class JiraAuthHandler extends BaseOAuthHandler {
             },
         });
         logInfo('User info', info.data);
-        const accountId = info.data?.accountId;
+        var accountId = info.data?.accountId;
 
         try {
             await xprisma.connections.upsert({
