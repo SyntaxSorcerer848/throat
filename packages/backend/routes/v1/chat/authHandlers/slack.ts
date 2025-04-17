@@ -24,8 +24,8 @@ class SlackAuthHandler extends BaseOAuthHandler {
         response,
         redirectUrl,
     }: IntegrationAuthProps) {
-        let url = 'https://slack.com/api/oauth.v2.access';
-        let formData = {
+        const url = 'https://slack.com/api/oauth.v2.access';
+        const formData = {
             grant_type: 'authorization_code',
             client_id: clientId || config.SLACK_CLIENT_ID,
             client_secret: clientSecret || config.SLACK_CLIENT_SECRET,
@@ -33,7 +33,7 @@ class SlackAuthHandler extends BaseOAuthHandler {
             code,
         };
 
-        let result = await axios({
+        const result = await axios({
             method: 'post',
             url: url,
             data: qs.stringify(formData),
@@ -42,7 +42,7 @@ class SlackAuthHandler extends BaseOAuthHandler {
 
         logInfo('OAuth creds for slack', result.data);
 
-        let info = await axios({
+        const info = await axios({
             method: 'get',
             url: 'https://slack.com/api/users.info',
             headers: {
