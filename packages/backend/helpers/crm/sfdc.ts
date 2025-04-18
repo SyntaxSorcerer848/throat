@@ -9,7 +9,7 @@ export function handleSfdcDisunify<T extends Record<string, any>>({
     objType: StandardObjects;
     transformedObj: any;
 }) {
-    const sfdcObj: any = {
+    let sfdcObj: any = {
         ...transformedObj,
         ...getSfdcAssociation(obj, objType),
     };
@@ -22,7 +22,7 @@ export function handleSfdcDisunify<T extends Record<string, any>>({
     return sfdcObj;
 }
 
-const getSfdcAssociation = (obj: any, objType: StandardObjects) => {
+let getSfdcAssociation = (obj: any, objType: StandardObjects) => {
     switch (objType) {
         case StandardObjects.note: {
             return {
