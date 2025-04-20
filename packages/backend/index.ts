@@ -15,7 +15,7 @@ import versionMiddleware, { manageRouterVersioning } from './helpers/versionMidd
 import { ShortloopSDK } from '@shortloop/node';
 import endpointLogger from './helpers/endPointLoggerMiddleWare';
 
-let app: Express = express();
+const app: Express = express();
 
 Sentry.init({
     dsn: config.SENTRY_DSN,
@@ -57,7 +57,7 @@ morgan.token('hostname', function getHostname() {
     return os.hostname();
 });
 
-let jsonFormat = (tokens: any, req: any, res: any) => {
+const jsonFormat = (tokens: any, req: any, res: any) => {
     return JSON.stringify({
         tenant: tokens['tenant-id'](req, res),
         account: tokens['account-id'](req, res),
@@ -95,13 +95,13 @@ ShortloopSDK.init({
 app.use(ShortloopSDK.capture());
 
 // TODO: Just to test versions. Remove later
-let testv2Router = (_req: Request, res: Response) => {
+const testv2Router = (_req: Request, res: Response) => {
     res.send({ data: 'v2 hit' });
 };
 
 if (config.MOESIF_APPLICATION_ID) {
     // Set the options, the only required field is applicationId
-    let moesifMiddleware = moesif({
+    const moesifMiddleware = moesif({
         applicationId: config.MOESIF_APPLICATION_ID!,
         debug: process.env.NODE_ENV !== 'production', // enable debug mode.
         logBody: true,
