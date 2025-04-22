@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import prisma from '../prisma/client';
 import { logError } from './logger';
 
-let revertAuthMiddleware = () => async (req: Request, res: Response, next: () => any) => {
-    let nonSecurePaths = ['/oauth-callback', '/oauth/refresh'];
-    let nonSecurePathsPartialMatch = ['/integration-status', '/trello-request-token', '/lever-app_config'];
+const revertAuthMiddleware = () => async (req: Request, res: Response, next: () => any) => {
+    const nonSecurePaths = ['/oauth-callback', '/oauth/refresh'];
+    const nonSecurePathsPartialMatch = ['/integration-status', '/trello-request-token', '/lever-app_config'];
     if (nonSecurePaths.includes(req.path) || nonSecurePathsPartialMatch.some((path) => req.path.includes(path)))
         return next();
-    let { 'x-revert-api-token': token, 'x-revert-t-token': tenantSecretToken } = req.headers;
+    const { 'x-revert-api-token': token, 'x-revert-t-token': tenantSecretToken } = req.headers;
 
     if (tenantSecretToken && !token) {
         return next();
@@ -20,7 +20,7 @@ let revertAuthMiddleware = () => async (req: Request, res: Response, next: () =>
         return;
     }
     try {
-        let account = await prisma.accounts.findMany({
+        const account = await prisma.accounts.findMany({
             where: {
                 environments: {
                     some: {
