@@ -25,8 +25,8 @@ class LinearAuthHandler extends BaseOAuthHandler {
         redirectUrl,
     }: IntegrationAuthProps) {
         // Handle the received code
-        const url = `https://api.linear.app/oauth/token`;
-        const formData = {
+        let url = `https://api.linear.app/oauth/token`;
+        let formData = {
             grant_type: 'authorization_code',
             client_id: clientId || config.LINEAR_CLIENT_ID,
             client_secret: clientSecret || config.LINEAR_CLIENT_SECRET,
@@ -34,7 +34,7 @@ class LinearAuthHandler extends BaseOAuthHandler {
             code,
         };
 
-        const result = await axios({
+        let result = await axios({
             method: 'post',
             url: url,
             data: qs.stringify(formData),
@@ -44,7 +44,7 @@ class LinearAuthHandler extends BaseOAuthHandler {
         });
 
         logInfo('OAuth creds for Linear', result.data);
-        const query = `query Me {
+        let query = `query Me {
           viewer {
             id
             name
@@ -52,7 +52,7 @@ class LinearAuthHandler extends BaseOAuthHandler {
           }
         }`;
 
-        const info = await axios({
+        let info = await axios({
             method: 'post',
             url: 'https://api.linear.app/graphql',
             headers: {
