@@ -6,22 +6,22 @@ import revertAuthMiddleware from '../../helpers/authMiddleware';
 import revertTenantMiddleware from '../../helpers/tenantIdMiddleware';
 import { logInfo } from '../../helpers/logger';
 
-const proxyService = new ProxyService(
+let proxyService = new ProxyService(
     {
         async tunnel(req, res) {
-            const connection = res.locals.connection;
-            const thirdPartyId = connection.tp_id;
-            const thirdPartyToken = connection.tp_access_token;
-            const tenantId = connection.t_id;
-            const request = req.body;
-            const path = request.path;
-            const body = request.body;
-            const method = request.method;
-            const queryParams = request.queryParams;
+            let connection = res.locals.connection;
+            let thirdPartyId = connection.tp_id;
+            let thirdPartyToken = connection.tp_access_token;
+            let tenantId = connection.t_id;
+            let request = req.body;
+            let path = request.path;
+            let body = request.body;
+            let method = request.method;
+            let queryParams = request.queryParams;
 
             logInfo('Revert::POST PROXY', connection.app?.env?.accountId, tenantId, thirdPartyId, thirdPartyToken);
             if (thirdPartyId === TP_ID.hubspot) {
-                const result = await axios({
+                let result = await axios({
                     method: method,
                     url: `https://api.hubapi.com/${path}`,
                     headers: {
@@ -36,7 +36,7 @@ const proxyService = new ProxyService(
                     result: result.data,
                 });
             } else if (thirdPartyId === TP_ID.zohocrm) {
-                const result = await axios({
+                let result = await axios({
                     method: method,
                     url: `https://www.zohoapis.com/${path}`,
                     headers: {
@@ -48,8 +48,8 @@ const proxyService = new ProxyService(
                 });
                 res.send({ result: result.data.data });
             } else if (thirdPartyId === TP_ID.sfdc || thirdPartyId === TP_ID.pipedrive) {
-                const instanceUrl = connection.tp_account_url;
-                const result = await axios({
+                let instanceUrl = connection.tp_account_url;
+                let result = await axios({
                     method: method,
                     url: `${instanceUrl}/${path}`,
                     headers: {
@@ -61,7 +61,7 @@ const proxyService = new ProxyService(
                 });
                 res.send({ result: result.data });
             } else if (thirdPartyId === TP_ID.closecrm) {
-                const result = await axios({
+                let result = await axios({
                     method: method,
                     url: `https://api.close.com/${path}`,
                     headers: {
@@ -74,7 +74,7 @@ const proxyService = new ProxyService(
 
                 res.send({ result: result.data });
             } else if (thirdPartyId === TP_ID.ms_dynamics_365_sales) {
-                const result = await axios({
+                let result = await axios({
                     method: method,
                     url: `${connection.tp_account_url}/${path}`,
                     params: queryParams,
