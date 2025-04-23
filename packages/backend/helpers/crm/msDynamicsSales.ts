@@ -48,11 +48,11 @@ export function handleMSDynamicsSales<T extends Record<string, any>>({
     if (objType === StandardObjects.note && obj.additional && obj.additional.entityType && obj.additional.entityId) {
         delete transformedObj.entityType;
         delete transformedObj.entityId;
-        var entityType = obj.additional.entityType;
-        var entityId = obj.additional.entityId;
-        var pluralForm = entityType !== 'opportunity' ? entityType + 's' : 'opportunities';
-        var path = `/${pluralForm}(${entityId})`;
-        var pathKey = `objectid_${entityType}@odata.bind`;
+        const entityType = obj.additional.entityType;
+        const entityId = obj.additional.entityId;
+        const pluralForm = entityType !== 'opportunity' ? entityType + 's' : 'opportunities';
+        const path = `/${pluralForm}(${entityId})`;
+        const pathKey = `objectid_${entityType}@odata.bind`;
 
         if (obj.additional.subject) transformedObj.subject = obj.additional.subject;
 
@@ -66,14 +66,14 @@ export function handleMSDynamicsSales<T extends Record<string, any>>({
         if (obj.probability) transformedObj.closeprobability = obj.probability * 100;
 
         if (obj.priority) {
-            var priority = String(obj.priority).toLowerCase();
+            const priority = String(obj.priority).toLowerCase();
             if (priority === 'hot') transformedObj.opportunityratingcode = 1;
             else if (priority === 'warm') transformedObj.opportunityratingcode = 2;
             else if (priority === 'cold') transformedObj.opportunityratingcode = 3;
         }
 
         if (obj.stage) {
-            var stage = String(obj.stage).toLowerCase();
+            const stage = String(obj.stage).toLowerCase();
             if (stage === 'qualify') transformedObj.salesstagecode = 0;
             else if (stage === 'develop') transformedObj.salesstagecode = 1;
             else if (stage === 'propose') transformedObj.salesstagecode = 2;
