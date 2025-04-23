@@ -59,7 +59,7 @@
     "dependencies": {
         "@linear/sdk": "^13.0.0",
         "@opensdks/runtime": "0.0.16",
-        "@opensdks/sdk-venice": "0.0.14",
+        "@opensdks/sdk-venice": "0.0.17",
         "@prisma/client": "^4.16.0",
         "@sentry/node": "^7.55.2",
         "@shortloop/node": "0.0.12",

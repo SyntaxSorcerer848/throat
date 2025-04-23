@@ -4226,12 +4226,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opensdks/sdk-venice@npm:0.0.14":
-  version: 0.0.14
-  resolution: "@opensdks/sdk-venice@npm:0.0.14"
+"@opensdks/sdk-venice@npm:0.0.17":
+  version: 0.0.17
+  resolution: "@opensdks/sdk-venice@npm:0.0.17"
   peerDependencies:
-    "@opensdks/runtime": 0.0.14
-  checksum: d46f6e7fa32f03563ffb83dd78e4cfcad65f0f6435e74fd0ed28f16c8623f772721d83f8b9b0989403492cbfa1610750059c9be7525512352e943c47c2c44b32
+    "@opensdks/runtime": 0.0.17
+  checksum: 574ec85e5859ef85bb9d19a94ba2c8b4831fee43391b0fc6522746d3cba555c221cf7151e346652f44bdb0e12bd4c97b347fa2132ec57e3595f57c40c8789d33
   languageName: node
   linkType: hard
 
@@ -5230,7 +5230,7 @@ __metadata:
     "@babel/preset-typescript": ^7.18.6
     "@linear/sdk": ^13.0.0
     "@opensdks/runtime": 0.0.16
-    "@opensdks/sdk-venice": 0.0.14
+    "@opensdks/sdk-venice": 0.0.17
     "@prisma/client": ^4.16.0
     "@sentry/node": ^7.55.2
     "@shortloop/node": 0.0.12
