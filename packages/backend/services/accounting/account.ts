@@ -10,19 +10,19 @@ import { AccountingStandardObjects, AppConfig } from '../../constants/common';
 import { AccountService } from '../../generated/typescript/api/resources/accounting/resources/account/service/AccountService';
 import { UnifiedAccount } from '../../models/unified/account';
 
-const objType = AccountingStandardObjects.account;
+var objType = AccountingStandardObjects.account;
 
-const accountServiceAccounting = new AccountService(
+var accountServiceAccounting = new AccountService(
     {
         async getAccount(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const accountId = req.params.id; //this is id that will be used to get the particular acccount for the below integrations.
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = req.query.fields && JSON.parse(req.query.fields as string);
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var accountId = req.params.id; //this is id that will be used to get the particular acccount for the below integrations.
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = req.query.fields && JSON.parse(req.query.fields as string);
                 logInfo(
                     'Revert::GET ACCOUNT',
                     connection.app?.env?.accountId,
@@ -39,10 +39,10 @@ const accountServiceAccounting = new AccountService(
                                 error: 'The query parameter "realmID" is required and should be included in the "fields" parameter.',
                             });
                         }
-                        const env =
+                        var env =
                             connection?.app?.tp_id === 'quickbooks' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'GET',
                             url: `${
                                 (env === 'Sandbox'
@@ -56,7 +56,7 @@ const accountServiceAccounting = new AccountService(
                             },
                         });
 
-                        const unifiedAccount: any = await unifyObject<any, UnifiedAccount>({
+                        var unifiedAccount: any = await unifyObject<any, UnifiedAccount>({
                             obj: result.data.Account,
                             tpId: thirdPartyId,
                             objType,
@@ -71,7 +71,7 @@ const accountServiceAccounting = new AccountService(
                         break;
                     }
                     case TP_ID.xero: {
-                        const result = await axios({
+                        var result = await axios({
                             method: 'GET',
                             url: `https://api.xero.com/api.xro/2.0/Accounts/${accountId}`,
                             headers: {
@@ -81,7 +81,7 @@ const accountServiceAccounting = new AccountService(
                             },
                         });
 
-                        const unifiedAccount: any = await unifyObject<any, UnifiedAccount>({
+                        var unifiedAccount: any = await unifyObject<any, UnifiedAccount>({
                             obj: result.data.Accounts[0],
                             tpId: thirdPartyId,
                             objType,
@@ -111,14 +111,14 @@ const accountServiceAccounting = new AccountService(
 
         async getAccounts(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const fields: any = req.query.fields ? JSON.parse(req.query.fields as string) : undefined;
-                const pageSize = parseInt(String(req.query.pageSize));
-                const cursor = req.query.cursor;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var fields: any = req.query.fields ? JSON.parse(req.query.fields as string) : undefined;
+                var pageSize = parseInt(String(req.query.pageSize));
+                var cursor = req.query.cursor;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
 
                 logInfo(
                     'Revert::GET ALL ACCOUNTS',
@@ -139,10 +139,10 @@ const accountServiceAccounting = new AccountService(
                             pageSize ? ` MAXRESULTS +${pageSize}` : ''
                         }`;
 
-                        const env =
+                        var env =
                             connection?.app?.tp_id === 'quickbooks' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'GET',
                             url: `${
                                 (env === 'Sandbox'
@@ -156,7 +156,7 @@ const accountServiceAccounting = new AccountService(
                             },
                         });
 
-                        const unifiedAccounts: any = result.data.QueryResponse.Account
+                        var unifiedAccounts: any = result.data.QueryResponse.Account
                             ? await Promise.all(
                                   result.data.QueryResponse.Account.map(
                                       async (accountItem: any) =>
@@ -170,7 +170,7 @@ const accountServiceAccounting = new AccountService(
                                   ),
                               )
                             : {};
-                        const nextCursor =
+                        var nextCursor =
                             pageSize && result.data.QueryResponse?.maxResults
                                 ? String(pageSize + (parseInt(String(cursor)) || 0))
                                 : undefined;
@@ -182,9 +182,9 @@ const accountServiceAccounting = new AccountService(
                         break;
                     }
                     case TP_ID.xero: {
-                        const pagingString = `${cursor ? `page=${cursor}` : ''}`;
+                        var pagingString = `${cursor ? `page=${cursor}` : ''}`;
 
-                        const result = await axios({
+                        var result = await axios({
                             method: 'GET',
                             url: `https://api.xero.com/api.xro/2.0/Accounts?${pagingString}`,
                             headers: {
@@ -194,7 +194,7 @@ const accountServiceAccounting = new AccountService(
                             },
                         });
 
-                        const unifiedAccounts: any = await Promise.all(
+                        var unifiedAccounts: any = await Promise.all(
                             result.data.Accounts.map(
                                 async (accountItem: any) =>
                                     await unifyObject<any, UnifiedAccount>({
@@ -206,8 +206,8 @@ const accountServiceAccounting = new AccountService(
                                     }),
                             ),
                         );
-                        const hasMoreResults = result.data.Accounts.length === 100;
-                        const nextCursor = hasMoreResults ? (cursor ? cursor + 1 : 2) : undefined;
+                        var hasMoreResults = result.data.Accounts.length === 100;
+                        var nextCursor = hasMoreResults ? (cursor ? cursor + 1 : 2) : undefined;
                         res.send({
                             status: 'ok',
                             next: nextCursor ? String(nextCursor) : undefined,
@@ -231,15 +231,15 @@ const accountServiceAccounting = new AccountService(
 
         async createAccount(req, res) {
             try {
-                const accountData: any = req.body as unknown as UnifiedAccount;
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                var accountData: any = req.body as unknown as UnifiedAccount;
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
-                const disunifiedAccountData: any = await disunifyAccountingObject<UnifiedAccount>({
+                var disunifiedAccountData: any = await disunifyAccountingObject<UnifiedAccount>({
                     obj: accountData,
                     tpId: thirdPartyId,
                     objType,
@@ -256,10 +256,10 @@ const accountServiceAccounting = new AccountService(
                                 error: 'The query parameter "realmID" is required and should be included in the "fields" parameter.',
                             });
                         }
-                        const env =
+                        var env =
                             connection?.app?.tp_id === 'quickbooks' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
                             url: `${
                                 (env === 'Sandbox'
@@ -278,7 +278,7 @@ const accountServiceAccounting = new AccountService(
                         break;
                     }
                     case TP_ID.xero: {
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'put',
                             url: `https://api.xero.com/api.xro/2.0/Accounts`,
                             headers: {
@@ -308,20 +308,20 @@ const accountServiceAccounting = new AccountService(
         },
         async updateAccount(req, res) {
             try {
-                const connection = res.locals.connection;
-                const account = res.locals.account;
-                const accountData = req.body as unknown as UnifiedAccount;
-                const accountId = req.params.id;
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
-                const fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
+                var connection = res.locals.connection;
+                var account = res.locals.account;
+                var accountData = req.body as unknown as UnifiedAccount;
+                var accountId = req.params.id;
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
+                var fields: any = req.query.fields && JSON.parse((req.query as any).fields as string);
 
                 if (thirdPartyId === TP_ID.quickbooks && accountData && !accountData.id) {
                     throw new Error('The parameter "id" is required in request body.');
                 }
 
-                const disunifiedAccountData: any = await disunifyAccountingObject<UnifiedAccount>({
+                var disunifiedAccountData: any = await disunifyAccountingObject<UnifiedAccount>({
                     obj: accountData,
                     tpId: thirdPartyId,
                     objType,
@@ -340,10 +340,10 @@ const accountServiceAccounting = new AccountService(
                         }
                         disunifiedAccountData.Id = accountId;
 
-                        const env =
+                        var env =
                             connection?.app?.tp_id === 'quickbooks' && (connection?.app?.app_config as AppConfig)?.env;
 
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
 
                             url: `${
@@ -368,7 +368,7 @@ const accountServiceAccounting = new AccountService(
                         break;
                     }
                     case TP_ID.xero: {
-                        const result: any = await axios({
+                        var result: any = await axios({
                             method: 'post',
                             url: `https://api.xero.com/api.xro/2.0/Accounts/${accountId}`,
                             headers: {
@@ -403,11 +403,11 @@ const accountServiceAccounting = new AccountService(
         },
         async deleteAccount(req, res) {
             try {
-                const connection = res.locals.connection;
-                const accountId = req.params.id; //this is id that will be used to get the particular acccount for the below integrations.
-                const thirdPartyId = connection.tp_id;
-                const thirdPartyToken = connection.tp_access_token;
-                const tenantId = connection.t_id;
+                var connection = res.locals.connection;
+                var accountId = req.params.id; //this is id that will be used to get the particular acccount for the below integrations.
+                var thirdPartyId = connection.tp_id;
+                var thirdPartyToken = connection.tp_access_token;
+                var tenantId = connection.t_id;
 
                 logInfo(
                     'Revert::DELETE ACCOUNT',
